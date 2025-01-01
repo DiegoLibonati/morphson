@@ -1,5 +1,3 @@
-import React from "react";
-
 import { GeneralProps } from "@/src/entities/entities";
 
 import { LoaderRoot } from "@/src/components/Loaders/export";

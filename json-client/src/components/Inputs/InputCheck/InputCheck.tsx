@@ -1,7 +1,6 @@
 import { GeneralProps } from "@/src/entities/entities";
-import React from "react";
 
-interface InputCheckedProps extends GeneralProps {
+interface InputCheckProps extends GeneralProps {
   id: string;
   label: string;
   name: string;
@@ -9,13 +8,13 @@ interface InputCheckedProps extends GeneralProps {
   onChange: React.ChangeEventHandler<HTMLInputElement>;
 }
 
-export const InputChecked = ({
+export const InputCheck = ({
   id,
   label,
   name,
   value,
   onChange,
-}: InputCheckedProps): JSX.Element => {
+}: InputCheckProps): JSX.Element => {
   return (
     <div className="flex flex-row gap-2">
       <input

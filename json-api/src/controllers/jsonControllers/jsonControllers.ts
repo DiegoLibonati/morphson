@@ -35,7 +35,7 @@ export const jsonControllers = {
 
       if (!idOutputJson || !isInteger(idOutputJson)) {
         return res.status(400).json({
-          message: "You must send a Valid Json Input ID!",
+          message: "You must send a Valid Json Output ID!",
           data: null,
         });
       }
@@ -141,7 +141,6 @@ export const jsonControllers = {
   },
   uploadJson: async (req: Request, res: Response): Promise<Response> => {
     try {
-      // const file = req.file;
       const body: { name: string; content: string } = req.body;
 
       const name = body.name.trim();
@@ -179,6 +178,7 @@ export const jsonControllers = {
         },
       });
     } catch (e: unknown) {
+      console.log(e);
       return res.status(500).json({
         message: getError(e),
       });

@@ -1,19 +1,17 @@
-import React from "react";
-
 import { editor } from "monaco-editor";
 import { Editor, OnChange, OnMount } from "@monaco-editor/react";
 
 import { GeneralProps } from "@/src/entities/entities.d";
 
 interface MonacoEditorProps extends GeneralProps {
-  language: "json";
+  language: string;
   defaultValue: string;
   value: string;
-  theme: "vs-dark";
-  onChange: OnChange;
-  onMount?: OnMount;
+  theme: string;
   height?: string;
   options?: editor.IStandaloneEditorConstructionOptions;
+  onChange: OnChange;
+  onMount?: OnMount;
 }
 
 export const MonacoEditor = ({

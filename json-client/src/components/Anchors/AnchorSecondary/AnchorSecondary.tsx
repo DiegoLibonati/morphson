@@ -1,6 +1,6 @@
-import { GeneralProps } from "@/src/entities/entities";
-import React from "react";
 import { Link } from "react-router-dom";
+
+import { GeneralProps } from "@/src/entities/entities";
 
 interface AnchorSecondaryProps extends GeneralProps {
   ariaLabel: string;

@@ -3,10 +3,11 @@
 ## Getting Started
 
 1. Clone the repository with `git clone "repository link"`
-2. Go to the folder where you cloned your repository
-3. Run `docker-compose build --no-cache` in the terminal
-4. Once built, you must execute the command: `docker-compose up`
-5. You have to be standing in the folder containing the: `docker-compose.yml`
+2. Join to `json-client` folder and `json-api` folder and execute: `npm install` or `yarn install` in the terminal
+3. Go to the previous folder and execute: `docker-compose build --no-cache` in the terminal
+4. Once built, you must execute the command: `docker-compose up --force-recreate` in the terminal
+
+NOTE: You have to be standing in the folder containing the: `docker-compose.yml` and you need to install `Docker Desktop` if you are in Windows.
 
 ## Description
 
@@ -37,22 +38,77 @@ Database:
 
 ## Libraries used
 
-FrontEnd:
+### Frontend
 
-1. Monaco Editor
-2. Monaco Editor React
-3. Axios
-4. React Icons
-5. React Router Dom
-6. Vite
+#### Dependencies
 
-BackEnd:
+```
+"@types/jest": "^29.5.13"
+"@types/node": "^22.7.4"
+"@types/react": "^18.3.3"
+"@types/react-dom": "^18.3.0"
+"react": "^18.3.1"
+"react-dom": "^18.3.1"
+"react-icons": "^5.3.0"
+"react-router-dom": "^6.26.2"
+"axios": "^1.7.7"
+"@monaco-editor/react": "^4.6.0"
+"monaco-editor": "^0.52.0"
+```
 
-1. Express
-2. Multer
-3. Prisma
-4. Nodemon
-5. Vite
+#### devDependencies
+
+```
+"@testing-library/dom": "^10.4.0"
+"@testing-library/jest-dom": "^6.6.2"
+"@testing-library/react": "^16.0.1"
+"@testing-library/user-event": "^14.5.2"
+"@vitejs/plugin-react": "^4.3.1"
+"@eslint/js": "^9.9.0"
+"eslint": "^9.9.0"
+"eslint-plugin-react-hooks": "^5.1.0-rc.0"
+"eslint-plugin-react-refresh": "^0.4.9"
+"autoprefixer": "^10.4.20"
+"postcss-loader": "^8.1.1"
+"tailwindcss": "^3.4.13"
+"typescript": "^5.5.3"
+"typescript-eslint": "^8.0.1"
+"globals": "^15.9.0"
+"vite": "^5.4.1"
+"jest": "^29.7.0"
+"jest-environment-jsdom": "^29.7.0"
+"ts-jest": "^29.2.5"
+"axios-mock-adapter": "^2.1.0"
+```
+
+### Backend
+
+#### Dependencies
+
+```
+"@types/express": "^5.0.0"
+"@types/jest": "^29.5.14"
+"@types/node": "^20.10.5"
+"@types/supertest": "^6.0.2"
+"@types/multer": "^1.4.12"
+"@prisma/client": "^5.20.0"
+"express": "^4.21.0"
+"multer": "^1.4.5-lts.1"
+```
+
+#### devDependencies
+
+```
+"prisma": "^5.20.0"
+"nodemon": "^3.1.7"
+"ts-node": "^10.9.2"
+"typescript": "^5.5.3"
+"tsconfig-paths": "^4.2.0"
+"vite": "^5.4.1"
+"jest": "^29.7.0"
+"supertest": "^7.0.0"
+"ts-jest": "^29.2.5"
+```
 
 ## Portfolio Link
 
@@ -62,13 +118,25 @@ BackEnd:
 
 https://github.com/user-attachments/assets/17fdb19c-e914-4127-976d-78d287afe2e1
 
+## Testing
+
+### Frontend
+
+1. Join to `json-client` folder
+2. Execute: `yarn test` or `npm test`
+
+### Backend
+
+1. Join to `json-api` folder
+2. Execute: `yarn test` or `npm test`
+
 ## Documentation APP
 
 ### **Version**
 
 ```ts
 APP VERSION: 0.0.1
-README UPDATED: 05/10/2024
+README UPDATED: 01/01/2025
 AUTHOR: Diego Libonati
 ```
 
@@ -148,7 +216,6 @@ DATABASE_URL=postgresql://root:admin@db:5432/jsondb?schema=public
 ```ts
 {
   name: string;
-  file: File;
   content: string;
 }
 ```

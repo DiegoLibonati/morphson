@@ -1,0 +1,222 @@
+{
+	"info": {
+		"_postman_id": "93ec9fd6-c4dd-4e75-8fd2-066f10a44f2f",
+		"name": "JSON Transformer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27611586"
+	},
+	"item": [
+		{
+			"name": "General",
+			"item": [
+				{
+					"name": "Alive",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APP_URL}}/alive",
+							"host": [
+								"{{APP_URL}}"
+							],
+							"path": [
+								"alive"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "JSON",
+			"item": [
+				{
+					"name": "Get Inputs Json",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APP_URL}}/json/inputs",
+							"host": [
+								"{{APP_URL}}"
+							],
+							"path": [
+								"json",
+								"inputs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Input Json",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APP_URL}}/json/input/1",
+							"host": [
+								"{{APP_URL}}"
+							],
+							"path": [
+								"json",
+								"input",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Outputs Json",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APP_URL}}/json/outputs",
+							"host": [
+								"{{APP_URL}}"
+							],
+							"path": [
+								"json",
+								"outputs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Output Json",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APP_URL}}/json/output/1",
+							"host": [
+								"{{APP_URL}}"
+							],
+							"path": [
+								"json",
+								"output",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post Upload Input Json",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"asdasdasdas\",\r\n  \"content\": \"{\\\"a\\\": \\\"b\\\"}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APP_URL}}/json/upload",
+							"host": [
+								"{{APP_URL}}"
+							],
+							"path": [
+								"json",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post Get Json Content",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/diego/Downloads/hola_transformed (3).json"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{APP_URL}}/json/getContent",
+							"host": [
+								"{{APP_URL}}"
+							],
+							"path": [
+								"json",
+								"getContent"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post Transform",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idInputJson\": \"1\",\r\n  \"saveOutputJson\": false,\r\n  \"outputJsonNameToSave\": \"12345\",\r\n  \"contentJsonToTransform\": \"{\\\"a\\\": \\\"b\\\"}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APP_URL}}/json/transform",
+							"host": [
+								"{{APP_URL}}"
+							],
+							"path": [
+								"json",
+								"transform"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "APP_URL",
+			"value": "http://localhost:3000/api/v1",
+			"type": "string"
+		}
+	]
+}

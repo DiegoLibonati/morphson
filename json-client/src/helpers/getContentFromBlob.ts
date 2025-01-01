@@ -4,7 +4,10 @@ export const getContentFromBlob = (blob: Blob): Promise<string> => {
       const reader = new FileReader();
 
       reader.onload = function (event) {
-        resolve(event.target.result as string);
+        const target = event.target as FileReader;
+        const result = target.result as string;
+
+        resolve(result);
       };
 
       reader.readAsText(blob);

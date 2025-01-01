@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useRef } from "react";
-
+import { useEffect, useRef } from "react";
+import { OnChange, OnMount } from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 
 import { MonacoEditor } from "@/src/components/Editors/export";
 
-import { JSONContext } from "@/src/contexts/export";
+import { useJSONContext } from "@/src/contexts/export";
 
 export const OutputWithInputEditor = (): JSX.Element => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
@@ -12,11 +12,16 @@ export const OutputWithInputEditor = (): JSX.Element => {
   const completionProviderRef = useRef<monaco.IDisposable | null>(null);
 
   const { inputJson, outputJson, handleOutputJsonModelUpdate } =
-    useContext(JSONContext);
+    useJSONContext();
 
-  const onChangeEditorContent = (value: string): void => {
-    const newContent = value;
+  const onChangeEditor: OnChange = (value) => {
+    const newContent = value!;
     return handleOutputJsonModelUpdate(newContent);
+  };
+
+  const onMountEditor: OnMount = (editor, monaco) => {
+    editorRef.current = editor;
+    monacoRef.current = monaco;
   };
 
   useEffect(() => {
@@ -61,16 +66,13 @@ export const OutputWithInputEditor = (): JSX.Element => {
 
   return (
     <MonacoEditor
-      className="h-full"
+      className="h-full output-with-input-editor"
       defaultValue="{}"
       language="json"
       theme="vs-dark"
       value={outputJson.model}
-      onChange={onChangeEditorContent}
-      onMount={(editor, monaco) => {
-        editorRef.current = editor;
-        monacoRef.current = monaco;
-      }}
+      onChange={onChangeEditor}
+      onMount={onMountEditor}
     ></MonacoEditor>
   );
 };

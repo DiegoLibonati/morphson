@@ -1,26 +1,28 @@
-import React, { Reducer, createContext, useEffect, useReducer } from "react";
+import React, {
+  Reducer,
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+} from "react";
 
 import { Modal } from "@/src/entities/entities";
-import { ModalAction, ModalState } from "@/src/entities/modal-context.d";
+import {
+  ModalAction,
+  ModalContext as ModalContextT,
+  ModalState,
+} from "@/src/entities/modal-context.d";
 
 import {
   initialState,
   reducer,
 } from "@/src/contexts/ModalContext/reducer/reducer";
 
-interface ModalContextProps {
-  modal: Modal;
-  handleSetModal: (modal: Modal) => void;
-  handleSetModalClose: () => void;
-}
-
 interface ModalProviderProps {
   children: React.ReactNode;
 }
 
-export const ModalContext = createContext<ModalContextProps | undefined>(
-  undefined
-);
+export const ModalContext = createContext<ModalContextT | undefined>(undefined);
 
 export const ModalProvider: React.FunctionComponent<ModalProviderProps> = ({
   children,
@@ -63,4 +65,9 @@ export const ModalProvider: React.FunctionComponent<ModalProviderProps> = ({
       {children}
     </ModalContext.Provider>
   );
+};
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const useModalContext = (): ModalContextT => {
+  return useContext(ModalContext)!;
 };

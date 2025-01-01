@@ -14,6 +14,6 @@ jsonRoutes
   .get("/input/:id", jsonControllers.getJsonInput)
   .get("/outputs", jsonControllers.getJsonOutputs)
   .get("/output/:id", jsonControllers.getJsonOutput)
-  .post("/upload", upload.single("file"), jsonControllers.uploadJson)
+  .post("/upload", jsonControllers.uploadJson)
   .post("/getContent", upload.single("file"), jsonControllers.getFileContent)
   .post("/transform", jsonControllers.transformJson);

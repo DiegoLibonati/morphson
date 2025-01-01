@@ -34,7 +34,7 @@ export const useForm = <T extends object>({
   const onInputFileChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const target = e.target as HTMLInputElement;
     const inputName = target.name;
-    const inputFile = target.files;
+    const inputFile = target.files!;
 
     if (inputFile.length === 0)
       throw "The requested file was not uploaded successfully.";

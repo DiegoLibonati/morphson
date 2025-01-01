@@ -1,5 +1,4 @@
 import { GeneralProps } from "@/src/entities/entities";
-import React from "react";
 
 interface SelectOptionProps extends GeneralProps {
   value: string;

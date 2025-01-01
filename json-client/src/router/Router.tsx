@@ -1,5 +1,3 @@
-import React from "react";
-
 import { PublicRoutes } from "@/src/router/export";
 
 export const Router = (): JSX.Element => {

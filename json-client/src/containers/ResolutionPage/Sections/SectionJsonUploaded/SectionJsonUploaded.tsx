@@ -1,8 +1,6 @@
-import React from "react";
+import { FaCheckCircle } from "react-icons/fa";
 
 import { AnchorAction } from "@/src/components/Anchors/export";
-
-import { FaCheckCircle } from "react-icons/fa";
 
 interface SectionJsonUploadedProps {
   jsonName: string;

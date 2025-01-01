@@ -1,5 +1,3 @@
-import React from "react";
-
 import { Link } from "react-router-dom";
 
 import { GeneralProps } from "@/src/entities/entities.d";
@@ -25,7 +23,7 @@ export const AnchorAction = ({
     >
       {children}
       {!noMark && (
-        <span className="absolute z-10 right-0 top-0 w-4 h-full bg-tertiary rounded-tr-lg rounded-br-lg opacity-0 transition-all group-hover:opacity-100"></span>
+        <span className="absolute z-10 right-0 top-0 w-4 h-full bg-tertiary rounded-tr-lg rounded-br-lg opacity-0 transition-all group-hover:opacity-100 span-nomark"></span>
       )}
     </Link>
   );

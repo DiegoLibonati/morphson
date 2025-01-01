@@ -1,4 +1,4 @@
-import React from "react";
+import { FaArrowLeft } from "react-icons/fa";
 
 import { GeneralProps } from "@/src/entities/entities";
 
@@ -10,8 +10,6 @@ import {
 import { AnchorSecondary } from "@/src/components/Anchors/export";
 
 import { MainLayout } from "@/src/layouts/export";
-
-import { FaArrowLeft } from "react-icons/fa";
 
 interface FormEditorLayoutProps extends GeneralProps {
   loading: boolean;

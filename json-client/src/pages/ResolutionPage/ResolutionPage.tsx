@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { MainLayout } from "@/src/layouts/export";
 import { SectionJsonUploaded } from "@/src/containers/export";
@@ -11,20 +11,17 @@ export const ResolutionPage = (): JSX.Element => {
 
   const { resolution } = params;
 
+  const jsonName = searchParams.get("name") || "unkwonk";
+  const res = resolution ? resolution!.toLocaleLowerCase().trim() : "";
+
   useEffect(() => {
-    if (
-      !resolution ||
-      !availablesIds.includes(resolution.toLocaleLowerCase().trim())
-    )
-      return handleNavigateToHome();
-  }, [resolution]);
+    if (!res || !availablesIds.includes(res)) return handleNavigateToHome();
+  }, [res]);
 
   return (
     <MainLayout className="flex items-center justify-center">
-      {resolution.trim().toLocaleLowerCase() === "uploaded" && (
-        <SectionJsonUploaded
-          jsonName={searchParams.get("name") || "unkwonk"}
-        ></SectionJsonUploaded>
+      {res === "uploaded" && (
+        <SectionJsonUploaded jsonName={jsonName}></SectionJsonUploaded>
       )}
     </MainLayout>
   );

@@ -1,40 +1,28 @@
-import React, { Reducer, createContext, useEffect, useReducer } from "react";
+import React, {
+  Reducer,
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+} from "react";
 
 import { InputJson, OutputJson } from "@/src/entities/entities";
-import { JSONAction, JSONState } from "@/src/entities/json-context.d";
+import {
+  JSONAction,
+  JSONState,
+  JSONContext as JSONContextT,
+} from "@/src/entities/json-context.d";
 
 import {
   initialState,
   reducer,
 } from "@/src/contexts/JSONContext/reducer/reducer";
 
-interface JSONContextProps {
-  inputJson: InputJson;
-  outputJson: OutputJson;
-  jsons: {
-    inputJsons: InputJson[];
-    outputJsons: OutputJson[];
-  };
-  loading: boolean;
-  handleUpdateInputJson: (inputJson: InputJson) => void;
-  handleInputJsonContentUpdate: (inputContent: string) => void;
-  handleInputJsonFileUpdate: (inputFile: File) => void;
-  handleInputJsons: (inputJsons: InputJson[]) => void;
-  handleOutputJsons: (outputJsons: OutputJson[]) => void;
-  handleFillJsons: (inputJsons: InputJson[], outputJsons: OutputJson[]) => void;
-  handleUpdateOutputJson: (outputJson: OutputJson) => void;
-  handleOutputJsonModelUpdate: (outputContent: string) => void;
-  handleLoading: (loading: boolean) => void;
-  handleClearJson: () => void;
-}
-
 interface JSONProviderProps {
   children: React.ReactNode;
 }
 
-export const JSONContext = createContext<JSONContextProps | undefined>(
-  undefined
-);
+export const JSONContext = createContext<JSONContextT | undefined>(undefined);
 
 export const JSONProvider: React.FunctionComponent<JSONProviderProps> = ({
   children,
@@ -50,7 +38,7 @@ export const JSONProvider: React.FunctionComponent<JSONProviderProps> = ({
       payload: {
         id: inputJson.id,
         name: inputJson.name,
-        file: inputJson.file,
+        file: inputJson.file!,
         content: inputJson.content,
         keys: inputJson.keys,
       },
@@ -157,4 +145,9 @@ export const JSONProvider: React.FunctionComponent<JSONProviderProps> = ({
       {children}
     </JSONContext.Provider>
   );
+};
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const useJSONContext = (): JSONContextT => {
+  return useContext(JSONContext)!;
 };

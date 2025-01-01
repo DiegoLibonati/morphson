@@ -1,5 +1,3 @@
-import React from "react";
-
 import { GeneralProps } from "@/src/entities/entities.d";
 
 interface ButtonSubmitProps extends GeneralProps {

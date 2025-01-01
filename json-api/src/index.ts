@@ -1,7 +1,9 @@
 import app from "@/src/app";
 
-import { API_CONFIG } from "@/src/config/config";
+import { API_CONFIG } from "@/src/config";
 
-app.listen(API_CONFIG.PORT, () => {
-  console.log(`Backend running on Port: ${API_CONFIG.PORT}`);
-});
+const onInit = () => {
+  console.log(`Server running on ${API_CONFIG.PORT}.`);
+};
+
+app.listen(API_CONFIG.PORT, onInit);

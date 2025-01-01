@@ -1,5 +1,3 @@
-import React from "react";
-
 import { GeneralProps } from "@/src/entities/entities.d";
 
 import { InputWithLabel } from "@/src/components/Inputs/export";
@@ -11,9 +9,9 @@ interface InputFileProps extends GeneralProps {
   emptyLabel: string;
   name: string;
   value: string;
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
   accept?: string;
   spanClassName?: string;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
 }
 
 export const InputFile = ({

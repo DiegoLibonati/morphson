@@ -1,5 +1,3 @@
-import React from "react";
-
 import { AnchorAction } from "@/src/components/Anchors/export";
 
 export const SectionActions = (): JSX.Element => {

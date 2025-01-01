@@ -1,5 +1,3 @@
-import React from "react";
-
 import { SectionActions } from "@/src/containers/export";
 import { MainLayout } from "@/src/layouts/export";
 

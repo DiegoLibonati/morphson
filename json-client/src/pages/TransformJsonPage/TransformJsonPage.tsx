@@ -1,11 +1,12 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
+import axios from "axios";
 
 import { LoaderSpinner } from "@/src/components/Loaders/export";
 import { SelectNormal, SelectOption } from "@/src/components/Selects/export";
-import { InputChecked, InputField } from "@/src/components/Inputs/export";
+import { InputCheck, InputField } from "@/src/components/Inputs/export";
 import { ButtonSubmit } from "@/src/components/Buttons/export";
 
-import { JSONContext, ModalContext } from "@/src/contexts/export";
+import { useJSONContext, useModalContext } from "@/src/contexts/export";
 import {
   getJsonInput,
   getJsonInputs,
@@ -17,7 +18,7 @@ import { FormEditorLayout } from "@/src/layouts/export";
 import { useForm } from "@/src/hooks/export";
 import { getContentFromBlob } from "@/src/helpers/export";
 
-type InitialValueForm = {
+type FormData = {
   idInputJson: string | "not_selected";
   idOutputJson: string | "not_selected";
   saveOutputJson: boolean;
@@ -35,11 +36,11 @@ export const TransformJsonPage = (): JSX.Element => {
     handleClearJson,
     handleUpdateInputJson,
     handleUpdateOutputJson,
-  } = useContext(JSONContext);
-  const { handleSetModal } = useContext(ModalContext);
+  } = useJSONContext();
+  const { handleSetModal } = useModalContext();
 
   const { formState, onInputChange, onSelectChange, onCheckboxChange } =
-    useForm<InitialValueForm>({
+    useForm<FormData>({
       initialValueForm: {
         idInputJson: "not_selected",
         idOutputJson: "not_selected",
@@ -63,7 +64,16 @@ export const TransformJsonPage = (): JSX.Element => {
       handleLoading(false);
       return handleFillJsons(inputJsons, outputJsons);
     } catch (e) {
-      handleSetModal({ message: e.response.data.message, open: true });
+      console.log(e);
+      if (axios.isAxiosError(e) && e.response) {
+        handleSetModal({ message: e.response.data.message, open: true });
+      } else {
+        handleSetModal({
+          message: "An unexpected error occurred.",
+          open: true,
+        });
+      }
+      handleLoading(false);
     }
   };
 
@@ -88,7 +98,16 @@ export const TransformJsonPage = (): JSX.Element => {
         file: null,
       });
     } catch (e) {
-      handleSetModal({ message: e.response.data.message, open: true });
+      console.log(e);
+      if (axios.isAxiosError(e) && e.response) {
+        handleSetModal({ message: e.response.data.message, open: true });
+      } else {
+        handleSetModal({
+          message: "An unexpected error occurred.",
+          open: true,
+        });
+      }
+      handleLoading(false);
     }
   };
 
@@ -110,7 +129,16 @@ export const TransformJsonPage = (): JSX.Element => {
         model: data.outputJson.model,
       });
     } catch (e) {
-      handleSetModal({ message: e.response.data.message, open: true });
+      console.log(e);
+      if (axios.isAxiosError(e) && e.response) {
+        handleSetModal({ message: e.response.data.message, open: true });
+      } else {
+        handleSetModal({
+          message: "An unexpected error occurred.",
+          open: true,
+        });
+      }
+      handleLoading(false);
     }
   };
 
@@ -159,11 +187,20 @@ export const TransformJsonPage = (): JSX.Element => {
         open: true,
       });
     } catch (e) {
+      console.log(e);
+      if (axios.isAxiosError(e) && e.response) {
+        const response = JSON.parse(
+          await getContentFromBlob(e.response.data as Blob)
+        );
+
+        handleSetModal({ message: response.message, open: true });
+      } else {
+        handleSetModal({
+          message: "An unexpected error occurred.",
+          open: true,
+        });
+      }
       handleLoading(false);
-      const response = JSON.parse(
-        await getContentFromBlob(e.response.data as Blob)
-      );
-      handleSetModal({ message: response.message, open: true });
     }
   };
 
@@ -226,7 +263,7 @@ export const TransformJsonPage = (): JSX.Element => {
 
       {jsons.outputJsons.length > 0 && (
         <SelectNormal
-          id="json_input_select"
+          id="json_output_select"
           label="Select an Output JSON"
           name="idOutputJson"
           className="lg:bg-primary"
@@ -246,13 +283,13 @@ export const TransformJsonPage = (): JSX.Element => {
         </SelectNormal>
       )}
 
-      <InputChecked
+      <InputCheck
         id="json_save_output"
         label="Do you want to save the json output for future transformations?"
         name="saveOutputJson"
         value="saveOutputJson"
         onChange={onCheckboxChange}
-      ></InputChecked>
+      ></InputCheck>
 
       {formState.saveOutputJson && (
         <InputField

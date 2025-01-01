@@ -1,17 +1,18 @@
-import React, { useContext, useEffect } from "react";
+import { useEffect } from "react";
+import axios from "axios";
 
 import { LoaderSpinner } from "@/src/components/Loaders/export";
 import { ButtonSubmit } from "@/src/components/Buttons/export";
 import { InputField, InputFile } from "@/src/components/Inputs/export";
 
-import { JSONContext, ModalContext } from "@/src/contexts/export";
+import { useJSONContext, useModalContext } from "@/src/contexts/export";
 import { FormEditorLayout } from "@/src/layouts/export";
 import { useForm, useRouter } from "@/src/hooks/export";
 import { postGetFileContent, postUploadJson } from "@/src/services/export";
 
-type InitialValueForm = {
+type FormData = {
   jsonName: string;
-  jsonFile: File;
+  jsonFile: File | null;
 };
 
 export const LoadJsonPage = (): JSX.Element => {
@@ -22,13 +23,12 @@ export const LoadJsonPage = (): JSX.Element => {
     handleInputJsonContentUpdate,
     handleUpdateInputJson,
     handleLoading,
-  } = useContext(JSONContext);
-  const { handleSetModal } = useContext(ModalContext);
+  } = useJSONContext();
+  const { handleSetModal } = useModalContext();
 
   const { handleNavigateToResolution } = useRouter();
-
   const { formState, onInputChange, onInputFileChange, onResetForm } =
-    useForm<InitialValueForm>({
+    useForm<FormData>({
       initialValueForm: {
         jsonName: "",
         jsonFile: null,
@@ -43,8 +43,6 @@ export const LoadJsonPage = (): JSX.Element => {
       handleLoading(true);
       console.log("Submit Form");
 
-      const formData = new FormData();
-
       const name = formState.jsonName.trim();
       const file = formState.jsonFile;
       const content = inputJson.content;
@@ -57,11 +55,12 @@ export const LoadJsonPage = (): JSX.Element => {
         });
       }
 
-      formData.append("name", name);
-      formData.append("file", file);
-      formData.append("content", content);
+      const body = {
+        "name": name,
+        "content": content
+      }
 
-      const response = await postUploadJson(formData);
+      const response = await postUploadJson(body);
 
       const data = response.data.data;
 
@@ -75,7 +74,15 @@ export const LoadJsonPage = (): JSX.Element => {
       handleLoading(false);
       return handleNavigateToResolution("uploaded", `name=${name}`);
     } catch (e) {
-      handleSetModal({ message: e.response.data.message, open: true });
+      console.log(e);
+      if (axios.isAxiosError(e) && e.response) {
+        handleSetModal({ message: e.response.data.message, open: true });
+      } else {
+        handleSetModal({
+          message: "An unexpected error occurred.",
+          open: true,
+        });
+      }
       handleLoading(false);
     }
   };
@@ -84,7 +91,7 @@ export const LoadJsonPage = (): JSX.Element => {
     try {
       const formData = new FormData();
 
-      formData.append("file", formState.jsonFile);
+      formData.append("file", formState.jsonFile!);
 
       const response = await postGetFileContent(formData);
 
@@ -92,7 +99,16 @@ export const LoadJsonPage = (): JSX.Element => {
 
       return handleInputJsonContentUpdate(data.content);
     } catch (e) {
-      handleSetModal({ message: e.response.data.message, open: true });
+      if (axios.isAxiosError(e) && e.response) {
+        handleSetModal({ message: e.response.data.message, open: true });
+      } else {
+        handleSetModal({
+          message: "An unexpected error occurred.",
+          open: true,
+        });
+      }
+
+      handleLoading(false);
     }
   };
 
@@ -125,7 +141,7 @@ export const LoadJsonPage = (): JSX.Element => {
         onChange={onInputChange}
       ></InputField>
       <InputFile
-        id="json_content"
+        id="json_file"
         label="Upload JSON"
         name="jsonFile"
         value={formState.jsonFile ? formState.jsonFile.name : ""}
