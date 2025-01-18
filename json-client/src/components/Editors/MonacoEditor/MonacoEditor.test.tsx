@@ -52,12 +52,16 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-test("It must render the monaco editor.", async () => {
-  const { container } = renderComponent();
+describe("MonacoEditor.tsx", () => {
+  describe("General Tests.", () => {
+    test("It must render the monaco editor.", async () => {
+      const { container } = renderComponent();
 
-  const monacoEditor = container.querySelector(
-    ".monaco-editor"
-  ) as HTMLDivElement;
+      const monacoEditor = container.querySelector(
+        ".monaco-editor"
+      ) as HTMLDivElement;
 
-  expect(monacoEditor).toBeInTheDocument();
+      expect(monacoEditor).toBeInTheDocument();
+    });
+  });
 });

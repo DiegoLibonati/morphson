@@ -1,36 +1,36 @@
 import { InputJson, Modal, OutputJson } from "../entities/entities";
 
-export const MOCK_INPUT_JSON_STATE: InputJson = {
+export const mockInputJsonState: InputJson = {
   id: "123",
   content: "content",
   file: null,
   keys: [],
   name: "pipi",
 };
-export const MOCK_INPUT_JSON_NULL_STATE: InputJson = {
+export const mockInputJsonNullState: InputJson = {
   id: "",
   content: "",
   file: null,
   keys: [],
   name: "",
 };
-export const MOCK_OUTPUT_JSON_STATE: OutputJson = {
+export const mockOutputJsonState: OutputJson = {
   id: "123",
   model: "content",
   name: "12345",
 };
-export const MOCK_OUTPUT_JSON_NULL_STATE: OutputJson = {
+export const mockOutputJsonNullState: OutputJson = {
   id: "",
   model: "",
   name: "",
 };
 
-export const MOCK_MODAL_OPEN_STATE: Modal = { message: "1234", open: true };
-export const MOCK_MODAL_CLOSE_STATE: Modal = { message: "", open: false };
+export const mockModalOpenState: Modal = { message: "1234", open: true };
+export const mockModalCloseState: Modal = { message: "", open: false };
 
-export const MOCK_RESOLUTION_UPLOADED = "uploaded";
+export const mockResolutionUploaded = "uploaded";
 
-export const MOCK_INPUT_JSONS = [
+export const mockInputJsons = [
   {
     id: 1,
     name: "asd",
@@ -46,7 +46,7 @@ export const MOCK_INPUT_JSONS = [
     keysAndValues: [],
   },
 ];
-export const MOCK_OUTPUT_JSONS = [
+export const mockOutputJsons = [
   {
     id: 1,
     name: "a2sd",

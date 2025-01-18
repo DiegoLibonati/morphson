@@ -39,29 +39,33 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-test("It must render the input checkbox with label.", () => {
-  const { props } = renderComponent();
+describe("InputCheck.tsx", () => {
+  describe("General Tests.", () => {
+    test("It must render the input checkbox with label.", () => {
+      const { props } = renderComponent();
 
-  const input = screen.getByRole("checkbox", { name: props.label });
-  const label = screen.getByText(props.label);
+      const input = screen.getByRole("checkbox", { name: props.label });
+      const label = screen.getByText(props.label);
 
-  expect(input).toBeInTheDocument();
-  expect(input).toHaveAttribute("id", props.id);
-  expect(input).toHaveAttribute("name", props.name);
-  expect(input).toHaveAttribute("type", "checkbox");
-  expect(input).not.toBeChecked();
-  expect(label).toBeInTheDocument();
-  expect(label).toHaveAttribute("for", props.id);
-});
+      expect(input).toBeInTheDocument();
+      expect(input).toHaveAttribute("id", props.id);
+      expect(input).toHaveAttribute("name", props.name);
+      expect(input).toHaveAttribute("type", "checkbox");
+      expect(input).not.toBeChecked();
+      expect(label).toBeInTheDocument();
+      expect(label).toHaveAttribute("for", props.id);
+    });
 
-test("It must execute the onChange function when the input is clicked.", async () => {
-  const { props } = renderComponent();
+    test("It must execute the onChange function when the input is clicked.", async () => {
+      const { props } = renderComponent();
 
-  const input = screen.getByRole("checkbox", { name: props.label });
+      const input = screen.getByRole("checkbox", { name: props.label });
 
-  expect(input).toBeInTheDocument();
+      expect(input).toBeInTheDocument();
 
-  await user.click(input);
+      await user.click(input);
 
-  expect(props.mockOnChange).toHaveBeenCalledTimes(1);
+      expect(props.mockOnChange).toHaveBeenCalledTimes(1);
+    });
+  });
 });

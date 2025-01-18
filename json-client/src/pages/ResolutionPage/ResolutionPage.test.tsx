@@ -4,7 +4,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 import { ResolutionPage } from "./ResolutionPage";
 
-import { MOCK_RESOLUTION_UPLOADED } from "@/src/tests/constants";
+import { mockResolutionUploaded } from "@/src/tests/jest.constants";
 
 type RenderComponent = {
   container: HTMLElement;
@@ -16,7 +16,7 @@ const renderComponent = (): RenderComponent => {
   const { container } = render(
     <MemoryRouter
       initialEntries={[
-        `/json/resolution/${MOCK_RESOLUTION_UPLOADED}?name=${name}`,
+        `/json/resolution/${mockResolutionUploaded}?name=${name}`,
       ]}
       future={{ v7_relativeSplatPath: true, v7_startTransition: true }}
     >
@@ -34,20 +34,24 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-test("It must render the main.", () => {
-  renderComponent();
+describe("ResolutionPage.tsx", () => {
+  describe("General Tests.", () => {
+    test("It must render the main.", () => {
+      renderComponent();
 
-  const main = screen.getByRole("main");
+      const main = screen.getByRole("main");
 
-  expect(main).toBeInTheDocument();
-});
+      expect(main).toBeInTheDocument();
+    });
 
-test("It must render the json upload message and the link to home.", () => {
-  renderComponent();
+    test("It must render the json upload message and the link to home.", () => {
+      renderComponent();
 
-  const message = screen.getByText(new RegExp(name));
-  const linkHome = screen.getByRole("link", { name: /go to home/i });
+      const message = screen.getByText(new RegExp(name));
+      const linkHome = screen.getByRole("link", { name: /go to home/i });
 
-  expect(message).toBeInTheDocument();
-  expect(linkHome).toBeInTheDocument();
+      expect(message).toBeInTheDocument();
+      expect(linkHome).toBeInTheDocument();
+    });
+  });
 });

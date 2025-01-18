@@ -18,20 +18,26 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-test("It must render the root modal.", () => {
-  const { container } = renderComponent();
+describe("Modal.tsx", () => {
+  describe("General Tests.", () => {
+    test("It must render the root modal.", () => {
+      const { container } = renderComponent();
 
-  const modalRoot = container.querySelector(".modal-root") as HTMLDivElement;
-  const modalCenter = modalRoot.children[0];
+      const modalRoot = container.querySelector(
+        ".modal-root"
+      ) as HTMLDivElement;
+      const modalCenter = modalRoot.children[0];
 
-  expect(modalRoot).toBeInTheDocument();
-  expect(modalCenter).toBeInTheDocument();
-});
+      expect(modalRoot).toBeInTheDocument();
+      expect(modalCenter).toBeInTheDocument();
+    });
 
-test("It must render the content entered by child to the modal.", () => {
-  renderComponent();
+    test("It must render the content entered by child to the modal.", () => {
+      renderComponent();
 
-  const heading = screen.getByRole("heading", { name: /cuack/i });
+      const heading = screen.getByRole("heading", { name: /cuack/i });
 
-  expect(heading).toBeInTheDocument();
+      expect(heading).toBeInTheDocument();
+    });
+  });
 });

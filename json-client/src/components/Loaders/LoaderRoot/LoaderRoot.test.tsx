@@ -24,19 +24,23 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-test("It must render the root of the loader.", async () => {
-  const { props, container } = renderComponent();
+describe("LoaderRoot.tsx", () => {
+  describe("General Tests.", () => {
+    test("It must render the root of the loader.", async () => {
+      const { props, container } = renderComponent();
 
-  const loaderRoot = container.querySelector("div") as HTMLDivElement;
+      const loaderRoot = container.querySelector("div") as HTMLDivElement;
 
-  expect(loaderRoot).toBeInTheDocument();
-  expect(loaderRoot).toHaveClass(props.className);
-});
+      expect(loaderRoot).toBeInTheDocument();
+      expect(loaderRoot).toHaveClass(props.className);
+    });
 
-test("It must render the contents of the root loader.", () => {
-  renderComponent();
+    test("It must render the contents of the root loader.", () => {
+      renderComponent();
 
-  const heading = screen.getByRole("heading", { name: /loading.../i });
+      const heading = screen.getByRole("heading", { name: /loading.../i });
 
-  expect(heading).toBeInTheDocument();
+      expect(heading).toBeInTheDocument();
+    });
+  });
 });

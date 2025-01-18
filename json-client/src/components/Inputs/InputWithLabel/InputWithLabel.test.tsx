@@ -34,22 +34,28 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-test("It must render the label and the entered child when the component is rendered.", () => {
-  const { props } = renderComponent();
+describe("InputWithLabel.tsx", () => {
+  describe("General Tests.", () => {
+    test("It must render the label and the entered child when the component is rendered.", () => {
+      const { props } = renderComponent();
 
-  const label = screen.getByText(props.label);
-  const heading = screen.getByRole("heading", { name: /coquito/i });
+      const label = screen.getByText(props.label);
+      const heading = screen.getByRole("heading", { name: /coquito/i });
 
-  expect(label).toBeInTheDocument();
-  expect(label).toHaveAttribute("for", props.id);
-  expect(heading).toBeInTheDocument();
-});
+      expect(label).toBeInTheDocument();
+      expect(label).toHaveAttribute("for", props.id);
+      expect(heading).toBeInTheDocument();
+    });
 
-test("It must render the root of the component with the class entered by props.", () => {
-  const { props, container } = renderComponent();
+    test("It must render the root of the component with the class entered by props.", () => {
+      const { props, container } = renderComponent();
 
-  const root = container.querySelector(`.${props.className}`) as HTMLDivElement;
+      const root = container.querySelector(
+        `.${props.className}`
+      ) as HTMLDivElement;
 
-  expect(root).toBeInTheDocument();
-  expect(root).toHaveClass(props.className);
+      expect(root).toBeInTheDocument();
+      expect(root).toHaveClass(props.className);
+    });
+  });
 });

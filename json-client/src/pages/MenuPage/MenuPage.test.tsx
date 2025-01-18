@@ -22,26 +22,30 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-test("It must render the main.", () => {
-  renderComponent();
+describe("MenuPage.tsx", () => {
+  describe("General Tests.", () => {
+    test("It must render the main.", () => {
+      renderComponent();
 
-  const main = screen.getByRole("main");
+      const main = screen.getByRole("main");
 
-  expect(main).toBeInTheDocument();
-});
+      expect(main).toBeInTheDocument();
+    });
 
-test("It must render the actions.", () => {
-  renderComponent();
+    test("It must render the actions.", () => {
+      renderComponent();
 
-  const linkGoToJsonLoad = screen.getByRole("link", {
-    name: /go to load json/i,
+      const linkGoToJsonLoad = screen.getByRole("link", {
+        name: /go to load json/i,
+      });
+      const linkGoToTransformJson = screen.getByRole("link", {
+        name: /go to transform json/i,
+      });
+
+      expect(linkGoToJsonLoad).toBeInTheDocument();
+      expect(linkGoToJsonLoad).toHaveTextContent("Load JSON");
+      expect(linkGoToTransformJson).toBeInTheDocument();
+      expect(linkGoToTransformJson).toHaveTextContent("Transform JSON");
+    });
   });
-  const linkGoToTransformJson = screen.getByRole("link", {
-    name: /go to transform json/i,
-  });
-
-  expect(linkGoToJsonLoad).toBeInTheDocument();
-  expect(linkGoToJsonLoad).toHaveTextContent("Load JSON");
-  expect(linkGoToTransformJson).toBeInTheDocument();
-  expect(linkGoToTransformJson).toHaveTextContent("Transform JSON");
 });

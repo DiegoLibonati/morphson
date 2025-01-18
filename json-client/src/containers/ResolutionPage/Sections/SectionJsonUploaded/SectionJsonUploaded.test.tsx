@@ -30,12 +30,16 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-test("It must render the json upload message and the link to home.", () => {
-  const { props } = renderComponent();
+describe("SectionJsonUploaded.tsx", () => {
+  describe("General Tests.", () => {
+    test("It must render the json upload message and the link to home.", () => {
+      const { props } = renderComponent();
 
-  const message = screen.getByText(new RegExp(props.jsonName));
-  const linkHome = screen.getByRole("link", { name: /go to home/i });
+      const message = screen.getByText(new RegExp(props.jsonName));
+      const linkHome = screen.getByRole("link", { name: /go to home/i });
 
-  expect(message).toBeInTheDocument();
-  expect(linkHome).toBeInTheDocument();
+      expect(message).toBeInTheDocument();
+      expect(linkHome).toBeInTheDocument();
+    });
+  });
 });

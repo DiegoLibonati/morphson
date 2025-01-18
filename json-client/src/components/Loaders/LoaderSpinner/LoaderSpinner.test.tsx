@@ -22,20 +22,24 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-test("It must render the root of the loader.", async () => {
-  const { props, container } = renderComponent();
+describe("LoaderSpinner.tsx", () => {
+  describe("General Tests.", () => {
+    test("It must render the root of the loader.", async () => {
+      const { props, container } = renderComponent();
 
-  const loaderRoot = container.querySelector("div") as HTMLDivElement;
+      const loaderRoot = container.querySelector("div") as HTMLDivElement;
 
-  expect(loaderRoot).toBeInTheDocument();
-  expect(loaderRoot).toHaveClass(props.className);
-});
+      expect(loaderRoot).toBeInTheDocument();
+      expect(loaderRoot).toHaveClass(props.className);
+    });
 
-test("It must render the spinner.", () => {
-  const { container } = renderComponent();
+    test("It must render the spinner.", () => {
+      const { container } = renderComponent();
 
-  const spinner = container.querySelector(".loader") as HTMLDivElement;
+      const spinner = container.querySelector(".loader") as HTMLDivElement;
 
-  expect(spinner).toBeInTheDocument();
-  expect(spinner).toHaveClass("loader");
+      expect(spinner).toBeInTheDocument();
+      expect(spinner).toHaveClass("loader");
+    });
+  });
 });

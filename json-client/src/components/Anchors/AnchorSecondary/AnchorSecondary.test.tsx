@@ -40,12 +40,16 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-test("It must render the link with the entered text.", () => {
-  const { props } = renderComponent();
+describe("AnchorSecondary.ts", () => {
+  describe("General Tests.", () => {
+    test("It must render the link with the entered text.", () => {
+      const { props } = renderComponent();
 
-  const link = screen.getByRole("link", { name: props.ariaLabel });
+      const link = screen.getByRole("link", { name: props.ariaLabel });
 
-  expect(link).toBeInTheDocument();
-  expect(link).toHaveTextContent("Cuack");
-  expect(link).toHaveClass(props.className);
+      expect(link).toBeInTheDocument();
+      expect(link).toHaveTextContent("Cuack");
+      expect(link).toHaveClass(props.className);
+    });
+  });
 });

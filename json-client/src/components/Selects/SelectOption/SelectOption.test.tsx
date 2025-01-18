@@ -34,41 +34,43 @@ const renderComponent = ({
   };
 };
 
-describe("If key selected is true.", () => {
-  const selected = true;
+describe("SelectOption.tsx", () => {
+  describe("If key selected is true.", () => {
+    const selected = true;
 
-  test("It must render the selected option.", () => {
-    renderComponent({ selected: selected });
+    test("It must render the selected option.", () => {
+      renderComponent({ selected: selected });
 
-    const option = screen.getByRole("option") as HTMLOptionElement;
+      const option = screen.getByRole("option") as HTMLOptionElement;
 
-    expect(option).toBeInTheDocument();
-    expect(option.selected).toBe(selected);
+      expect(option).toBeInTheDocument();
+      expect(option.selected).toBe(selected);
+    });
   });
-});
 
-describe("If key selected is false.", () => {
-  const selected = false;
+  describe("If key selected is false.", () => {
+    const selected = false;
 
-  test("IT must render the unselected option.", () => {
-    renderComponent({ selected: selected });
+    test("IT must render the unselected option.", () => {
+      renderComponent({ selected: selected });
 
-    const option = screen.getByRole("option") as HTMLOptionElement;
+      const option = screen.getByRole("option") as HTMLOptionElement;
 
-    expect(option).toBeInTheDocument();
-    expect(option.selected).toBe(selected);
+      expect(option).toBeInTheDocument();
+      expect(option.selected).toBe(selected);
+    });
   });
-});
 
-describe("General Tests.", () => {
-  test("It must render the option with the entered props.", () => {
-    const { props } = renderComponent({ selected: false });
+  describe("General Tests.", () => {
+    test("It must render the option with the entered props.", () => {
+      const { props } = renderComponent({ selected: false });
 
-    const option = screen.getByRole("option") as HTMLOptionElement;
+      const option = screen.getByRole("option") as HTMLOptionElement;
 
-    expect(option).toBeInTheDocument();
-    expect(option.selected).toBe(false);
-    expect(option).toHaveAttribute("value", props.value);
-    expect(option).toHaveTextContent("2");
+      expect(option).toBeInTheDocument();
+      expect(option.selected).toBe(false);
+      expect(option).toHaveAttribute("value", props.value);
+      expect(option).toHaveTextContent("2");
+    });
   });
 });

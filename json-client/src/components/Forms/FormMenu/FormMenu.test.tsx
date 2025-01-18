@@ -29,25 +29,29 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-test("It must render the form.", () => {
-  const { props, container } = renderComponent();
+describe("FormMenu.tsx", () => {
+  describe("General Tests.", () => {
+    test("It must render the form.", () => {
+      const { props, container } = renderComponent();
 
-  const form = container.querySelector(
-    `.${props.className}`
-  ) as HTMLFormElement;
+      const form = container.querySelector(
+        `.${props.className}`
+      ) as HTMLFormElement;
 
-  expect(form).toBeInTheDocument();
-  expect(form).toHaveClass(props.className);
-});
+      expect(form).toBeInTheDocument();
+      expect(form).toHaveClass(props.className);
+    });
 
-test("It must execute the submit of the form when the submit button is clicked.", async () => {
-  const { props } = renderComponent();
+    test("It must execute the submit of the form when the submit button is clicked.", async () => {
+      const { props } = renderComponent();
 
-  const btnSubmit = screen.getByRole("button", { name: /submit form/i });
+      const btnSubmit = screen.getByRole("button", { name: /submit form/i });
 
-  expect(btnSubmit).toBeInTheDocument();
+      expect(btnSubmit).toBeInTheDocument();
 
-  await user.click(btnSubmit);
+      await user.click(btnSubmit);
 
-  expect(props.mockOnSubmit).toHaveBeenCalledTimes(1);
+      expect(props.mockOnSubmit).toHaveBeenCalledTimes(1);
+    });
+  });
 });

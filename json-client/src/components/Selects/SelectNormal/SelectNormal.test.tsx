@@ -15,10 +15,6 @@ type RenderComponent = {
   container: HTMLElement;
 };
 
-beforeEach(() => {
-  jest.clearAllMocks();
-});
-
 const renderComponent = (): RenderComponent => {
   const props = {
     id: "input",
@@ -48,35 +44,43 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-test("It must render the select with label.", () => {
-  const { props, container } = renderComponent();
+describe("SelectNormal.tsx", () => {
+  describe("General Tests.", () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
 
-  const select = container.querySelector("select") as HTMLSelectElement;
-  const label = screen.getByText(props.label);
+    test("It must render the select with label.", () => {
+      const { props, container } = renderComponent();
 
-  expect(select).toBeInTheDocument();
-  expect(select).toHaveClass(props.className);
-  expect(select).toHaveAttribute("id", props.id);
-  expect(select).toHaveAttribute("name", props.name);
-  expect(label).toBeInTheDocument();
-  expect(label).toHaveAttribute("for", props.id);
-});
+      const select = container.querySelector("select") as HTMLSelectElement;
+      const label = screen.getByText(props.label);
 
-test("It should render the child entered when the component was rendered.", () => {
-  renderComponent();
+      expect(select).toBeInTheDocument();
+      expect(select).toHaveClass(props.className);
+      expect(select).toHaveAttribute("id", props.id);
+      expect(select).toHaveAttribute("name", props.name);
+      expect(label).toBeInTheDocument();
+      expect(label).toHaveAttribute("for", props.id);
+    });
 
-  const option = screen.getByRole("option");
+    test("It should render the child entered when the component was rendered.", () => {
+      renderComponent();
 
-  expect(option).toBeInTheDocument();
-  expect(option).toHaveAttribute("value", "1");
-});
+      const option = screen.getByRole("option");
 
-test("The corresponding functions must be executed when an option is selected.", async () => {
-  const { props, container } = renderComponent();
+      expect(option).toBeInTheDocument();
+      expect(option).toHaveAttribute("value", "1");
+    });
 
-  const select = container.querySelector("select") as HTMLSelectElement;
+    test("The corresponding functions must be executed when an option is selected.", async () => {
+      const { props, container } = renderComponent();
 
-  await user.selectOptions(select, "1");
+      const select = container.querySelector("select") as HTMLSelectElement;
 
-  expect(props.mockOnChange).toHaveBeenCalledTimes(1);
+      await user.selectOptions(select, "1");
+
+      expect(props.mockOnChange).toHaveBeenCalledTimes(1);
+    });
+  });
 });

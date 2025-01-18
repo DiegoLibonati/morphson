@@ -16,10 +16,6 @@ type RenderComponent = {
   container: HTMLElement;
 };
 
-beforeEach(() => {
-  jest.clearAllMocks();
-});
-
 const renderComponent = (): RenderComponent => {
   const props = {
     id: "input",
@@ -49,34 +45,42 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-test("It must render the input field with label.", () => {
-  const { props } = renderComponent();
+describe("InputField.tsx", () => {
+  describe("General Tests.", () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
 
-  const input = screen.getByRole("textbox", { name: props.label });
-  const label = screen.getByText(props.label);
+    test("It must render the input field with label.", () => {
+      const { props } = renderComponent();
 
-  expect(input).toBeInTheDocument();
-  expect(input).toHaveAttribute("id", props.id);
-  expect(input).toHaveAttribute("name", props.name);
-  expect(input).toHaveAttribute("placeholder", props.placeholder);
-  expect(input).toHaveAttribute("type", "text");
-  expect(input).toHaveValue(props.value);
-  expect(input).toHaveClass(props.className);
-  expect(label).toBeInTheDocument();
-  expect(label).toHaveAttribute("for", props.id);
-});
+      const input = screen.getByRole("textbox", { name: props.label });
+      const label = screen.getByText(props.label);
 
-test("It must execute the onChange function when writing to the input.", async () => {
-  const value = "a";
+      expect(input).toBeInTheDocument();
+      expect(input).toHaveAttribute("id", props.id);
+      expect(input).toHaveAttribute("name", props.name);
+      expect(input).toHaveAttribute("placeholder", props.placeholder);
+      expect(input).toHaveAttribute("type", "text");
+      expect(input).toHaveValue(props.value);
+      expect(input).toHaveClass(props.className);
+      expect(label).toBeInTheDocument();
+      expect(label).toHaveAttribute("for", props.id);
+    });
 
-  const { props } = renderComponent();
+    test("It must execute the onChange function when writing to the input.", async () => {
+      const value = "a";
 
-  const input = screen.getByRole("textbox", { name: props.label });
+      const { props } = renderComponent();
 
-  expect(input).toBeInTheDocument();
+      const input = screen.getByRole("textbox", { name: props.label });
 
-  await user.click(input);
-  await user.keyboard(value);
+      expect(input).toBeInTheDocument();
 
-  expect(props.mockOnChange).toHaveBeenCalledTimes(1);
+      await user.click(input);
+      await user.keyboard(value);
+
+      expect(props.mockOnChange).toHaveBeenCalledTimes(1);
+    });
+  });
 });

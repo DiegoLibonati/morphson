@@ -26,19 +26,23 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-test("It must render the main.", () => {
-  const { props } = renderComponent();
+describe("MainLayout.tsx", () => {
+  describe("General Tests.", () => {
+    test("It must render the main.", () => {
+      const { props } = renderComponent();
 
-  const main = screen.getByRole("main");
+      const main = screen.getByRole("main");
 
-  expect(main).toBeInTheDocument();
-  expect(main).toHaveClass(props.className);
-});
+      expect(main).toBeInTheDocument();
+      expect(main).toHaveClass(props.className);
+    });
 
-test("It must render the element entered by child.", () => {
-  renderComponent();
+    test("It must render the element entered by child.", () => {
+      renderComponent();
 
-  const heading = screen.getByRole("heading", { name: /hi2/i });
+      const heading = screen.getByRole("heading", { name: /hi2/i });
 
-  expect(heading).toBeInTheDocument();
+      expect(heading).toBeInTheDocument();
+    });
+  });
 });

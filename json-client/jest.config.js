@@ -3,7 +3,7 @@ export default {
   testEnvironment: "jsdom",
   setupFilesAfterEnv: ["<rootDir>/src/tests/jest.setup.ts"],
   moduleNameMapper: {
-    "\\.(css|scss)$": "<rootDir>/src/tests/mocks/files/styleMock.js",
+    "\\.(css|scss)$": "<rootDir>/src/tests_mocks/styleMock.js",
     "^@/src/(.*)$": "<rootDir>/src/$1",
     "^monaco-editor$": "<rootDir>/node_modules/@monaco-editor/react",
   },

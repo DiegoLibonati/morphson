@@ -22,10 +22,6 @@ interface RenderComponentProps {
   value: string;
 }
 
-beforeEach(() => {
-  jest.clearAllMocks();
-});
-
 const renderComponent = ({ value }: RenderComponentProps): RenderComponent => {
   const props = {
     id: "asd",
@@ -61,74 +57,84 @@ const renderComponent = ({ value }: RenderComponentProps): RenderComponent => {
   };
 };
 
-describe("if there is a value in the input file.", () => {
-  const value = "file.json";
+describe("InputFile.tsx", () => {
+  describe("General Tests.", () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
 
-  test("It should render the information message with the value from the file.", () => {
-    renderComponent({ value: value });
+    describe("if there is a value in the input file.", () => {
+      const value = "file.json";
 
-    const message = screen.getByText(value);
+      test("It should render the information message with the value from the file.", () => {
+        renderComponent({ value: value });
 
-    expect(message).toBeInTheDocument();
-  });
-});
+        const message = screen.getByText(value);
 
-describe("if there is not a value in the input file.", () => {
-  const value = "";
+        expect(message).toBeInTheDocument();
+      });
+    });
 
-  test("It should render the information message with the emptyLabel from props.", () => {
-    const { props } = renderComponent({ value: value });
+    describe("if there is not a value in the input file.", () => {
+      const value = "";
 
-    const message = screen.getByText(props.emptyLabel);
+      test("It should render the information message with the emptyLabel from props.", () => {
+        const { props } = renderComponent({ value: value });
 
-    expect(message).toBeInTheDocument();
-  });
-});
+        const message = screen.getByText(props.emptyLabel);
 
-describe("General Tests.", () => {
-  const value = "file.json";
+        expect(message).toBeInTheDocument();
+      });
+    });
 
-  test("It must render the input with label.", () => {
-    const { props, container } = renderComponent({ value: value });
+    describe("General Tests.", () => {
+      const value = "file.json";
 
-    const input = container.querySelector("input") as HTMLInputElement;
-    const label = screen.getByText(props.label);
+      test("It must render the input with label.", () => {
+        const { props, container } = renderComponent({ value: value });
 
-    expect(input).toBeInTheDocument();
-    expect(input).toHaveAttribute("id", props.id);
-    expect(input).toHaveAttribute("name", props.name);
-    expect(input).toHaveAttribute("accept", props.accept);
-    expect(input).toHaveAttribute("type", "file");
-    expect(label).toBeInTheDocument();
-    expect(label).toHaveAttribute("for", props.id);
-  });
+        const input = container.querySelector("input") as HTMLInputElement;
+        const label = screen.getByText(props.label);
 
-  test("It must render the button to add files.", () => {
-    const { props } = renderComponent({ value: value });
+        expect(input).toBeInTheDocument();
+        expect(input).toHaveAttribute("id", props.id);
+        expect(input).toHaveAttribute("name", props.name);
+        expect(input).toHaveAttribute("accept", props.accept);
+        expect(input).toHaveAttribute("type", "file");
+        expect(label).toBeInTheDocument();
+        expect(label).toHaveAttribute("for", props.id);
+      });
 
-    const btnLabel = screen.getByRole("button", { name: props.buttonLabel });
+      test("It must render the button to add files.", () => {
+        const { props } = renderComponent({ value: value });
 
-    expect(btnLabel).toBeInTheDocument();
-    expect(btnLabel).toHaveTextContent(props.buttonLabel);
-  });
+        const btnLabel = screen.getByRole("button", {
+          name: props.buttonLabel,
+        });
 
-  test("It must render the information message with the entered class.", () => {
-    const { props } = renderComponent({ value: value });
+        expect(btnLabel).toBeInTheDocument();
+        expect(btnLabel).toHaveTextContent(props.buttonLabel);
+      });
 
-    const message = screen.getByText(value);
+      test("It must render the information message with the entered class.", () => {
+        const { props } = renderComponent({ value: value });
 
-    expect(message).toBeInTheDocument();
-    expect(message).toHaveClass(props.spanClassName);
-  });
+        const message = screen.getByText(value);
 
-  test("It must render the element with the class entered by props.", () => {
-    const { props, container } = renderComponent({ value: value });
+        expect(message).toBeInTheDocument();
+        expect(message).toHaveClass(props.spanClassName);
+      });
 
-    const root = container.querySelector(
-      `.${props.className}`
-    ) as HTMLDivElement;
+      test("It must render the element with the class entered by props.", () => {
+        const { props, container } = renderComponent({ value: value });
 
-    expect(root).toBeInTheDocument();
-    expect(root).toHaveClass(props.className);
+        const root = container.querySelector(
+          `.${props.className}`
+        ) as HTMLDivElement;
+
+        expect(root).toBeInTheDocument();
+        expect(root).toHaveClass(props.className);
+      });
+    });
   });
 });
