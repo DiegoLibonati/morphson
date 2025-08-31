@@ -4,7 +4,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 
 import { ResolutionPage } from "./ResolutionPage";
 
-import { mockResolutionUploaded } from "@/src/tests/jest.constants";
+import { mockResolutionUploaded } from "@/tests/jest.constants";
 
 type RenderComponent = {
   container: HTMLElement;

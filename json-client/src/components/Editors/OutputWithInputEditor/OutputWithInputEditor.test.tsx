@@ -7,7 +7,7 @@ import { JSONProvider, useJSONContext } from "@/src/contexts/export";
 import {
   mockInputJsonState,
   mockOutputJsonState,
-} from "@/src/tests/jest.constants";
+} from "@/tests/jest.constants";
 
 type RenderComponent = {
   container: HTMLElement;

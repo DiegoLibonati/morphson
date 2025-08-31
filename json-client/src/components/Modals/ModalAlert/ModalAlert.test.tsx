@@ -5,7 +5,7 @@ import { ModalAlert } from "./ModalAlert";
 
 import { ModalProvider, useModalContext } from "@/src/contexts/export";
 
-import { mockModalOpenState } from "@/src/tests/jest.constants";
+import { mockModalOpenState } from "@/tests/jest.constants";
 
 type RenderComponent = {
   container: HTMLElement;

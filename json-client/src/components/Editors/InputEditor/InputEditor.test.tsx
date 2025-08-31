@@ -4,7 +4,7 @@ import { InputEditor } from "./InputEditor";
 
 import { JSONProvider, useJSONContext } from "@/src/contexts/export";
 
-import { mockInputJsonState } from "@/src/tests/jest.constants";
+import { mockInputJsonState } from "@/tests/jest.constants";
 
 type RenderComponent = {
   container: HTMLElement;

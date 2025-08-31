@@ -30,6 +30,7 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         "@/src": resolve(root, "src"),
+        "@/tests": resolve(root, "tests"),
       },
     },
     css: {

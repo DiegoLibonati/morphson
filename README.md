@@ -4,10 +4,10 @@
 
 1. Clone the repository with `git clone "repository link"`
 2. Join to `json-client` folder and `json-api` folder and execute: `npm install` or `yarn install` in the terminal
-3. Go to the previous folder and execute: `docker-compose build --no-cache` in the terminal
-4. Once built, you must execute the command: `docker-compose up --force-recreate` in the terminal
+3. Go to the previous folder and execute: `docker-compose -f dev.docker-compose.yaml build --no-cache` in the terminal
+4. Once built, you must execute the command: `docker-compose -f dev.docker-compose.yaml up --force-recreate` in the terminal
 
-NOTE: You have to be standing in the folder containing the: `docker-compose.yml` and you need to install `Docker Desktop` if you are in Windows.
+NOTE: You have to be standing in the folder containing the: `dev.docker-compose.yaml` and you need to install `Docker Desktop` if you are in Windows.
 
 ## Description
 
@@ -43,10 +43,6 @@ Database:
 #### Dependencies
 
 ```
-"@types/jest": "^29.5.13"
-"@types/node": "^22.7.4"
-"@types/react": "^18.3.3"
-"@types/react-dom": "^18.3.0"
 "react": "^18.3.1"
 "react-dom": "^18.3.1"
 "react-icons": "^5.3.0"
@@ -79,6 +75,10 @@ Database:
 "jest-environment-jsdom": "^29.7.0"
 "ts-jest": "^29.2.5"
 "axios-mock-adapter": "^2.1.0"
+"@types/jest": "^29.5.13"
+"@types/node": "^22.7.4"
+"@types/react": "^18.3.3"
+"@types/react-dom": "^18.3.0"
 ```
 
 ### Backend
@@ -86,11 +86,6 @@ Database:
 #### Dependencies
 
 ```
-"@types/express": "^5.0.0"
-"@types/jest": "^29.5.14"
-"@types/node": "^20.10.5"
-"@types/supertest": "^6.0.2"
-"@types/multer": "^1.4.12"
 "@prisma/client": "^5.20.0"
 "express": "^4.21.0"
 "multer": "^1.4.5-lts.1"
@@ -99,12 +94,16 @@ Database:
 #### devDependencies
 
 ```
+"@types/express": "^5.0.0"
+"@types/jest": "^29.5.14"
+"@types/node": "^20.10.5"
+"@types/supertest": "^6.0.2"
+"@types/multer": "^1.4.12"
 "prisma": "^5.20.0"
 "nodemon": "^3.1.7"
 "ts-node": "^10.9.2"
 "typescript": "^5.5.3"
 "tsconfig-paths": "^4.2.0"
-"vite": "^5.4.1"
 "jest": "^29.7.0"
 "supertest": "^7.0.0"
 "ts-jest": "^29.2.5"

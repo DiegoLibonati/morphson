@@ -7,7 +7,7 @@ import app from "./app";
 import {
   mockJsonTransformBody,
   mockJsonUploadBody,
-} from "./tests/jest.constants";
+} from "../tests/jest.constants";
 
 import { getPeers } from "./helpers/getPeers";
 

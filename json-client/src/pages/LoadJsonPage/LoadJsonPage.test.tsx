@@ -17,7 +17,7 @@ import { jsonApi } from "@/src/services/axios";
 import {
   mockInputJsonNullState,
   mockInputJsonState,
-} from "@/src/tests/jest.constants";
+} from "@/tests/jest.constants";
 
 type RenderComponent = {
   container: HTMLElement;

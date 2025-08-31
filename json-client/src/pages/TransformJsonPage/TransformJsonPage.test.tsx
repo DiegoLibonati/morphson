@@ -19,7 +19,7 @@ import {
   mockInputJsons,
   mockOutputJsonNullState,
   mockOutputJsons,
-} from "@/src/tests/jest.constants";
+} from "@/tests/jest.constants";
 
 type RenderComponent = {
   container: HTMLElement;
