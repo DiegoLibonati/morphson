@@ -1,10 +1,8 @@
-import { GeneralProps } from "@/src/entities/entities";
+import { LoaderSpinnerProps } from "@src/entities/props";
 
-import { LoaderRoot } from "@/src/components/Loaders/export";
+import { LoaderRoot } from "@src/components/Loaders/export";
 
-import "@/src/components/Loaders/LoaderSpinner/LoaderSpinner.css";
-
-interface LoaderSpinnerProps extends GeneralProps {}
+import "@src/components/Loaders/LoaderSpinner/LoaderSpinner.css";
 
 export const LoaderSpinner = ({
   className,

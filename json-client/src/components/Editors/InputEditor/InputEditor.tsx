@@ -1,17 +1,32 @@
+import { useEffect } from "react";
+
 import { OnChange } from "@monaco-editor/react";
 
-import { MonacoEditor } from "@/src/components/Editors/export";
+import { MonacoEditor } from "@src/components/Editors/export";
 
-import { useJSONContext } from "@/src/contexts/export";
+import { useJSONContext, useEditorContext } from "@src/contexts/export";
 
 export const InputEditor = (): JSX.Element => {
-  const { inputJson, handleInputJsonContentUpdate } = useJSONContext();
+  const { handleInputJsonContentUpdate } = useJSONContext();
+  const { text, handleSetText } = useEditorContext();
 
   const onChangeEditorContent: OnChange = (value) => {
     const newContent = value!;
 
-    return handleInputJsonContentUpdate(newContent);
+    handleSetText(newContent);
   };
+
+  const onTextEditorChange = () => {
+    try {
+      const parsed = JSON.parse(text);
+
+      return handleInputJsonContentUpdate(parsed);
+    } catch {}
+  };
+
+  useEffect(() => {
+    onTextEditorChange();
+  }, [text]);
 
   return (
     <MonacoEditor
@@ -19,7 +34,7 @@ export const InputEditor = (): JSX.Element => {
       defaultValue="{}"
       language="json"
       theme="vs-dark"
-      value={inputJson.content}
+      value={text}
       onChange={onChangeEditorContent}
     ></MonacoEditor>
   );

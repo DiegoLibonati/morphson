@@ -1,4 +1,4 @@
-import { getContentFromBlob } from "./getContentFromBlob";
+import { getContentFromBlob } from "@src/helpers/getContentFromBlob";
 
 describe("getContentFromBlob.ts", () => {
   describe("General Tests.", () => {

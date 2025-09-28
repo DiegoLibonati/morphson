@@ -1,8 +1,4 @@
-import { GeneralProps } from "@/src/entities/entities";
-
-interface FormMenuProps extends GeneralProps {
-  onSubmit: React.FormEventHandler<HTMLFormElement>;
-}
+import { FormMenuProps } from "@src/entities/props";
 
 export const FormMenu = ({
   className,

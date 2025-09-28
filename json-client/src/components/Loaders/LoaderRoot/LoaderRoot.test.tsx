@@ -1,9 +1,11 @@
 import { screen, render } from "@testing-library/react";
 
-import { LoaderRoot } from "./LoaderRoot";
+import { LoaderRootProps } from "@src/entities/props";
+
+import { LoaderRoot } from "@src/components/Loaders/LoaderRoot/LoaderRoot";
 
 type RenderComponent = {
-  props: { className: string };
+  props: LoaderRootProps;
   container: HTMLElement;
 };
 
@@ -32,7 +34,7 @@ describe("LoaderRoot.tsx", () => {
       const loaderRoot = container.querySelector("div") as HTMLDivElement;
 
       expect(loaderRoot).toBeInTheDocument();
-      expect(loaderRoot).toHaveClass(props.className);
+      expect(loaderRoot).toHaveClass(props.className!);
     });
 
     test("It must render the contents of the root loader.", () => {

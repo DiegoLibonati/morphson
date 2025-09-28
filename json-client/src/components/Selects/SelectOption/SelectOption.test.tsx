@@ -1,31 +1,21 @@
 import { screen, render } from "@testing-library/react";
 
-import { SelectOption } from "./SelectOption";
+import { SelectOptionProps } from "@src/entities/props";
+
+import { SelectOption } from "@src/components/Selects/SelectOption/SelectOption";
 
 type RenderComponent = {
-  props: {
-    value: string;
-    selected: boolean;
-  };
+  props: SelectOptionProps;
   container: HTMLElement;
 };
 
-interface RenderComponentProps {
-  selected: boolean;
-}
-
-const renderComponent = ({
-  selected,
-}: RenderComponentProps): RenderComponent => {
+const renderComponent = (): RenderComponent => {
   const props = {
     value: "2",
-    selected: selected,
   };
 
   const { container } = render(
-    <SelectOption value={props.value} selected={props.selected}>
-      2
-    </SelectOption>
+    <SelectOption value={props.value}>2</SelectOption>
   );
 
   return {
@@ -35,35 +25,9 @@ const renderComponent = ({
 };
 
 describe("SelectOption.tsx", () => {
-  describe("If key selected is true.", () => {
-    const selected = true;
-
-    test("It must render the selected option.", () => {
-      renderComponent({ selected: selected });
-
-      const option = screen.getByRole("option") as HTMLOptionElement;
-
-      expect(option).toBeInTheDocument();
-      expect(option.selected).toBe(selected);
-    });
-  });
-
-  describe("If key selected is false.", () => {
-    const selected = false;
-
-    test("IT must render the unselected option.", () => {
-      renderComponent({ selected: selected });
-
-      const option = screen.getByRole("option") as HTMLOptionElement;
-
-      expect(option).toBeInTheDocument();
-      expect(option.selected).toBe(selected);
-    });
-  });
-
   describe("General Tests.", () => {
     test("It must render the option with the entered props.", () => {
-      const { props } = renderComponent({ selected: false });
+      const { props } = renderComponent();
 
       const option = screen.getByRole("option") as HTMLOptionElement;
 

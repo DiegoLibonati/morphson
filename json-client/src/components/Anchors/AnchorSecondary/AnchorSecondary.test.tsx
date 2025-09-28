@@ -2,14 +2,12 @@ import { screen, render } from "@testing-library/react";
 
 import { MemoryRouter } from "react-router-dom";
 
-import { AnchorSecondary } from "./AnchorSecondary";
+import { AnchorSecondaryProps } from "@src/entities/props";
+
+import { AnchorSecondary } from "@src/components/Anchors/AnchorSecondary/AnchorSecondary";
 
 type RenderComponent = {
-  props: {
-    to: string;
-    ariaLabel: string;
-    className: string;
-  };
+  props: AnchorSecondaryProps;
   container: HTMLElement;
 };
 
@@ -49,7 +47,7 @@ describe("AnchorSecondary.ts", () => {
 
       expect(link).toBeInTheDocument();
       expect(link).toHaveTextContent("Cuack");
-      expect(link).toHaveClass(props.className);
+      expect(link).toHaveClass(props.className!);
     });
   });
 });

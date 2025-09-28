@@ -1,12 +1,12 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import { JSONProvider } from "@/src/contexts/export";
+import { EditorProvider, JSONProvider } from "@src/contexts/export";
 import {
   LoadJsonPage,
   MenuPage,
   TransformJsonPage,
   ResolutionPage,
-} from "@/src/pages/export";
+} from "@src/pages/export";
 
 export const PublicRoutes = (): JSX.Element => {
   return (
@@ -16,7 +16,9 @@ export const PublicRoutes = (): JSX.Element => {
         path={"/json/load"}
         element={
           <JSONProvider>
-            <LoadJsonPage></LoadJsonPage>
+            <EditorProvider>
+              <LoadJsonPage></LoadJsonPage>
+            </EditorProvider>
           </JSONProvider>
         }
       ></Route>
@@ -24,7 +26,9 @@ export const PublicRoutes = (): JSX.Element => {
         path="/json/transform"
         element={
           <JSONProvider>
-            <TransformJsonPage></TransformJsonPage>
+            <EditorProvider>
+              <TransformJsonPage></TransformJsonPage>
+            </EditorProvider>
           </JSONProvider>
         }
       ></Route>

@@ -2,7 +2,7 @@ import { screen, render } from "@testing-library/react";
 
 import { MemoryRouter } from "react-router-dom";
 
-import { MenuPage } from "./MenuPage";
+import { MenuPage } from "@src/pages/MenuPage/MenuPage";
 
 type RenderComponent = {
   container: HTMLElement;

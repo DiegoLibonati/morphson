@@ -4,20 +4,22 @@ import user from "@testing-library/user-event";
 import MockAdapter from "axios-mock-adapter";
 import { MemoryRouter } from "react-router-dom";
 
-import { LoadJsonPage } from "./LoadJsonPage";
+import { LoadJsonPage } from "@src/pages/LoadJsonPage/LoadJsonPage";
 
 import {
+  EditorProvider,
   JSONProvider,
   ModalProvider,
+  useEditorContext,
   useJSONContext,
   useModalContext,
-} from "@/src/contexts/export";
-import { jsonApi } from "@/src/services/axios";
+} from "@src/contexts/export";
+import { fileApi, inputApi } from "@src/services/axios";
 
 import {
   mockInputJsonNullState,
   mockInputJsonState,
-} from "@/tests/jest.constants";
+} from "@tests/jest.constants";
 
 type RenderComponent = {
   container: HTMLElement;
@@ -30,7 +32,9 @@ const renderComponent = (): RenderComponent => {
     >
       <JSONProvider>
         <ModalProvider>
-          <LoadJsonPage></LoadJsonPage>
+          <EditorProvider>
+            <LoadJsonPage></LoadJsonPage>
+          </EditorProvider>
         </ModalProvider>
       </JSONProvider>
     </MemoryRouter>
@@ -41,13 +45,17 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-jest.mock("../../contexts/ModalContext/ModalContext", () => ({
-  ...jest.requireActual("../../contexts/ModalContext/ModalContext"),
+jest.mock("@src/contexts/ModalContext/ModalContext", () => ({
+  ...jest.requireActual("@src/contexts/ModalContext/ModalContext"),
   useModalContext: jest.fn(),
 }));
-jest.mock("../../contexts/JSONContext/JSONContext", () => ({
-  ...jest.requireActual("../../contexts/JSONContext/JSONContext"),
+jest.mock("@src/contexts/JSONContext/JSONContext", () => ({
+  ...jest.requireActual("@src/contexts/JSONContext/JSONContext"),
   useJSONContext: jest.fn(),
+}));
+jest.mock("@src/contexts/EditorContext/EditorContext", () => ({
+  ...jest.requireActual("@src/contexts/EditorContext/EditorContext"),
+  useEditorContext: jest.fn(),
 }));
 
 describe("LoadJsonPage.tsx", () => {
@@ -57,11 +65,12 @@ describe("LoadJsonPage.tsx", () => {
     const mockHandleUpdateInputJson = jest.fn();
     const mockHandleLoading = jest.fn();
     const mockHandleSetModal = jest.fn();
+    const mockHandleSetText = jest.fn();
 
-    const mock = new MockAdapter(jsonApi);
+    const mockFile = new MockAdapter(fileApi);
 
-    mock
-      .onPost("/json/getContent")
+    mockFile
+      .onPost("/content")
       .reply(200, { data: { content: mockInputJsonNullState.content } });
 
     beforeEach(() => {
@@ -79,11 +88,16 @@ describe("LoadJsonPage.tsx", () => {
         handleUpdateInputJson: mockHandleUpdateInputJson,
         handleLoading: mockHandleLoading,
       });
+
+      (useEditorContext as jest.Mock).mockReturnValue({
+        text: mockInputJsonNullState.content,
+        handleSetText: mockHandleSetText,
+      });
     });
 
     test("It must submit the form with invalid fields.", async () => {
       const name = "1234";
-      const blob = new Blob([mockInputJsonNullState.content]);
+      const blob = new Blob([""]);
       const file = new File([blob], "values.json", {
         type: "application/JSON",
       });
@@ -135,13 +149,15 @@ describe("LoadJsonPage.tsx", () => {
     const mockHandleUpdateInputJson = jest.fn();
     const mockHandleLoading = jest.fn();
     const mockHandleSetModal = jest.fn();
+    const mockHandleSetText = jest.fn();
 
-    const mock = new MockAdapter(jsonApi);
+    const mockFile = new MockAdapter(fileApi);
+    const mockInput = new MockAdapter(inputApi);
 
-    const mockRequestPostJsonUpload = { json: mockInputJsonState };
+    const mockRequestPostJsonUpload = { inputJson: mockInputJsonState };
 
-    mock.onPost("/json/getContent").reply(200, { data: mockInputJsonState });
-    mock.onPost("/json/upload").reply(200, { data: mockRequestPostJsonUpload });
+    mockFile.onPost("/content").reply(200, { data: mockInputJsonState });
+    mockInput.onPost("/upload").reply(200, { data: mockRequestPostJsonUpload });
 
     beforeEach(() => {
       jest.clearAllMocks();
@@ -158,12 +174,17 @@ describe("LoadJsonPage.tsx", () => {
         handleUpdateInputJson: mockHandleUpdateInputJson,
         handleLoading: mockHandleLoading,
       });
+
+      (useEditorContext as jest.Mock).mockReturnValue({
+        text: JSON.stringify(mockInputJsonState.content),
+        handleSetText: mockHandleSetText,
+      });
     });
 
     test("It must submit the form with valid fields.", async () => {
       const name = "1234";
 
-      const blob = new Blob([mockInputJsonState.content]);
+      const blob = new Blob([JSON.stringify(mockInputJsonState.content)]);
       const file = new File([blob], "values.json", {
         type: "application/JSON",
       });
@@ -204,11 +225,13 @@ describe("LoadJsonPage.tsx", () => {
       expect(mockHandleLoading).toHaveBeenCalledWith(false);
       expect(mockHandleUpdateInputJson).toHaveBeenCalledTimes(1);
       expect(mockHandleUpdateInputJson).toHaveBeenCalledWith({
-        id: mockRequestPostJsonUpload.json.id,
-        name: name,
-        file: file,
-        content: mockInputJsonState.content,
-        keys: [],
+        id: mockRequestPostJsonUpload.inputJson.id,
+        name: mockRequestPostJsonUpload.inputJson.name,
+        content: mockRequestPostJsonUpload.inputJson.content,
+        keys: mockRequestPostJsonUpload.inputJson.keys,
+        keysAndValues: mockRequestPostJsonUpload.inputJson.keysAndValues,
+        createdAt: mockRequestPostJsonUpload.inputJson.createdAt,
+        updatedAt: mockRequestPostJsonUpload.inputJson.updatedAt,
       });
     });
   });
@@ -219,6 +242,7 @@ describe("LoadJsonPage.tsx", () => {
     const mockHandleUpdateInputJson = jest.fn();
     const mockHandleLoading = jest.fn();
     const mockHandleSetModal = jest.fn();
+    const mockHandleSetText = jest.fn();
 
     beforeEach(() => {
       jest.clearAllMocks();
@@ -234,6 +258,10 @@ describe("LoadJsonPage.tsx", () => {
         handleInputJsonContentUpdate: mockHandleInputJsonContentUpdate,
         handleUpdateInputJson: mockHandleUpdateInputJson,
         handleLoading: mockHandleLoading,
+      });
+
+      (useEditorContext as jest.Mock).mockReturnValue({
+        handleSetText: mockHandleSetText,
       });
     });
 

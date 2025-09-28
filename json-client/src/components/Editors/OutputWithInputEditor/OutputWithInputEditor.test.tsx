@@ -1,13 +1,14 @@
 import { render } from "@testing-library/react";
 
-import { OutputWithInputEditor } from "./OutputWithInputEditor";
-
-import { JSONProvider, useJSONContext } from "@/src/contexts/export";
+import { OutputWithInputEditor } from "@src/components/Editors/OutputWithInputEditor/OutputWithInputEditor";
 
 import {
-  mockInputJsonState,
-  mockOutputJsonState,
-} from "@/tests/jest.constants";
+  EditorProvider,
+  JSONProvider,
+  useJSONContext,
+} from "@src/contexts/export";
+
+import { mockInputJsonState, mockOutputJsonState } from "@tests/jest.constants";
 
 type RenderComponent = {
   container: HTMLElement;
@@ -16,7 +17,9 @@ type RenderComponent = {
 const renderComponent = (): RenderComponent => {
   const { container } = render(
     <JSONProvider>
-      <OutputWithInputEditor></OutputWithInputEditor>
+      <EditorProvider>
+        <OutputWithInputEditor></OutputWithInputEditor>
+      </EditorProvider>
     </JSONProvider>
   );
 
@@ -25,8 +28,8 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-jest.mock("../../../contexts/JSONContext/JSONContext", () => ({
-  ...jest.requireActual("../../../contexts/JSONContext/JSONContext"),
+jest.mock("@src/contexts/JSONContext/JSONContext", () => ({
+  ...jest.requireActual("@src/contexts/JSONContext/JSONContext"),
   useJSONContext: jest.fn(),
 }));
 

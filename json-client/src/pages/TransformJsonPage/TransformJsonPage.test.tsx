@@ -4,22 +4,24 @@ import user from "@testing-library/user-event";
 import MockAdapter from "axios-mock-adapter";
 import { MemoryRouter } from "react-router-dom";
 
-import { TransformJsonPage } from "./TransformJsonPage";
+import { TransformJsonPage } from "@src/pages/TransformJsonPage/TransformJsonPage";
 
 import {
+  EditorProvider,
   JSONProvider,
   ModalProvider,
+  useEditorContext,
   useJSONContext,
   useModalContext,
-} from "@/src/contexts/export";
-import { jsonApi } from "@/src/services/axios";
+} from "@src/contexts/export";
+import { inputApi, outputApi } from "@src/services/axios";
 
 import {
   mockInputJsonNullState,
   mockInputJsons,
   mockOutputJsonNullState,
   mockOutputJsons,
-} from "@/tests/jest.constants";
+} from "@tests/jest.constants";
 
 type RenderComponent = {
   container: HTMLElement;
@@ -32,7 +34,9 @@ const renderComponent = (): RenderComponent => {
     >
       <JSONProvider>
         <ModalProvider>
-          <TransformJsonPage></TransformJsonPage>
+          <EditorProvider>
+            <TransformJsonPage></TransformJsonPage>
+          </EditorProvider>
         </ModalProvider>
       </JSONProvider>
     </MemoryRouter>
@@ -43,14 +47,19 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-jest.mock("../../contexts/ModalContext/ModalContext", () => ({
-  ...jest.requireActual("../../contexts/ModalContext/ModalContext"),
+jest.mock("@src/contexts/ModalContext/ModalContext", () => ({
+  ...jest.requireActual("@src/contexts/ModalContext/ModalContext"),
   useModalContext: jest.fn(),
 }));
 
-jest.mock("../../contexts/JSONContext/JSONContext", () => ({
-  ...jest.requireActual("../../contexts/JSONContext/JSONContext"),
+jest.mock("@src/contexts/JSONContext/JSONContext", () => ({
+  ...jest.requireActual("@src/contexts/JSONContext/JSONContext"),
   useJSONContext: jest.fn(),
+}));
+
+jest.mock("@src/contexts/EditorContext/EditorContext", () => ({
+  ...jest.requireActual("@src/contexts/EditorContext/EditorContext"),
+  useEditorContext: jest.fn(),
 }));
 
 describe("TransformJsonPage.tsx", () => {
@@ -61,11 +70,13 @@ describe("TransformJsonPage.tsx", () => {
     const mockHandleUpdateInputJson = jest.fn();
     const mockHandleUpdateOutputJson = jest.fn();
     const mockHandleSetModal = jest.fn();
+    const mockHandleSetText = jest.fn();
 
-    const mock = new MockAdapter(jsonApi);
+    const mockInput = new MockAdapter(inputApi);
+    const mockOutput = new MockAdapter(outputApi);
 
-    mock.onGet("/json/inputs").reply(200, { data: mockInputJsons });
-    mock.onGet("/json/outputs").reply(200, { data: mockOutputJsons });
+    mockInput.onGet("/").reply(200, { data: mockInputJsons });
+    mockOutput.onGet("/").reply(200, { data: mockOutputJsons });
 
     beforeEach(() => {
       jest.clearAllMocks();
@@ -87,6 +98,10 @@ describe("TransformJsonPage.tsx", () => {
         handleClearJson: mockHandleClearJson,
         handleUpdateInputJson: mockHandleUpdateInputJson,
         handleUpdateOutputJson: mockHandleUpdateOutputJson,
+      });
+
+      (useEditorContext as jest.Mock).mockReturnValue({
+        handleSetText: mockHandleSetText,
       });
     });
 
@@ -155,20 +170,22 @@ describe("TransformJsonPage.tsx", () => {
     const mockHandleUpdateInputJson = jest.fn();
     const mockHandleUpdateOutputJson = jest.fn();
     const mockHandleSetModal = jest.fn();
+    const mockHandleSetText = jest.fn();
 
     const inputJsonSelected = mockInputJsons[0];
     const outputJsonSelected = mockOutputJsons[0];
 
-    const mock = new MockAdapter(jsonApi);
+    const mockInput = new MockAdapter(inputApi);
+    const mockOutput = new MockAdapter(outputApi);
 
-    mock.onGet("/json/inputs").reply(200, { data: mockInputJsons });
-    mock.onGet("/json/outputs").reply(200, { data: mockOutputJsons });
-    mock.onGet(`/json/input/${inputJsonSelected.id}`).reply(200, {
+    mockInput.onGet("").reply(200, { data: mockInputJsons });
+    mockOutput.onGet("").reply(200, { data: mockOutputJsons });
+    mockInput.onGet(`/${inputJsonSelected.id}`).reply(200, {
       data: {
         inputJson: inputJsonSelected,
       },
     });
-    mock.onGet(`/json/output/${outputJsonSelected.id}`).reply(200, {
+    mockOutput.onGet(`/${outputJsonSelected.id}`).reply(200, {
       data: {
         outputJson: outputJsonSelected,
       },
@@ -194,6 +211,10 @@ describe("TransformJsonPage.tsx", () => {
         handleClearJson: mockHandleClearJson,
         handleUpdateInputJson: mockHandleUpdateInputJson,
         handleUpdateOutputJson: mockHandleUpdateOutputJson,
+      });
+
+      (useEditorContext as jest.Mock).mockReturnValue({
+        handleSetText: mockHandleSetText,
       });
     });
 
@@ -228,7 +249,9 @@ describe("TransformJsonPage.tsx", () => {
         name: inputJsonSelected.name,
         content: inputJsonSelected.content,
         keys: inputJsonSelected.keys,
-        file: null,
+        keysAndValues: inputJsonSelected.keysAndValues,
+        createdAt: inputJsonSelected.createdAt,
+        updatedAt: inputJsonSelected.updatedAt,
       });
     });
 
@@ -259,11 +282,17 @@ describe("TransformJsonPage.tsx", () => {
         open: true,
         message: "Successfully loaded the output json!",
       });
+      expect(mockHandleSetText).toHaveBeenCalledTimes(1);
+      expect(mockHandleSetText).toHaveBeenCalledWith(
+        JSON.stringify(outputJsonSelected.transformationModel, null, 2)
+      );
       expect(mockHandleUpdateOutputJson).toHaveBeenCalledTimes(1);
       expect(mockHandleUpdateOutputJson).toHaveBeenCalledWith({
         id: outputJsonSelected.id,
         name: outputJsonSelected.name,
-        model: outputJsonSelected.model,
+        transformationModel: outputJsonSelected.transformationModel,
+        createdAt: outputJsonSelected.createdAt,
+        updatedAt: outputJsonSelected.updatedAt,
       });
     });
   });

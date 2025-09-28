@@ -3,18 +3,26 @@ import { CSSProperties } from "react";
 // **** GENERAL ****
 
 export type InputJson = {
-  id: string;
+  id: number | null;
   name: string;
-  file: File | null;
-  content: string;
+  content: Record<string, unknown> | null;
   keys: string[];
+  keysAndValues: Record<string, unknown> | null;
+  createdAt: string | null;
+  updatedAt: string | null;
 };
 
+export type InputJsonFlat = Omit<InputJson, "id" | "createdAt" | "updatedAt">;
+
 export type OutputJson = {
-  id: string;
+  id: number | null;
   name: string;
-  model: string;
+  transformationModel: Record<string, unknown> | null;
+  createdAt: string | null;
+  updatedAt: string | null;
 };
+
+export type OutputJsonFlat = Omit<OutputJson, "id" | "createdAt" | "updatedAt">;
 
 export type Modal = {
   message: string;
@@ -22,11 +30,3 @@ export type Modal = {
 };
 
 export type Resolution = "uploaded";
-
-// **** INTERFACES ****
-
-export interface GeneralProps {
-  className?: string;
-  children?: React.ReactNode;
-  style?: CSSProperties;
-}

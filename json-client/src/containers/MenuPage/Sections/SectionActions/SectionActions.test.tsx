@@ -2,7 +2,7 @@ import { screen, render } from "@testing-library/react";
 
 import { MemoryRouter } from "react-router-dom";
 
-import { SectionActions } from "./SectionActions";
+import { SectionActions } from "@src/containers/MenuPage/Sections/SectionActions/SectionActions";
 
 type RenderComponent = {
   container: HTMLElement;

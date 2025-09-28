@@ -1,24 +1,23 @@
 import { screen, render } from "@testing-library/react";
 import user from "@testing-library/user-event";
 
-import { FormMenu } from "./FormMenu";
+import { FormMenuProps } from "@src/entities/props";
+
+import { FormMenu } from "@src/components/Forms/FormMenu/FormMenu";
 
 type RenderComponent = {
-  props: {
-    className: string;
-    mockOnSubmit: jest.Mock;
-  };
+  props: { onSubmit: jest.Mock } & FormMenuProps;
   container: HTMLElement;
 };
 
 const renderComponent = (): RenderComponent => {
   const props = {
     className: "asd",
-    mockOnSubmit: jest.fn((e) => e.preventDefault()),
+    onSubmit: jest.fn((e) => e.preventDefault()),
   };
 
   const { container } = render(
-    <FormMenu className={props.className} onSubmit={props.mockOnSubmit}>
+    <FormMenu className={props.className} onSubmit={props.onSubmit}>
       <button type="submit" aria-label="submit form"></button>
     </FormMenu>
   );
@@ -39,7 +38,7 @@ describe("FormMenu.tsx", () => {
       ) as HTMLFormElement;
 
       expect(form).toBeInTheDocument();
-      expect(form).toHaveClass(props.className);
+      expect(form).toHaveClass(props.className!);
     });
 
     test("It must execute the submit of the form when the submit button is clicked.", async () => {
@@ -51,7 +50,7 @@ describe("FormMenu.tsx", () => {
 
       await user.click(btnSubmit);
 
-      expect(props.mockOnSubmit).toHaveBeenCalledTimes(1);
+      expect(props.onSubmit).toHaveBeenCalledTimes(1);
     });
   });
 });

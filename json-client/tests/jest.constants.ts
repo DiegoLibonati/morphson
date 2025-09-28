@@ -1,28 +1,36 @@
-import { InputJson, Modal, OutputJson } from "../src/entities/entities";
+import { InputJson, Modal, OutputJson } from "@src/entities/entities";
 
 export const mockInputJsonState: InputJson = {
-  id: "123",
-  content: "content",
-  file: null,
-  keys: [],
+  id: 123,
+  content: { a: "b" },
+  keys: ["a"],
   name: "pipi",
+  createdAt: "2025-09-27T14:28:34.019Z",
+  updatedAt: "2025-09-27T14:28:34.019Z",
+  keysAndValues: { a: "b" },
 };
 export const mockInputJsonNullState: InputJson = {
-  id: "",
-  content: "",
-  file: null,
+  id: null,
+  content: null,
   keys: [],
   name: "",
+  createdAt: null,
+  keysAndValues: null,
+  updatedAt: null,
 };
 export const mockOutputJsonState: OutputJson = {
-  id: "123",
-  model: "content",
+  id: 1234,
   name: "12345",
+  transformationModel: { b: "a" },
+  createdAt: "2025-09-27T14:28:34.019Z",
+  updatedAt: "2025-09-27T14:28:34.019Z",
 };
 export const mockOutputJsonNullState: OutputJson = {
-  id: "",
-  model: "",
+  id: null,
   name: "",
+  transformationModel: null,
+  createdAt: null,
+  updatedAt: null,
 };
 
 export const mockModalOpenState: Modal = { message: "1234", open: true };
@@ -34,27 +42,35 @@ export const mockInputJsons = [
   {
     id: 1,
     name: "asd",
-    content: "{'ds': '2as'}",
+    content: { a: "b" },
     keys: [],
-    keysAndValues: [],
+    keysAndValues: { a: "b" },
+    createdAt: "2025-09-27T14:28:34.019Z",
+    updatedAt: "2025-09-27T14:28:34.019Z",
   },
   {
     id: 2,
     name: "asdasdf",
-    content: "{'pe': 'as'}",
+    content: { a: "b" },
     keys: [],
-    keysAndValues: [],
+    keysAndValues: { a: "b" },
+    createdAt: "2025-09-27T14:28:34.019Z",
+    updatedAt: "2025-09-27T14:28:34.019Z",
   },
 ];
 export const mockOutputJsons = [
   {
     id: 1,
     name: "a2sd",
-    model: "{'pe3pe': 'asd'}",
+    transformationModel: { b: "a" },
+    createdAt: "2025-09-27T14:28:34.019Z",
+    updatedAt: "2025-09-27T14:28:34.019Z",
   },
   {
     id: 2,
     name: "asd",
-    model: "{'pepe': 'asd'}",
+    transformationModel: { b: "a" },
+    createdAt: "2025-09-27T14:28:34.019Z",
+    updatedAt: "2025-09-27T14:28:34.019Z",
   },
 ];

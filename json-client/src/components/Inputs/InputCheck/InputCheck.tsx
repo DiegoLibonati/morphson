@@ -1,12 +1,4 @@
-import { GeneralProps } from "@/src/entities/entities";
-
-interface InputCheckProps extends GeneralProps {
-  id: string;
-  label: string;
-  name: string;
-  value: string;
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
-}
+import { InputCheckProps } from "@src/entities/props";
 
 export const InputCheck = ({
   id,

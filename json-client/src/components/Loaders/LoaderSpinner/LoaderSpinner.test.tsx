@@ -1,9 +1,11 @@
 import { render } from "@testing-library/react";
 
-import { LoaderSpinner } from "./LoaderSpinner";
+import { LoaderSpinnerProps } from "@src/entities/props";
+
+import { LoaderSpinner } from "@src/components/Loaders/LoaderSpinner/LoaderSpinner";
 
 type RenderComponent = {
-  props: { className: string };
+  props: LoaderSpinnerProps;
   container: HTMLElement;
 };
 
@@ -30,7 +32,7 @@ describe("LoaderSpinner.tsx", () => {
       const loaderRoot = container.querySelector("div") as HTMLDivElement;
 
       expect(loaderRoot).toBeInTheDocument();
-      expect(loaderRoot).toHaveClass(props.className);
+      expect(loaderRoot).toHaveClass(props.className!);
     });
 
     test("It must render the spinner.", () => {

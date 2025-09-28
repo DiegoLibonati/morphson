@@ -1,1 +1,1 @@
-export * from "@/src/components/Forms/FormMenu/FormMenu";
+export * from "@src/components/Forms/FormMenu/FormMenu";

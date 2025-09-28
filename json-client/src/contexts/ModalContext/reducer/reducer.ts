@@ -1,4 +1,4 @@
-import { ModalAction, ModalState } from "@/src/entities/modal-context.d";
+import { ModalAction, ModalState } from "@src/entities/modal-context.d";
 
 export const initialState: ModalState = {
   modal: {

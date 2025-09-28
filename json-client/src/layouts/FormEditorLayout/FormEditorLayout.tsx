@@ -1,22 +1,15 @@
 import { FaArrowLeft } from "react-icons/fa";
 
-import { GeneralProps } from "@/src/entities/entities";
+import { FormEditorLayoutProps } from "@src/entities/props";
 
-import { FormMenu } from "@/src/components/Forms/export";
+import { FormMenu } from "@src/components/Forms/export";
 import {
   InputEditor,
   OutputWithInputEditor,
-} from "@/src/components/Editors/export";
-import { AnchorSecondary } from "@/src/components/Anchors/export";
+} from "@src/components/Editors/export";
+import { AnchorSecondary } from "@src/components/Anchors/export";
 
-import { MainLayout } from "@/src/layouts/export";
-
-interface FormEditorLayoutProps extends GeneralProps {
-  loading: boolean;
-  jsonTypeToEdit: "input" | "outputWithInput";
-  LoadingComponent: React.ComponentType;
-  onSubmit: React.FormEventHandler<HTMLFormElement>;
-}
+import { MainLayout } from "@src/layouts/export";
 
 export const FormEditorLayout = ({
   loading,

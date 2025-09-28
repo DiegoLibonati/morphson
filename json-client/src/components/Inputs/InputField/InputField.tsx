@@ -1,15 +1,6 @@
-import { GeneralProps } from "@/src/entities/entities.d";
+import { InputFieldProps } from "@src/entities/props";
 
-import { InputWithLabel } from "@/src/components/Inputs/export";
-
-interface InputFieldProps extends GeneralProps {
-  id: string;
-  label: string;
-  placeholder: string;
-  name: string;
-  value: string;
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
-}
+import { InputWithLabel } from "@src/components/Inputs/export";
 
 export const InputField = ({
   id,

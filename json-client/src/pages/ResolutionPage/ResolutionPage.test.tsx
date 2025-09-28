@@ -2,9 +2,9 @@ import { screen, render } from "@testing-library/react";
 
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
-import { ResolutionPage } from "./ResolutionPage";
+import { ResolutionPage } from "@src/pages/ResolutionPage/ResolutionPage";
 
-import { mockResolutionUploaded } from "@/tests/jest.constants";
+import { mockResolutionUploaded } from "@tests/jest.constants";
 
 type RenderComponent = {
   container: HTMLElement;

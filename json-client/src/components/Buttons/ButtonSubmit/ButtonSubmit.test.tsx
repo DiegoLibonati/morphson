@@ -1,13 +1,11 @@
 import { screen, render } from "@testing-library/react";
 
-import { ButtonSubmit } from "./ButtonSubmit";
+import { ButtonSubmitProps } from "@src/entities/props";
+
+import { ButtonSubmit } from "@src/components/Buttons/ButtonSubmit/ButtonSubmit";
 
 type RenderComponent = {
-  props: {
-    ariaLabel: string;
-    disabled: boolean;
-    className: string;
-  };
+  props: ButtonSubmitProps;
   container: HTMLElement;
 };
 
@@ -78,7 +76,7 @@ describe("ButtonSubmit.tsx", () => {
       expect(btnSubmit).toBeInTheDocument();
       expect(btnSubmit).toHaveTextContent("Cuack");
       expect(btnSubmit).toHaveAttribute("type", "submit");
-      expect(btnSubmit).toHaveClass(props.className);
+      expect(btnSubmit).toHaveClass(props.className!);
     });
   });
 });

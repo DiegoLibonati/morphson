@@ -1,11 +1,11 @@
 import { screen, render } from "@testing-library/react";
 import user from "@testing-library/user-event";
 
-import { ModalAlert } from "./ModalAlert";
+import { ModalAlert } from "@src/components/Modals/ModalAlert/ModalAlert";
 
-import { ModalProvider, useModalContext } from "@/src/contexts/export";
+import { ModalProvider, useModalContext } from "@src/contexts/export";
 
-import { mockModalOpenState } from "@/tests/jest.constants";
+import { mockModalOpenState } from "@tests/jest.constants";
 
 type RenderComponent = {
   container: HTMLElement;
@@ -23,8 +23,8 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-jest.mock("../../../contexts/ModalContext/ModalContext", () => ({
-  ...jest.requireActual("../../../contexts/ModalContext/ModalContext"),
+jest.mock("@src/contexts/ModalContext/ModalContext", () => ({
+  ...jest.requireActual("@src/contexts/ModalContext/ModalContext"),
   useModalContext: jest.fn(),
 }));
 

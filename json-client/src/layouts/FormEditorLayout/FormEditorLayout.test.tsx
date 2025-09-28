@@ -3,17 +3,17 @@ import user from "@testing-library/user-event";
 
 import { MemoryRouter } from "react-router-dom";
 
-import { FormEditorLayout } from "./FormEditorLayout";
+import { FormEditorLayoutProps } from "@src/entities/props";
 
-import { JSONProvider } from "@/src/contexts/export";
+import { FormEditorLayout } from "@src/layouts/FormEditorLayout/FormEditorLayout";
+
+import { EditorProvider, JSONProvider } from "@src/contexts/export";
 
 type RenderComponent = {
   props: {
-    loading: boolean;
-    jsonTypeToEdit: "input" | "outputWithInput";
     LoadingComponent: React.ComponentType;
-    mockOnSubmit: jest.Mock;
-  };
+    onSubmit: jest.Mock;
+  } & FormEditorLayoutProps;
   container: HTMLElement;
 };
 
@@ -30,7 +30,7 @@ const renderComponent = ({
     loading: loading,
     jsonTypeToEdit: jsonTypeToEdit,
     LoadingComponent: () => <h2>Loading...</h2>,
-    mockOnSubmit: jest.fn((e) => e.preventDefault()),
+    onSubmit: jest.fn((e) => e.preventDefault()),
   };
 
   const { container } = render(
@@ -38,14 +38,16 @@ const renderComponent = ({
       future={{ v7_relativeSplatPath: true, v7_startTransition: true }}
     >
       <JSONProvider>
-        <FormEditorLayout
-          loading={props.loading}
-          LoadingComponent={props.LoadingComponent}
-          jsonTypeToEdit={props.jsonTypeToEdit}
-          onSubmit={props.mockOnSubmit}
-        >
-          <button type="submit" aria-label="submit form"></button>
-        </FormEditorLayout>
+        <EditorProvider>
+          <FormEditorLayout
+            loading={props.loading}
+            LoadingComponent={props.LoadingComponent}
+            jsonTypeToEdit={props.jsonTypeToEdit}
+            onSubmit={props.onSubmit}
+          >
+            <button type="submit" aria-label="submit form"></button>
+          </FormEditorLayout>
+        </EditorProvider>
       </JSONProvider>
     </MemoryRouter>
   );
@@ -144,7 +146,7 @@ describe("FormEditorLayout.tsx", () => {
 
       await user.click(btnSubmit);
 
-      expect(props.mockOnSubmit).toHaveBeenCalledTimes(1);
+      expect(props.onSubmit).toHaveBeenCalledTimes(1);
     });
 
     test("It must render the link to return to home.", () => {

@@ -1,4 +1,4 @@
-import { AnchorAction } from "@/src/components/Anchors/export";
+import { AnchorAction } from "@src/components/Anchors/export";
 
 export const SectionActions = (): JSX.Element => {
   return (

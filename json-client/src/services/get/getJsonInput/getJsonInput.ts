@@ -1,5 +1,5 @@
-import { jsonApi } from "@/src/services/axios";
+import { inputApi } from "@src/services/axios";
 
 export const getJsonInput = (idInputJson: string) => {
-  return jsonApi.get(`/json/input/${idInputJson}`);
+  return inputApi.get(`/${idInputJson}`);
 };

@@ -1,17 +1,11 @@
 import { screen, render } from "@testing-library/react";
 import user from "@testing-library/user-event";
 
-import { SelectNormal } from "./SelectNormal";
+import { SelectNormal } from "@src/components/Selects/SelectNormal/SelectNormal";
+import { SelectNormalProps } from "@src/entities/props";
 
 type RenderComponent = {
-  props: {
-    id: string;
-    label: string;
-    name: string;
-    value: string;
-    className: string;
-    mockOnChange: jest.Mock;
-  };
+  props: { onChange: jest.Mock } & SelectNormalProps;
   container: HTMLElement;
 };
 
@@ -22,7 +16,7 @@ const renderComponent = (): RenderComponent => {
     name: "input",
     value: "",
     className: "hi",
-    mockOnChange: jest.fn(),
+    onChange: jest.fn(),
   };
 
   const { container } = render(
@@ -32,7 +26,7 @@ const renderComponent = (): RenderComponent => {
       name={props.name}
       value={props.value}
       className={props.className}
-      onChange={props.mockOnChange}
+      onChange={props.onChange}
     >
       <option value="1">1</option>
     </SelectNormal>
@@ -57,7 +51,7 @@ describe("SelectNormal.tsx", () => {
       const label = screen.getByText(props.label);
 
       expect(select).toBeInTheDocument();
-      expect(select).toHaveClass(props.className);
+      expect(select).toHaveClass(props.className!);
       expect(select).toHaveAttribute("id", props.id);
       expect(select).toHaveAttribute("name", props.name);
       expect(label).toBeInTheDocument();
@@ -80,7 +74,7 @@ describe("SelectNormal.tsx", () => {
 
       await user.selectOptions(select, "1");
 
-      expect(props.mockOnChange).toHaveBeenCalledTimes(1);
+      expect(props.onChange).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -1,12 +1,6 @@
 import { Link } from "react-router-dom";
 
-import { GeneralProps } from "@/src/entities/entities.d";
-
-interface AnchorActionProps extends GeneralProps {
-  to: string;
-  ariaLabel: string;
-  noMark?: boolean;
-}
+import { AnchorActionProps } from "@src/entities/props";
 
 export const AnchorAction = ({
   to,

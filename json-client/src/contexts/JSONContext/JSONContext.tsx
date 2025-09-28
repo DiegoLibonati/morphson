@@ -6,21 +6,18 @@ import React, {
   useReducer,
 } from "react";
 
-import { InputJson, OutputJson } from "@/src/entities/entities";
+import { InputJson, OutputJson } from "@src/entities/entities";
 import {
   JSONAction,
   JSONState,
   JSONContext as JSONContextT,
-} from "@/src/entities/json-context.d";
+  JSONProviderProps,
+} from "@src/entities/json-context.d";
 
 import {
   initialState,
   reducer,
-} from "@/src/contexts/JSONContext/reducer/reducer";
-
-interface JSONProviderProps {
-  children: React.ReactNode;
-}
+} from "@src/contexts/JSONContext/reducer/reducer";
 
 export const JSONContext = createContext<JSONContextT | undefined>(undefined);
 
@@ -38,24 +35,18 @@ export const JSONProvider: React.FunctionComponent<JSONProviderProps> = ({
       payload: {
         id: inputJson.id,
         name: inputJson.name,
-        file: inputJson.file!,
         content: inputJson.content,
         keys: inputJson.keys,
       },
     });
   };
 
-  const handleInputJsonContentUpdate = (inputContent: string): void => {
+  const handleInputJsonContentUpdate = (
+    inputContent: Pick<InputJson, "content">
+  ): void => {
     return dispatch({
       type: "INPUT_JSON_CONTENT_UPDATE",
       payload: { content: inputContent },
-    });
-  };
-
-  const handleInputJsonFileUpdate = (inputFile: File): void => {
-    return dispatch({
-      type: "INPUT_JSON_FILE_UPDATE",
-      payload: { file: inputFile },
     });
   };
 
@@ -96,15 +87,17 @@ export const JSONProvider: React.FunctionComponent<JSONProviderProps> = ({
       payload: {
         id: outputJson.id,
         name: outputJson.name,
-        model: outputJson.model,
+        transformationModel: outputJson.transformationModel,
       },
     });
   };
 
-  const handleOutputJsonModelUpdate = (outputContent: string): void => {
+  const handleOutputJsonModelUpdate = (
+    outputContent: Pick<OutputJson, "transformationModel">
+  ): void => {
     return dispatch({
       type: "OUTPUT_JSON_MODEL_UPDATE",
-      payload: { model: outputContent },
+      payload: { transformationModel: outputContent },
     });
   };
 
@@ -131,7 +124,6 @@ export const JSONProvider: React.FunctionComponent<JSONProviderProps> = ({
         jsons: state.jsons,
         loading: state.loading,
         handleUpdateInputJson: handleUpdateInputJson,
-        handleInputJsonFileUpdate: handleInputJsonFileUpdate,
         handleInputJsonContentUpdate: handleInputJsonContentUpdate,
         handleInputJsons: handleInputJsons,
         handleOutputJsons: handleOutputJsons,
@@ -147,7 +139,6 @@ export const JSONProvider: React.FunctionComponent<JSONProviderProps> = ({
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const useJSONContext = (): JSONContextT => {
   return useContext(JSONContext)!;
 };

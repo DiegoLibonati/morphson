@@ -7,11 +7,683 @@
 	},
 	"item": [
 		{
-			"name": "General",
+			"name": "Transform",
 			"item": [
 				{
-					"name": "Alive",
+					"name": "POST - Transform",
 					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idInputJson\": \"20\",\r\n  \"saveOutputJson\": true,\r\n  \"outputJsonNameToSave\": \"12345\",\r\n  \"contentJsonToTransform\": \"{\\\"a\\\": \\\"b\\\"}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APP_URL}}/transform",
+							"host": [
+								"{{APP_URL}}"
+							],
+							"path": [
+								"transform"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Ok without save.",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"idInputJson\": \"1\",\r\n  \"saveOutputJson\": false,\r\n  \"outputJsonNameToSave\": \"12345\",\r\n  \"contentJsonToTransform\": \"{\\\"a\\\": \\\"b\\\"}\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{APP_URL}}/transform",
+									"host": [
+										"{{APP_URL}}"
+									],
+									"path": [
+										"transform"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Disposition",
+									"value": "attachment; filename=\"asdasdasdas_transformed.json\""
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Accept-Ranges",
+									"value": "bytes"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "public, max-age=0"
+								},
+								{
+									"key": "Last-Modified",
+									"value": "Sat, 27 Sep 2025 15:07:41 GMT"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"e-1998bb72b64\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "14"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 27 Sep 2025 15:07:41 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"a\": \"b\"\n}"
+						},
+						{
+							"name": "Ok with save.",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"idInputJson\": \"1\",\r\n  \"saveOutputJson\": true,\r\n  \"outputJsonNameToSave\": \"12345\",\r\n  \"contentJsonToTransform\": \"{\\\"a\\\": \\\"b\\\"}\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{APP_URL}}/transform",
+									"host": [
+										"{{APP_URL}}"
+									],
+									"path": [
+										"transform"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Disposition",
+									"value": "attachment; filename=\"asdasdasdas_transformed.json\""
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Accept-Ranges",
+									"value": "bytes"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "public, max-age=0"
+								},
+								{
+									"key": "Last-Modified",
+									"value": "Sat, 27 Sep 2025 15:07:56 GMT"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"e-1998bb76711\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "14"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 27 Sep 2025 15:07:56 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"a\": \"b\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "File",
+			"item": [
+				{
+					"name": "GET - File Content",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/diego/Downloads/tailwind.config.ts"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{APP_URL}}/file/content",
+							"host": [
+								"{{APP_URL}}"
+							],
+							"path": [
+								"file",
+								"content"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Ok.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"type": "file",
+											"src": "/D:/Programacion/Proyectos mios/JSON-Transformer/json-api/JSON Transformer.postman_collection.json"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{APP_URL}}/file/content",
+									"host": [
+										"{{APP_URL}}"
+									],
+									"path": [
+										"file",
+										"content"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "6440"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"1928-OeFSCRD5ziwcZe7U0gYCqitYEOM\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 26 Sep 2025 21:28:09 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": \"SUCCESS_GET_FILE_CONTENT\",\n    \"message\": \"¡Successfully obtained the contents of the file!\",\n    \"content\": \"{\\r\\n\\t\\\"info\\\": {\\r\\n\\t\\t\\\"_postman_id\\\": \\\"93ec9fd6-c4dd-4e75-8fd2-066f10a44f2f\\\",\\r\\n\\t\\t\\\"name\\\": \\\"JSON Transformer\\\",\\r\\n\\t\\t\\\"schema\\\": \\\"https://schema.getpostman.com/json/collection/v2.1.0/collection.json\\\",\\r\\n\\t\\t\\\"_exporter_id\\\": \\\"27611586\\\"\\r\\n\\t},\\r\\n\\t\\\"item\\\": [\\r\\n\\t\\t{\\r\\n\\t\\t\\t\\\"name\\\": \\\"General\\\",\\r\\n\\t\\t\\t\\\"item\\\": [\\r\\n\\t\\t\\t\\t{\\r\\n\\t\\t\\t\\t\\t\\\"name\\\": \\\"Alive\\\",\\r\\n\\t\\t\\t\\t\\t\\\"request\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\\"method\\\": \\\"GET\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\\"header\\\": [],\\r\\n\\t\\t\\t\\t\\t\\t\\\"url\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"raw\\\": \\\"{{APP_URL}}/alive\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"host\\\": [\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"{{APP_URL}}\\\"\\r\\n\\t\\t\\t\\t\\t\\t\\t],\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"path\\\": [\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"alive\\\"\\r\\n\\t\\t\\t\\t\\t\\t\\t]\\r\\n\\t\\t\\t\\t\\t\\t}\\r\\n\\t\\t\\t\\t\\t},\\r\\n\\t\\t\\t\\t\\t\\\"response\\\": []\\r\\n\\t\\t\\t\\t}\\r\\n\\t\\t\\t]\\r\\n\\t\\t},\\r\\n\\t\\t{\\r\\n\\t\\t\\t\\\"name\\\": \\\"JSON\\\",\\r\\n\\t\\t\\t\\\"item\\\": [\\r\\n\\t\\t\\t\\t{\\r\\n\\t\\t\\t\\t\\t\\\"name\\\": \\\"Get Inputs Json\\\",\\r\\n\\t\\t\\t\\t\\t\\\"request\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\\"method\\\": \\\"GET\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\\"header\\\": [],\\r\\n\\t\\t\\t\\t\\t\\t\\\"url\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"raw\\\": \\\"{{APP_URL}}/json/inputs\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"host\\\": [\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"{{APP_URL}}\\\"\\r\\n\\t\\t\\t\\t\\t\\t\\t],\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"path\\\": [\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"json\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"inputs\\\"\\r\\n\\t\\t\\t\\t\\t\\t\\t]\\r\\n\\t\\t\\t\\t\\t\\t}\\r\\n\\t\\t\\t\\t\\t},\\r\\n\\t\\t\\t\\t\\t\\\"response\\\": []\\r\\n\\t\\t\\t\\t},\\r\\n\\t\\t\\t\\t{\\r\\n\\t\\t\\t\\t\\t\\\"name\\\": \\\"Get Input Json\\\",\\r\\n\\t\\t\\t\\t\\t\\\"request\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\\"method\\\": \\\"GET\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\\"header\\\": [],\\r\\n\\t\\t\\t\\t\\t\\t\\\"url\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"raw\\\": \\\"{{APP_URL}}/json/input/1\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"host\\\": [\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"{{APP_URL}}\\\"\\r\\n\\t\\t\\t\\t\\t\\t\\t],\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"path\\\": [\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"json\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"input\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"1\\\"\\r\\n\\t\\t\\t\\t\\t\\t\\t]\\r\\n\\t\\t\\t\\t\\t\\t}\\r\\n\\t\\t\\t\\t\\t},\\r\\n\\t\\t\\t\\t\\t\\\"response\\\": []\\r\\n\\t\\t\\t\\t},\\r\\n\\t\\t\\t\\t{\\r\\n\\t\\t\\t\\t\\t\\\"name\\\": \\\"Get Outputs Json\\\",\\r\\n\\t\\t\\t\\t\\t\\\"request\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\\"method\\\": \\\"GET\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\\"header\\\": [],\\r\\n\\t\\t\\t\\t\\t\\t\\\"url\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"raw\\\": \\\"{{APP_URL}}/json/outputs\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"host\\\": [\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"{{APP_URL}}\\\"\\r\\n\\t\\t\\t\\t\\t\\t\\t],\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"path\\\": [\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"json\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"outputs\\\"\\r\\n\\t\\t\\t\\t\\t\\t\\t]\\r\\n\\t\\t\\t\\t\\t\\t}\\r\\n\\t\\t\\t\\t\\t},\\r\\n\\t\\t\\t\\t\\t\\\"response\\\": []\\r\\n\\t\\t\\t\\t},\\r\\n\\t\\t\\t\\t{\\r\\n\\t\\t\\t\\t\\t\\\"name\\\": \\\"Get Output Json\\\",\\r\\n\\t\\t\\t\\t\\t\\\"request\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\\"method\\\": \\\"GET\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\\"header\\\": [],\\r\\n\\t\\t\\t\\t\\t\\t\\\"url\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"raw\\\": \\\"{{APP_URL}}/json/output/1\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"host\\\": [\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"{{APP_URL}}\\\"\\r\\n\\t\\t\\t\\t\\t\\t\\t],\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"path\\\": [\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"json\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"output\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"1\\\"\\r\\n\\t\\t\\t\\t\\t\\t\\t]\\r\\n\\t\\t\\t\\t\\t\\t}\\r\\n\\t\\t\\t\\t\\t},\\r\\n\\t\\t\\t\\t\\t\\\"response\\\": []\\r\\n\\t\\t\\t\\t},\\r\\n\\t\\t\\t\\t{\\r\\n\\t\\t\\t\\t\\t\\\"name\\\": \\\"Post Upload Input Json\\\",\\r\\n\\t\\t\\t\\t\\t\\\"request\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\\"method\\\": \\\"POST\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\\"header\\\": [],\\r\\n\\t\\t\\t\\t\\t\\t\\\"body\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"mode\\\": \\\"raw\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"raw\\\": \\\"{\\\\r\\\\n  \\\\\\\"name\\\\\\\": \\\\\\\"asdasdasdas\\\\\\\",\\\\r\\\\n  \\\\\\\"content\\\\\\\": \\\\\\\"{\\\\\\\\\\\\\\\"a\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"b\\\\\\\\\\\\\\\"}\\\\\\\"\\\\r\\\\n}\\\\r\\\\n\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"options\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"raw\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\\"language\\\": \\\"json\\\"\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t}\\r\\n\\t\\t\\t\\t\\t\\t\\t}\\r\\n\\t\\t\\t\\t\\t\\t},\\r\\n\\t\\t\\t\\t\\t\\t\\\"url\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"raw\\\": \\\"{{APP_URL}}/json/upload\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"host\\\": [\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"{{APP_URL}}\\\"\\r\\n\\t\\t\\t\\t\\t\\t\\t],\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"path\\\": [\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"json\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"upload\\\"\\r\\n\\t\\t\\t\\t\\t\\t\\t]\\r\\n\\t\\t\\t\\t\\t\\t}\\r\\n\\t\\t\\t\\t\\t},\\r\\n\\t\\t\\t\\t\\t\\\"response\\\": []\\r\\n\\t\\t\\t\\t},\\r\\n\\t\\t\\t\\t{\\r\\n\\t\\t\\t\\t\\t\\\"name\\\": \\\"Post Get Json Content\\\",\\r\\n\\t\\t\\t\\t\\t\\\"request\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\\"method\\\": \\\"POST\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\\"header\\\": [],\\r\\n\\t\\t\\t\\t\\t\\t\\\"body\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"mode\\\": \\\"formdata\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"formdata\\\": [\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t{\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\\"key\\\": \\\"file\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\\"type\\\": \\\"file\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\\"src\\\": \\\"/C:/Users/diego/Downloads/hola_transformed (3).json\\\"\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t}\\r\\n\\t\\t\\t\\t\\t\\t\\t]\\r\\n\\t\\t\\t\\t\\t\\t},\\r\\n\\t\\t\\t\\t\\t\\t\\\"url\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"raw\\\": \\\"{{APP_URL}}/json/getContent\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"host\\\": [\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"{{APP_URL}}\\\"\\r\\n\\t\\t\\t\\t\\t\\t\\t],\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"path\\\": [\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"json\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"getContent\\\"\\r\\n\\t\\t\\t\\t\\t\\t\\t]\\r\\n\\t\\t\\t\\t\\t\\t}\\r\\n\\t\\t\\t\\t\\t},\\r\\n\\t\\t\\t\\t\\t\\\"response\\\": []\\r\\n\\t\\t\\t\\t},\\r\\n\\t\\t\\t\\t{\\r\\n\\t\\t\\t\\t\\t\\\"name\\\": \\\"Post Transform\\\",\\r\\n\\t\\t\\t\\t\\t\\\"request\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\\"method\\\": \\\"POST\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\\"header\\\": [],\\r\\n\\t\\t\\t\\t\\t\\t\\\"body\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"mode\\\": \\\"raw\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"raw\\\": \\\"{\\\\r\\\\n  \\\\\\\"idInputJson\\\\\\\": \\\\\\\"1\\\\\\\",\\\\r\\\\n  \\\\\\\"saveOutputJson\\\\\\\": false,\\\\r\\\\n  \\\\\\\"outputJsonNameToSave\\\\\\\": \\\\\\\"12345\\\\\\\",\\\\r\\\\n  \\\\\\\"contentJsonToTransform\\\\\\\": \\\\\\\"{\\\\\\\\\\\\\\\"a\\\\\\\\\\\\\\\": \\\\\\\\\\\\\\\"b\\\\\\\\\\\\\\\"}\\\\\\\"\\\\r\\\\n}\\\\r\\\\n\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"options\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"raw\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\\"language\\\": \\\"json\\\"\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t}\\r\\n\\t\\t\\t\\t\\t\\t\\t}\\r\\n\\t\\t\\t\\t\\t\\t},\\r\\n\\t\\t\\t\\t\\t\\t\\\"url\\\": {\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"raw\\\": \\\"{{APP_URL}}/json/transform\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"host\\\": [\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"{{APP_URL}}\\\"\\r\\n\\t\\t\\t\\t\\t\\t\\t],\\r\\n\\t\\t\\t\\t\\t\\t\\t\\\"path\\\": [\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"json\\\",\\r\\n\\t\\t\\t\\t\\t\\t\\t\\t\\\"transform\\\"\\r\\n\\t\\t\\t\\t\\t\\t\\t]\\r\\n\\t\\t\\t\\t\\t\\t}\\r\\n\\t\\t\\t\\t\\t},\\r\\n\\t\\t\\t\\t\\t\\\"response\\\": []\\r\\n\\t\\t\\t\\t}\\r\\n\\t\\t\\t]\\r\\n\\t\\t}\\r\\n\\t],\\r\\n\\t\\\"event\\\": [\\r\\n\\t\\t{\\r\\n\\t\\t\\t\\\"listen\\\": \\\"prerequest\\\",\\r\\n\\t\\t\\t\\\"script\\\": {\\r\\n\\t\\t\\t\\t\\\"type\\\": \\\"text/javascript\\\",\\r\\n\\t\\t\\t\\t\\\"packages\\\": {},\\r\\n\\t\\t\\t\\t\\\"exec\\\": [\\r\\n\\t\\t\\t\\t\\t\\\"\\\"\\r\\n\\t\\t\\t\\t]\\r\\n\\t\\t\\t}\\r\\n\\t\\t},\\r\\n\\t\\t{\\r\\n\\t\\t\\t\\\"listen\\\": \\\"test\\\",\\r\\n\\t\\t\\t\\\"script\\\": {\\r\\n\\t\\t\\t\\t\\\"type\\\": \\\"text/javascript\\\",\\r\\n\\t\\t\\t\\t\\\"packages\\\": {},\\r\\n\\t\\t\\t\\t\\\"exec\\\": [\\r\\n\\t\\t\\t\\t\\t\\\"\\\"\\r\\n\\t\\t\\t\\t]\\r\\n\\t\\t\\t}\\r\\n\\t\\t}\\r\\n\\t],\\r\\n\\t\\\"variable\\\": [\\r\\n\\t\\t{\\r\\n\\t\\t\\t\\\"key\\\": \\\"APP_URL\\\",\\r\\n\\t\\t\\t\\\"value\\\": \\\"http://localhost:3000/api/v1\\\",\\r\\n\\t\\t\\t\\\"type\\\": \\\"string\\\"\\r\\n\\t\\t}\\r\\n\\t]\\r\\n}\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Input",
+			"item": [
+				{
+					"name": "GET - Get Inputs Json",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APP_URL}}/inputs",
+							"host": [
+								"{{APP_URL}}"
+							],
+							"path": [
+								"inputs"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Ok.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APP_URL}}/inputs",
+									"host": [
+										"{{APP_URL}}"
+									],
+									"path": [
+										"inputs"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "600"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"258-/Ky+/JoTDsT638xWN6kMg7TLXmc\""
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 27 Sep 2025 14:45:23 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": \"SUCCESS_GET_ALL_INPUT_JSONS\",\n    \"message\": \"¡Input jsons successfully delivered!\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"asdasdasdas\",\n            \"content\": {\n                \"a\": \"b\"\n            },\n            \"keys\": [\n                \"a\"\n            ],\n            \"keysAndValues\": {\n                \"a\": \"b\"\n            },\n            \"createdAt\": \"2025-09-27T14:28:34.019Z\",\n            \"updatedAt\": \"2025-09-27T14:28:34.019Z\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"asdasdasdas2\",\n            \"content\": {\n                \"a\": \"b\"\n            },\n            \"keys\": [\n                \"a\"\n            ],\n            \"keysAndValues\": {\n                \"a\": \"b\"\n            },\n            \"createdAt\": \"2025-09-27T14:35:22.580Z\",\n            \"updatedAt\": \"2025-09-27T14:35:22.580Z\"\n        },\n        {\n            \"id\": 4,\n            \"name\": \"asdasdasdas3\",\n            \"content\": {\n                \"a\": \"b\"\n            },\n            \"keys\": [\n                \"a\"\n            ],\n            \"keysAndValues\": {\n                \"a\": \"b\"\n            },\n            \"createdAt\": \"2025-09-27T14:41:52.853Z\",\n            \"updatedAt\": \"2025-09-27T14:41:52.853Z\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "GET - Get Input Json",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APP_URL}}/inputs/24",
+							"host": [
+								"{{APP_URL}}"
+							],
+							"path": [
+								"inputs",
+								"24"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Ok.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APP_URL}}/inputs/24",
+									"host": [
+										"{{APP_URL}}"
+									],
+									"path": [
+										"inputs",
+										"24"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "272"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"110-0O231gqnITajyBIQDNvTGaa+veY\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 28 Sep 2025 02:59:37 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": \"SUCCESS_GET_INPUT_JSON\",\n    \"message\": \"¡Input json successfully delivered!\",\n    \"data\": {\n        \"inputJson\": {\n            \"id\": 24,\n            \"name\": \"asdasdasdas4\",\n            \"content\": {\n                \"a\": \"b\"\n            },\n            \"keys\": [\n                \"a\"\n            ],\n            \"keysAndValues\": {\n                \"a\": \"b\"\n            },\n            \"createdAt\": \"2025-09-28T02:58:55.040Z\",\n            \"updatedAt\": \"2025-09-28T02:58:55.040Z\"\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "POST - Upload Input Json",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"asdasdasdas4\",\r\n  \"content\": \"{\\\"a\\\": \\\"b\\\"}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{APP_URL}}/inputs/upload",
+							"host": [
+								"{{APP_URL}}"
+							],
+							"path": [
+								"inputs",
+								"upload"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Ok.",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"asdasdasdas4\",\r\n  \"content\": \"{\\\"a\\\": \\\"b\\\"}\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{APP_URL}}/inputs/upload",
+									"host": [
+										"{{APP_URL}}"
+									],
+									"path": [
+										"inputs",
+										"upload"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "257"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"101-0MncaSMdsjVv8LU3XmktVPcsRJo\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 28 Sep 2025 02:58:55 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": \"SUCCESS_INPUT_JSON_UPLOADED\",\n    \"message\": \"¡JSON Uploaded!\",\n    \"data\": {\n        \"inputJson\": {\n            \"id\": 24,\n            \"name\": \"asdasdasdas4\",\n            \"content\": {\n                \"a\": \"b\"\n            },\n            \"keys\": [\n                \"a\"\n            ],\n            \"keysAndValues\": {\n                \"a\": \"b\"\n            },\n            \"createdAt\": \"2025-09-28T02:58:55.040Z\",\n            \"updatedAt\": \"2025-09-28T02:58:55.040Z\"\n        }\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Output",
+			"item": [
+				{
+					"name": "GET - Get Outputs Json",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APP_URL}}/outputs",
+							"host": [
+								"{{APP_URL}}"
+							],
+							"path": [
+								"outputs"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Ok.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APP_URL}}/outputs",
+									"host": [
+										"{{APP_URL}}"
+									],
+									"path": [
+										"outputs"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "233"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"e9-NdAj3G0LZHFDwc1Fz1cNrTZTFLA\""
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 27 Sep 2025 15:10:12 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": \"SUCCESS_GET_ALL_OUTPUT_JSONS\",\n    \"message\": \"¡Output jsons successfully delivered!\",\n    \"data\": [\n        {\n            \"id\": 2,\n            \"name\": \"12345\",\n            \"transformationModel\": {\n                \"a\": \"b\"\n            },\n            \"createdAt\": \"2025-09-27T15:09:12.228Z\",\n            \"updatedAt\": \"2025-09-27T15:09:12.228Z\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "GET - Get Output Json",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{APP_URL}}/outputs/21",
+							"host": [
+								"{{APP_URL}}"
+							],
+							"path": [
+								"outputs",
+								"21"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Ok.",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{APP_URL}}/outputs/21",
+									"host": [
+										"{{APP_URL}}"
+									],
+									"path": [
+										"outputs",
+										"21"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "241"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"f1-OGERzy0ZUrXuQdTBufze2pzgTo0\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 28 Sep 2025 03:01:54 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"code\": \"SUCCESS_GET_OUTPUT_JSON\",\n    \"message\": \"¡Output json successfully delivered!\",\n    \"data\": {\n        \"outputJson\": {\n            \"id\": 21,\n            \"name\": \"12345\",\n            \"transformationModel\": {\n                \"a\": \"b\"\n            },\n            \"createdAt\": \"2025-09-28T03:01:28.467Z\",\n            \"updatedAt\": \"2025-09-28T03:01:28.467Z\"\n        }\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Alive",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{APP_URL}}/alive",
+					"host": [
+						"{{APP_URL}}"
+					],
+					"path": [
+						"alive"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Ok.",
+					"originalRequest": {
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -24,168 +696,41 @@
 							]
 						}
 					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "JSON",
-			"item": [
-				{
-					"name": "Get Inputs Json",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{APP_URL}}/json/inputs",
-							"host": [
-								"{{APP_URL}}"
-							],
-							"path": [
-								"json",
-								"inputs"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Input Json",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{APP_URL}}/json/input/1",
-							"host": [
-								"{{APP_URL}}"
-							],
-							"path": [
-								"json",
-								"input",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Outputs Json",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{APP_URL}}/json/outputs",
-							"host": [
-								"{{APP_URL}}"
-							],
-							"path": [
-								"json",
-								"outputs"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Output Json",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{APP_URL}}/json/output/1",
-							"host": [
-								"{{APP_URL}}"
-							],
-							"path": [
-								"json",
-								"output",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Post Upload Input Json",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"asdasdasdas\",\r\n  \"content\": \"{\\\"a\\\": \\\"b\\\"}\"\r\n}\r\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
 						},
-						"url": {
-							"raw": "{{APP_URL}}/json/upload",
-							"host": [
-								"{{APP_URL}}"
-							],
-							"path": [
-								"json",
-								"upload"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Post Get Json Content",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "file",
-									"type": "file",
-									"src": "/C:/Users/diego/Downloads/hola_transformed (3).json"
-								}
-							]
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
 						},
-						"url": {
-							"raw": "{{APP_URL}}/json/getContent",
-							"host": [
-								"{{APP_URL}}"
-							],
-							"path": [
-								"json",
-								"getContent"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Post Transform",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"idInputJson\": \"1\",\r\n  \"saveOutputJson\": false,\r\n  \"outputJsonNameToSave\": \"12345\",\r\n  \"contentJsonToTransform\": \"{\\\"a\\\": \\\"b\\\"}\"\r\n}\r\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+						{
+							"key": "Content-Length",
+							"value": "75"
 						},
-						"url": {
-							"raw": "{{APP_URL}}/json/transform",
-							"host": [
-								"{{APP_URL}}"
-							],
-							"path": [
-								"json",
-								"transform"
-							]
+						{
+							"key": "ETag",
+							"value": "W/\"4b-IGTcpDS69dYKsrkOlDgS8vcReH4\""
+						},
+						{
+							"key": "Date",
+							"value": "Fri, 26 Sep 2025 21:27:41 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
 						}
-					},
-					"response": []
+					],
+					"cookie": [],
+					"body": "{\n    \"author\": \"Diego Libonati\",\n    \"name\": \"JSON-Transformer-API\",\n    \"version\": \"1.1.0\"\n}"
 				}
 			]
 		}

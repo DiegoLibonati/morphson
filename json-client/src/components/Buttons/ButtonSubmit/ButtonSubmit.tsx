@@ -1,9 +1,4 @@
-import { GeneralProps } from "@/src/entities/entities.d";
-
-interface ButtonSubmitProps extends GeneralProps {
-  ariaLabel: string;
-  disabled?: boolean;
-}
+import { ButtonSubmitProps } from "@src/entities/props";
 
 export const ButtonSubmit = ({
   ariaLabel,

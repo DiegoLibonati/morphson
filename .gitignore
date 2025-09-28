@@ -1,7 +1,1 @@
-node_modules
-dist
-api.env
-client.env
-.env
-yarn.lock
 data

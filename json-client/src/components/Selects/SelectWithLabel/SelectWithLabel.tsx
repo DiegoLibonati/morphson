@@ -1,9 +1,4 @@
-import { GeneralProps } from "@/src/entities/entities";
-
-interface SelectWithLabelProps extends GeneralProps {
-  id: string;
-  label: string;
-}
+import { SelectWithLabelProps } from "@src/entities/props";
 
 export const SelectWithLabel = ({
   id,

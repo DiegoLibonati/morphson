@@ -1,9 +1,9 @@
-import { ButtonSecondary } from "@/src/components/Buttons/export";
-import { Modal } from "@/src/components/Modals/export";
-
-import { useModalContext } from "@/src/contexts/export";
-
 import { FaInfoCircle } from "react-icons/fa";
+
+import { ButtonSecondary } from "@src/components/Buttons/export";
+import { Modal } from "@src/components/Modals/export";
+
+import { useModalContext } from "@src/contexts/export";
 
 export const ModalAlert = (): JSX.Element => {
   const { modal, handleSetModalClose } = useModalContext();

@@ -1,9 +1,4 @@
-import { GeneralProps } from "@/src/entities/entities.d";
-
-interface InputWithLabelProps extends GeneralProps {
-  id: string;
-  label: string;
-}
+import { InputWithLabelProps } from "@src/entities/props";
 
 export const InputWithLabel = ({
   id,

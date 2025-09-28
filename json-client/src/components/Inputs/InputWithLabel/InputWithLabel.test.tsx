@@ -1,13 +1,11 @@
 import { screen, render } from "@testing-library/react";
 
-import { InputWithLabel } from "./InputWithLabel";
+import { InputWithLabelProps } from "@src/entities/props";
+
+import { InputWithLabel } from "@src/components/Inputs/InputWithLabel/InputWithLabel";
 
 type RenderComponent = {
-  props: {
-    id: string;
-    label: string;
-    className: string;
-  };
+  props: InputWithLabelProps;
   container: HTMLElement;
 };
 
@@ -55,7 +53,7 @@ describe("InputWithLabel.tsx", () => {
       ) as HTMLDivElement;
 
       expect(root).toBeInTheDocument();
-      expect(root).toHaveClass(props.className);
+      expect(root).toHaveClass(props.className!);
     });
   });
 });

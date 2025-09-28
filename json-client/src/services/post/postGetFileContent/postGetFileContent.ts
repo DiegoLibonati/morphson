@@ -1,5 +1,5 @@
-import { jsonApi } from "@/src/services/export";
+import { fileApi } from "@src/services/export";
 
 export const postGetFileContent = (formData: FormData) => {
-  return jsonApi.post("/json/getContent", formData);
+  return fileApi.post("/content", formData);
 };

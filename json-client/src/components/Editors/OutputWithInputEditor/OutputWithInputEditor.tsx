@@ -2,26 +2,35 @@ import { useEffect, useRef } from "react";
 import { OnChange, OnMount } from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 
-import { MonacoEditor } from "@/src/components/Editors/export";
+import { MonacoEditor } from "@src/components/Editors/export";
 
-import { useJSONContext } from "@/src/contexts/export";
+import { useEditorContext, useJSONContext } from "@src/contexts/export";
 
 export const OutputWithInputEditor = (): JSX.Element => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<typeof monaco | null>(null);
   const completionProviderRef = useRef<monaco.IDisposable | null>(null);
 
-  const { inputJson, outputJson, handleOutputJsonModelUpdate } =
-    useJSONContext();
+  const { inputJson, handleOutputJsonModelUpdate } = useJSONContext();
+  const { text, handleSetText } = useEditorContext();
 
   const onChangeEditor: OnChange = (value) => {
     const newContent = value!;
-    return handleOutputJsonModelUpdate(newContent);
+
+    handleSetText(newContent);
   };
 
   const onMountEditor: OnMount = (editor, monaco) => {
     editorRef.current = editor;
     monacoRef.current = monaco;
+  };
+
+  const onTextEditorChange = () => {
+    try {
+      const parsed = JSON.parse(text);
+
+      return handleOutputJsonModelUpdate(parsed);
+    } catch {}
   };
 
   useEffect(() => {
@@ -64,13 +73,17 @@ export const OutputWithInputEditor = (): JSX.Element => {
     };
   }, [inputJson.keys]);
 
+  useEffect(() => {
+    onTextEditorChange();
+  }, [text]);
+
   return (
     <MonacoEditor
       className="h-full output-with-input-editor"
       defaultValue="{}"
       language="json"
       theme="vs-dark"
-      value={outputJson.model}
+      value={text}
       onChange={onChangeEditor}
       onMount={onMountEditor}
     ></MonacoEditor>

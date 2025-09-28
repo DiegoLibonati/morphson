@@ -1,14 +1,6 @@
-import { GeneralProps } from "@/src/entities/entities";
+import { SelectNormalProps } from "@src/entities/props";
 
-import { SelectWithLabel } from "@/src/components/Selects/export";
-
-interface SelectNormalProps extends GeneralProps {
-  id: string;
-  label: string;
-  name: string;
-  value: string;
-  onChange: React.ChangeEventHandler<HTMLSelectElement>;
-}
+import { SelectWithLabel } from "@src/components/Selects/export";
 
 export const SelectNormal = ({
   id,

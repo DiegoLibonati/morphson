@@ -1,17 +1,21 @@
-import { JSONAction, JSONState } from "@/src/entities/json-context.d";
+import { JSONAction, JSONState } from "@src/entities/json-context.d";
 
 export const initialState: JSONState = {
   inputJson: {
-    id: "",
+    id: null,
     name: "",
-    file: null,
-    content: "",
+    content: null,
     keys: [],
+    keysAndValues: null,
+    createdAt: null,
+    updatedAt: null,
   },
   outputJson: {
-    id: "",
+    id: null,
     name: "",
-    model: "",
+    transformationModel: null,
+    createdAt: null,
+    updatedAt: null,
   },
   jsons: {
     inputJsons: [],
@@ -29,7 +33,6 @@ export function reducer(state: JSONState, action: JSONAction): JSONState {
           ...state.inputJson,
           id: action.payload.id,
           name: action.payload.name,
-          file: action.payload.file,
           content: action.payload.content,
           keys: action.payload.keys,
         },
@@ -40,14 +43,6 @@ export function reducer(state: JSONState, action: JSONAction): JSONState {
         inputJson: {
           ...state.inputJson,
           content: action.payload.content,
-        },
-      };
-    case "INPUT_JSON_FILE_UPDATE":
-      return {
-        ...state,
-        inputJson: {
-          ...state.inputJson,
-          file: action.payload.file,
         },
       };
     case "INPUT_JSONS":
@@ -82,7 +77,7 @@ export function reducer(state: JSONState, action: JSONAction): JSONState {
           ...state.outputJson,
           id: action.payload.id,
           name: action.payload.name,
-          model: action.payload.model,
+          transformationModel: action.payload.transformationModel,
         },
       };
     case "OUTPUT_JSON_MODEL_UPDATE":
@@ -90,7 +85,7 @@ export function reducer(state: JSONState, action: JSONAction): JSONState {
         ...state,
         outputJson: {
           ...state.outputJson,
-          model: action.payload.model,
+          transformationModel: action.payload.transformationModel,
         },
       };
     case "LOADING":
@@ -99,24 +94,10 @@ export function reducer(state: JSONState, action: JSONAction): JSONState {
         loading: action.payload.loading,
       };
     case "CONTEXT_CLEAR":
+      const { loading, ...rest } = initialState;
       return {
         ...state,
-        inputJson: {
-          id: "",
-          name: "",
-          file: null,
-          content: "",
-          keys: [],
-        },
-        outputJson: {
-          id: "",
-          name: "",
-          model: "",
-        },
-        jsons: {
-          inputJsons: [],
-          outputJsons: [],
-        },
+        ...rest,
       };
     default:
       return state;

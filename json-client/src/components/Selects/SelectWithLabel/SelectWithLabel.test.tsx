@@ -1,13 +1,10 @@
 import { screen, render } from "@testing-library/react";
 
-import { SelectWithLabel } from "./SelectWithLabel";
+import { SelectWithLabel } from "@src/components/Selects/SelectWithLabel/SelectWithLabel";
+import { SelectWithLabelProps } from "@src/entities/props";
 
 type RenderComponent = {
-  props: {
-    id: string;
-    label: string;
-    className: string;
-  };
+  props: SelectWithLabelProps;
   container: HTMLElement;
 };
 
@@ -55,7 +52,7 @@ describe("SelectWithLabel.tsx", () => {
       ) as HTMLDivElement;
 
       expect(root).toBeInTheDocument();
-      expect(root).toHaveClass(props.className);
+      expect(root).toHaveClass(props.className!);
     });
   });
 });

@@ -1,18 +1,8 @@
-import { GeneralProps } from "@/src/entities/entities";
-
-interface SelectOptionProps extends GeneralProps {
-  value: string;
-  selected?: boolean;
-}
+import { SelectOptionProps } from "@src/entities/props";
 
 export const SelectOption = ({
   value,
-  selected,
   children,
 }: SelectOptionProps): JSX.Element => {
-  return (
-    <option value={value} selected={selected}>
-      {children}
-    </option>
-  );
+  return <option value={value}>{children}</option>;
 };

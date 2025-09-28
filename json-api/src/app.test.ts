@@ -1,78 +1,34 @@
 import request from "supertest";
 
-import { PrismaClient } from "@prisma/client";
-
-import app from "./app";
+import app from "@src/app";
 
 import {
   mockJsonTransformBody,
   mockJsonUploadBody,
-} from "../tests/jest.constants";
+} from "@tests/jest.constants";
 
-import { getPeers } from "./helpers/getPeers";
+import { InputService } from "@src/services/input.service";
+import { OutputService } from "@src/services/output.service";
+
+import { getPeers } from "@src/helpers/get_peers.helper";
+
+import {
+  MESSAGES_NOT,
+  MESSAGES_SUCCESS,
+} from "@src/constants/messages.constant";
+import { CODES_NOT, CODES_SUCCESS } from "@src/constants/codes.constant";
 
 describe("app.ts", () => {
-  const prisma = new PrismaClient();
-
   afterAll(async () => {
     console.log("Remove all JSON TEST.");
 
-    console.log(
-      "JSON INPUT BEFORE DELETE: ",
-      await prisma.inputJson.findUnique({
-        where: {
-          name: mockJsonUploadBody.name,
-          content: mockJsonUploadBody.content,
-        },
-      })
-    );
-
-    console.log(
-      "JSON OUTPUT BEFORE DELETE: ",
-      await prisma.outputJson.findUnique({
-        where: {
-          name: mockJsonTransformBody.outputJsonNameToSave,
-          model: mockJsonTransformBody.contentJsonToTransform,
-        },
-      })
-    );
-
-    await prisma.inputJson.delete({
-      where: {
-        name: mockJsonUploadBody.name,
-        content: mockJsonUploadBody.content,
-      },
-    });
-
-    await prisma.outputJson.delete({
-      where: {
-        name: mockJsonTransformBody.outputJsonNameToSave,
-        model: mockJsonTransformBody.contentJsonToTransform,
-      },
-    });
-
-    console.log(
-      "JSON INPUT AFTER DELETE: ",
-      await prisma.inputJson.findUnique({
-        where: {
-          name: mockJsonUploadBody.name,
-          content: mockJsonUploadBody.content,
-        },
-      })
-    );
-
-    console.log(
-      "JSON OUTPUT BEFORE DELETE: ",
-      await prisma.outputJson.findUnique({
-        where: {
-          name: mockJsonTransformBody.outputJsonNameToSave,
-          model: mockJsonTransformBody.contentJsonToTransform,
-        },
-      })
+    await InputService.deleteInput(mockJsonUploadBody.name);
+    await OutputService.deleteOutput(
+      mockJsonTransformBody.outputJsonNameToSave
     );
   });
 
-  describe("GENERAL Route", () => {
+  describe("General Route", () => {
     const PREFIX_GENERAL = "/api/v1";
 
     describe(`${PREFIX_GENERAL}/alive`, () => {
@@ -83,7 +39,7 @@ describe("app.ts", () => {
         expect(response.body).toEqual({
           author: "Diego Libonati",
           name: "JSON-Transformer-API",
-          version: "0.0.1",
+          version: "1.1.0",
         });
       });
     });
@@ -95,13 +51,44 @@ describe("app.ts", () => {
         );
 
         expect(response.status).toBe(404);
-        expect(response.body).toEqual({ message: "Route not found" });
+        expect(response.body).toEqual({
+          code: CODES_NOT.foundRoute,
+          message: MESSAGES_NOT.foundRoute,
+        });
       });
     });
   });
 
-  describe("JSON Route", () => {
-    const PREFIX_JSON = "/api/v1/json";
+  describe("File Route", () => {
+    const PREFIX_JSON = "/api/v1/file";
+
+    describe(`${PREFIX_JSON}/content`, () => {
+      const jsonData = {
+        name: "Diego",
+        age: 27,
+        profession: "Developer",
+      };
+
+      const jsonString = JSON.stringify(jsonData);
+      const fileBuffer = Buffer.from(jsonString, "utf-8");
+
+      test("It should return the contents of the entered file.", async () => {
+        const response = await request(app)
+          .get(`${PREFIX_JSON}/content`)
+          .attach("file", fileBuffer, "file.json");
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+          code: CODES_SUCCESS.getFileContent,
+          message: MESSAGES_SUCCESS.getFileContent,
+          content: jsonString,
+        });
+      });
+    });
+  });
+
+  describe("Input Route", () => {
+    const PREFIX_JSON = "/api/v1/inputs";
 
     describe(`${PREFIX_JSON}/upload`, () => {
       test("It must return that a valid name was not entered.", async () => {
@@ -112,7 +99,8 @@ describe("app.ts", () => {
 
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
-          message: "You must send a valid name!",
+          code: CODES_NOT.validName,
+          message: MESSAGES_NOT.validName,
         });
       });
 
@@ -124,15 +112,16 @@ describe("app.ts", () => {
 
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
-          message: "You must send a JSON with content to be able to transform!",
+          code: CODES_NOT.validContent,
+          message: MESSAGES_NOT.validContent,
           data: null,
         });
       });
 
       test("It must return the input json uploaded.", async () => {
-        const keysAndValues = await getPeers(
-          JSON.parse(mockJsonUploadBody.content)
-        );
+        const content = JSON.parse(mockJsonUploadBody.content);
+
+        const keysAndValues = await getPeers(content);
         const keys = Object.keys(keysAndValues);
 
         const response = await request(app)
@@ -142,39 +131,54 @@ describe("app.ts", () => {
 
         expect(response.status).toBe(201);
         expect(response.body).toEqual({
-          message: "¡JSON Uploaded!",
+          code: CODES_SUCCESS.inputJsonUploaded,
+          message: MESSAGES_SUCCESS.inputJsonUploaded,
           data: {
-            json: {
+            inputJson: {
               id: expect.any(Number),
               name: mockJsonUploadBody.name,
-              content: mockJsonUploadBody.content,
+              content: content,
               keys: keys,
               keysAndValues: keysAndValues,
+              createdAt: expect.any(String),
+              updatedAt: expect.any(String),
             },
           },
         });
       });
     });
 
-    describe(`${PREFIX_JSON}/inputs`, () => {
+    describe(`${PREFIX_JSON}`, () => {
       test("It must return the list of input jsons.", async () => {
-        const response = await request(app).get(`${PREFIX_JSON}/inputs`);
+        const response = await request(app).get(`${PREFIX_JSON}`);
 
         expect(response.status).toBe(200);
-        expect(response.body).toEqual({
-          message: "¡Input jsons successfully delivered!",
-          data: await prisma.inputJson.findMany(),
-        });
+        expect(response.body).toEqual(
+          expect.objectContaining({
+            code: CODES_SUCCESS.getAllInputJsons,
+            message: MESSAGES_SUCCESS.getAllInputJsons,
+            data: expect.arrayContaining([
+              expect.objectContaining({
+                id: expect.any(Number),
+                name: expect.any(String),
+                keys: expect.arrayContaining([expect.any(String)]),
+                content: expect.anything(),
+                keysAndValues: expect.anything(),
+              }),
+            ]),
+          })
+        );
       });
     });
 
-    describe(`${PREFIX_JSON}/input/:id`, () => {
+    describe(`${PREFIX_JSON}/:id`, () => {
       test("It must return a valid ID to be entered.", async () => {
-        const response = await request(app).get(`${PREFIX_JSON}/input/asd`);
+        const response = await request(app).get(`${PREFIX_JSON}/asd`);
 
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
-          message: "You must send a Valid Json Input ID!",
+          code: CODES_NOT.validInputJsonId,
+          message: MESSAGES_NOT.validInputJsonId,
           data: null,
         });
       });
@@ -182,30 +186,29 @@ describe("app.ts", () => {
       test("It should return that a test with the entered id was not found.", async () => {
         const id = 99;
 
-        const response = await request(app).get(`${PREFIX_JSON}/input/${id}`);
+        const response = await request(app).get(`${PREFIX_JSON}/${id}`);
 
-        expect(response.status).toBe(400);
+        expect(response.status).toBe(404);
         expect(response.body).toEqual({
-          message: `The ID: ${id} does not exist in our database!`,
+          code: CODES_NOT.foundInputJson,
+          message: MESSAGES_NOT.foundInputJson,
           data: null,
         });
       });
 
       test("It must return a json input through an id.", async () => {
-        const jsonTest = await prisma.inputJson.findUnique({
-          where: {
-            name: mockJsonUploadBody.name,
-            content: mockJsonUploadBody.content,
-          },
-        });
+        const jsonTest = await InputService.getInputByName(
+          mockJsonUploadBody.name
+        );
 
         const response = await request(app).get(
-          `${PREFIX_JSON}/input/${jsonTest?.id}`
+          `${PREFIX_JSON}/${jsonTest?.id}`
         );
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({
-          message: "¡Input json successfully delivered!",
+          code: CODES_SUCCESS.getInputJson,
+          message: MESSAGES_SUCCESS.getInputJson,
           data: {
             inputJson: {
               id: jsonTest?.id,
@@ -217,34 +220,15 @@ describe("app.ts", () => {
         });
       });
     });
+  });
 
-    describe(`${PREFIX_JSON}/getContent`, () => {
-      const jsonData = {
-        name: "Diego",
-        age: 26,
-        profession: "Developer",
-      };
+  describe("Transform Route", () => {
+    const PREFIX_JSON = "/api/v1/transform";
 
-      const jsonString = JSON.stringify(jsonData);
-      const fileBuffer = Buffer.from(jsonString, "utf-8");
-
-      test("It should return the contents of the entered file.", async () => {
-        const response = await request(app)
-          .post(`${PREFIX_JSON}/getContent`)
-          .attach("file", fileBuffer, "file.json");
-
-        expect(response.status).toBe(200);
-        expect(response.body).toEqual({
-          message: "¡Successfully obtained the contents of the file!",
-          content: jsonString,
-        });
-      });
-    });
-
-    describe(`${PREFIX_JSON}/transform`, () => {
+    describe(`${PREFIX_JSON}`, () => {
       test("It should return that a valid id was not entered.", async () => {
         const response = await request(app)
-          .post(`${PREFIX_JSON}/transform`)
+          .post(`${PREFIX_JSON}`)
           .send({
             idInputJson: "asd",
             saveOutputJson: false,
@@ -256,14 +240,15 @@ describe("app.ts", () => {
 
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
-          message: "You must send a Valid Json Input ID!",
+          code: CODES_NOT.validInputJsonId,
+          message: MESSAGES_NOT.validInputJsonId,
           data: null,
         });
       });
 
       test("It must return that you must send a valid name if you want to save the output json.", async () => {
         const response = await request(app)
-          .post(`${PREFIX_JSON}/transform`)
+          .post(`${PREFIX_JSON}`)
           .send({
             idInputJson: 1,
             saveOutputJson: true,
@@ -275,15 +260,15 @@ describe("app.ts", () => {
 
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
-          message:
-            "If you want to save the model as json output you must enter a valid name!",
+          code: CODES_NOT.validName,
+          message: MESSAGES_NOT.validName,
           data: null,
         });
       });
 
       test("It should return that you must enter a valid content to save a json output.", async () => {
         const response = await request(app)
-          .post(`${PREFIX_JSON}/transform`)
+          .post(`${PREFIX_JSON}`)
           .send({
             idInputJson: 1,
             saveOutputJson: true,
@@ -294,7 +279,8 @@ describe("app.ts", () => {
 
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
-          message: "You must send a JSON with content to be able to transform!",
+          code: CODES_NOT.validContent,
+          message: MESSAGES_NOT.validContent,
           data: null,
         });
       });
@@ -303,7 +289,7 @@ describe("app.ts", () => {
         const id = 99;
 
         const response = await request(app)
-          .post(`${PREFIX_JSON}/transform`)
+          .post(`${PREFIX_JSON}`)
           .send({
             idInputJson: id,
             saveOutputJson: true,
@@ -313,23 +299,21 @@ describe("app.ts", () => {
           })
           .set("Content-Type", "application/json");
 
-        expect(response.status).toBe(400);
+        expect(response.status).toBe(404);
         expect(response.body).toEqual({
-          message: `The ID: ${id} does not exist in our database!`,
+          code: CODES_NOT.foundInputJson,
+          message: MESSAGES_NOT.foundInputJson,
           data: null,
         });
       });
 
       test("It must return the transformed file.", async () => {
-        const testInputJson = await prisma.inputJson.findUnique({
-          where: {
-            name: mockJsonUploadBody.name,
-            content: mockJsonUploadBody.content,
-          },
-        });
+        const testInputJson = await InputService.getInputByName(
+          mockJsonUploadBody.name
+        );
 
         const response = await request(app)
-          .post(`${PREFIX_JSON}/transform`)
+          .post(`${PREFIX_JSON}`)
           .send({
             idInputJson: testInputJson?.id,
             saveOutputJson: true,
@@ -343,26 +327,38 @@ describe("app.ts", () => {
         expect(response.headers["content-disposition"]).toContain("attachment");
       });
     });
+  });
 
-    describe(`${PREFIX_JSON}/outputs`, () => {
+  describe("Output Route", () => {
+    const PREFIX_JSON = "/api/v1/outputs";
+
+    describe(`${PREFIX_JSON}`, () => {
       test("It must return the list of output jsons.", async () => {
-        const response = await request(app).get(`${PREFIX_JSON}/outputs`);
+        const response = await request(app).get(`${PREFIX_JSON}`);
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({
-          message: "¡Output jsons successfully delivered!",
-          data: await prisma.outputJson.findMany(),
+          code: CODES_SUCCESS.getAllOutputJsons,
+          message: MESSAGES_SUCCESS.getAllOutputJsons,
+          data: expect.arrayContaining([
+            expect.objectContaining({
+              id: expect.any(Number),
+              name: expect.any(String),
+              transformationModel: expect.anything(),
+            }),
+          ]),
         });
       });
     });
 
-    describe(`${PREFIX_JSON}/output/:id`, () => {
+    describe(`${PREFIX_JSON}/:id`, () => {
       test("It must return a valid ID to be entered.", async () => {
-        const response = await request(app).get(`${PREFIX_JSON}/output/asd`);
+        const response = await request(app).get(`${PREFIX_JSON}/asd`);
 
         expect(response.status).toBe(400);
         expect(response.body).toEqual({
-          message: "You must send a Valid Json Output ID!",
+          code: CODES_NOT.validOutputJsonId,
+          message: MESSAGES_NOT.validOutputJsonId,
           data: null,
         });
       });
@@ -370,35 +366,34 @@ describe("app.ts", () => {
       test("It should return that a test with the entered id was not found.", async () => {
         const id = 99;
 
-        const response = await request(app).get(`${PREFIX_JSON}/output/${id}`);
+        const response = await request(app).get(`${PREFIX_JSON}/${id}`);
 
-        expect(response.status).toBe(400);
+        expect(response.status).toBe(404);
         expect(response.body).toEqual({
-          message: `The ID: ${id} does not exist in our database!`,
+          code: CODES_NOT.foundOutputJson,
+          message: MESSAGES_NOT.foundOutputJson,
           data: null,
         });
       });
 
       test("It must return a json output through an id.", async () => {
-        const jsonTest = await prisma.outputJson.findUnique({
-          where: {
-            name: mockJsonTransformBody.outputJsonNameToSave,
-            model: mockJsonTransformBody.contentJsonToTransform,
-          },
-        });
+        const jsonTest = await OutputService.getOutputByName(
+          mockJsonTransformBody.outputJsonNameToSave
+        );
 
         const response = await request(app).get(
-          `${PREFIX_JSON}/output/${jsonTest?.id}`
+          `${PREFIX_JSON}/${jsonTest?.id}`
         );
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual({
-          message: "¡Output json successfully delivered!",
+          code: CODES_SUCCESS.getOutputJson,
+          message: MESSAGES_SUCCESS.getOutputJson,
           data: {
             outputJson: {
               id: jsonTest?.id,
               name: jsonTest?.name,
-              model: jsonTest?.model,
+              transformationModel: jsonTest?.transformationModel,
             },
           },
         });

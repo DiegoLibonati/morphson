@@ -1,7 +1,7 @@
 import { execSync } from "child_process";
 
-module.exports = async () => {
-  console.log("Stopping db container...");
+export default async () => {
+  console.log("🛑 Stopping test database container...");
   try {
     execSync(
       `docker-compose -f ../dev.docker-compose.yaml down -v --remove-orphans`,
@@ -9,8 +9,8 @@ module.exports = async () => {
         stdio: "inherit",
       }
     );
-    console.log("db container stopped!");
+    console.log("✅ DB container stopped!");
   } catch (error) {
-    console.error("Error stopping db container:", error);
+    console.error("❌ Error stopping db container:", error);
   }
 };

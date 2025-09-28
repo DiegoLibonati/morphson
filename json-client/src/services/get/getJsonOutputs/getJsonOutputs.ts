@@ -1,5 +1,5 @@
-import { jsonApi } from "@/src/services/axios";
+import { outputApi } from "@src/services/axios";
 
 export const getJsonOutputs = () => {
-  return jsonApi.get("/json/outputs");
+  return outputApi.get("/");
 };

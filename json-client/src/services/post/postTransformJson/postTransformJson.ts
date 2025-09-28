@@ -1,4 +1,4 @@
-import { jsonApi } from "@/src/services/export";
+import { transformApi } from "@src/services/export";
 
 type Body = {
   idInputJson: string;
@@ -8,5 +8,5 @@ type Body = {
 };
 
 export const postTransformJson = (body: Body) => {
-  return jsonApi.post("/json/transform", body, { responseType: "blob" });
+  return transformApi.post("/", body, { responseType: "blob" });
 };

@@ -1,16 +1,11 @@
 import { screen, render } from "@testing-library/react";
 import user from "@testing-library/user-event";
 
-import { InputCheck } from "./InputCheck";
+import { InputCheck } from "@src/components/Inputs/InputCheck/InputCheck";
+import { InputCheckProps } from "@src/entities/props";
 
 type RenderComponent = {
-  props: {
-    id: string;
-    label: string;
-    name: string;
-    value: string;
-    mockOnChange: jest.Mock;
-  };
+  props: { onChange: jest.Mock } & InputCheckProps;
   container: HTMLElement;
 };
 
@@ -20,7 +15,7 @@ const renderComponent = (): RenderComponent => {
     label: "pepiño",
     name: "input",
     value: "input",
-    mockOnChange: jest.fn(),
+    onChange: jest.fn(),
   };
 
   const { container } = render(
@@ -29,7 +24,7 @@ const renderComponent = (): RenderComponent => {
       label={props.label}
       name={props.name}
       value={props.value}
-      onChange={props.mockOnChange}
+      onChange={props.onChange}
     ></InputCheck>
   );
 
@@ -65,7 +60,7 @@ describe("InputCheck.tsx", () => {
 
       await user.click(input);
 
-      expect(props.mockOnChange).toHaveBeenCalledTimes(1);
+      expect(props.onChange).toHaveBeenCalledTimes(1);
     });
   });
 });

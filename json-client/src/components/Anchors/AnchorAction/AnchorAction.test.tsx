@@ -2,15 +2,12 @@ import { screen, render } from "@testing-library/react";
 
 import { MemoryRouter } from "react-router-dom";
 
-import { AnchorAction } from "./AnchorAction";
+import { AnchorActionProps } from "@src/entities/props";
+
+import { AnchorAction } from "@src/components/Anchors/AnchorAction/AnchorAction";
 
 type RenderComponent = {
-  props: {
-    to: string;
-    ariaLabel: string;
-    noMark: boolean;
-    className: string;
-  };
+  props: AnchorActionProps;
   container: HTMLElement;
 };
 
@@ -86,7 +83,7 @@ describe("AnchorAction.tsx", () => {
 
       expect(link).toBeInTheDocument();
       expect(link).toHaveTextContent("Cuack");
-      expect(link).toHaveClass(props.className);
+      expect(link).toHaveClass(props.className!);
     });
   });
 });

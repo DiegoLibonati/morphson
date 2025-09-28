@@ -1,6 +1,6 @@
 import { screen, render } from "@testing-library/react";
 
-import { Modal } from "./Modal";
+import { Modal } from "@src/components/Modals/Modal/Modal";
 
 type RenderComponent = {
   container: HTMLElement;

@@ -1,18 +1,11 @@
 import { screen, render } from "@testing-library/react";
 import user from "@testing-library/user-event";
 
-import { InputField } from "./InputField";
+import { InputField } from "@src/components/Inputs/InputField/InputField";
+import { InputFieldProps } from "@src/entities/props";
 
 type RenderComponent = {
-  props: {
-    id: string;
-    label: string;
-    name: string;
-    placeholder: string;
-    value: string;
-    className: string;
-    mockOnChange: jest.Mock;
-  };
+  props: { onChange: jest.Mock } & InputFieldProps;
   container: HTMLElement;
 };
 
@@ -24,7 +17,7 @@ const renderComponent = (): RenderComponent => {
     placeholder: "Hi",
     value: "input",
     className: "hi",
-    mockOnChange: jest.fn(),
+    onChange: jest.fn(),
   };
 
   const { container } = render(
@@ -35,7 +28,7 @@ const renderComponent = (): RenderComponent => {
       name={props.name}
       value={props.value}
       className={props.className}
-      onChange={props.mockOnChange}
+      onChange={props.onChange}
     ></InputField>
   );
 
@@ -63,7 +56,7 @@ describe("InputField.tsx", () => {
       expect(input).toHaveAttribute("placeholder", props.placeholder);
       expect(input).toHaveAttribute("type", "text");
       expect(input).toHaveValue(props.value);
-      expect(input).toHaveClass(props.className);
+      expect(input).toHaveClass(props.className!);
       expect(label).toBeInTheDocument();
       expect(label).toHaveAttribute("for", props.id);
     });
@@ -80,7 +73,7 @@ describe("InputField.tsx", () => {
       await user.click(input);
       await user.keyboard(value);
 
-      expect(props.mockOnChange).toHaveBeenCalledTimes(1);
+      expect(props.onChange).toHaveBeenCalledTimes(1);
     });
   });
 });

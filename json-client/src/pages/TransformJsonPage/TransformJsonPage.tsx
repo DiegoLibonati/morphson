@@ -1,22 +1,26 @@
 import React, { useEffect } from "react";
 import axios from "axios";
 
-import { LoaderSpinner } from "@/src/components/Loaders/export";
-import { SelectNormal, SelectOption } from "@/src/components/Selects/export";
-import { InputCheck, InputField } from "@/src/components/Inputs/export";
-import { ButtonSubmit } from "@/src/components/Buttons/export";
+import { LoaderSpinner } from "@src/components/Loaders/export";
+import { SelectNormal, SelectOption } from "@src/components/Selects/export";
+import { InputCheck, InputField } from "@src/components/Inputs/export";
+import { ButtonSubmit } from "@src/components/Buttons/export";
 
-import { useJSONContext, useModalContext } from "@/src/contexts/export";
+import {
+  useEditorContext,
+  useJSONContext,
+  useModalContext,
+} from "@src/contexts/export";
 import {
   getJsonInput,
   getJsonInputs,
   getJsonOutput,
   getJsonOutputs,
   postTransformJson,
-} from "@/src/services/export";
-import { FormEditorLayout } from "@/src/layouts/export";
-import { useForm } from "@/src/hooks/export";
-import { getContentFromBlob } from "@/src/helpers/export";
+} from "@src/services/export";
+import { FormEditorLayout } from "@src/layouts/export";
+import { useForm } from "@src/hooks/export";
+import { getContentFromBlob, safeJsonParse } from "@src/helpers/export";
 
 type FormData = {
   idInputJson: string | "not_selected";
@@ -38,6 +42,7 @@ export const TransformJsonPage = (): JSX.Element => {
     handleUpdateOutputJson,
   } = useJSONContext();
   const { handleSetModal } = useModalContext();
+  const { text, handleSetText } = useEditorContext();
 
   const { formState, onInputChange, onSelectChange, onCheckboxChange } =
     useForm<FormData>({
@@ -48,6 +53,8 @@ export const TransformJsonPage = (): JSX.Element => {
         outputJsonNameToSave: "",
       },
     });
+
+  const parsedText = safeJsonParse(text) ? safeJsonParse(text) : text;
 
   const handleGetJsons = async (): Promise<void> => {
     try {
@@ -95,7 +102,9 @@ export const TransformJsonPage = (): JSX.Element => {
         name: data.inputJson.name,
         content: data.inputJson.content,
         keys: data.inputJson.keys,
-        file: null,
+        keysAndValues: data.inputJson.keysAndValues,
+        createdAt: data.inputJson.createdAt,
+        updatedAt: data.inputJson.updatedAt,
       });
     } catch (e) {
       console.log(e);
@@ -123,10 +132,15 @@ export const TransformJsonPage = (): JSX.Element => {
         message: "Successfully loaded the output json!",
       });
 
+      handleSetText(
+        JSON.stringify(data.outputJson.transformationModel, null, 2)
+      );
       return handleUpdateOutputJson({
         id: data.outputJson.id,
         name: data.outputJson.name,
-        model: data.outputJson.model,
+        transformationModel: data.outputJson.transformationModel,
+        createdAt: data.outputJson.createdAt,
+        updatedAt: data.outputJson.updatedAt,
       });
     } catch (e) {
       console.log(e);
@@ -152,13 +166,13 @@ export const TransformJsonPage = (): JSX.Element => {
       const idInputJson = formState.idInputJson;
       const saveOutputJson = formState.saveOutputJson;
       const outputJsonNameToSave = formState.outputJsonNameToSave.trim();
-      const contentJsonToTransform = outputJson.model.trim();
+      const contentJsonToTransform = outputJson.transformationModel;
 
       const body = {
         idInputJson: idInputJson === "not_selected" ? "" : idInputJson,
         saveOutputJson: saveOutputJson,
         outputJsonNameToSave: outputJsonNameToSave,
-        contentJsonToTransform: contentJsonToTransform,
+        contentJsonToTransform: JSON.stringify(contentJsonToTransform),
       };
 
       const response = await postTransformJson(body);
@@ -220,7 +234,7 @@ export const TransformJsonPage = (): JSX.Element => {
       return;
 
     if (
-      inputJson.id != formState.idInputJson &&
+      String(inputJson.id) !== formState.idInputJson &&
       formState.idInputJson !== "not_selected"
     ) {
       handleGetInputJson(formState.idInputJson);
@@ -228,7 +242,7 @@ export const TransformJsonPage = (): JSX.Element => {
     }
 
     if (
-      outputJson.id != formState.idOutputJson &&
+      String(outputJson.id) !== formState.idOutputJson &&
       formState.idOutputJson !== "not_selected"
     ) {
       handleGetOutputJson(formState.idOutputJson);
@@ -254,7 +268,7 @@ export const TransformJsonPage = (): JSX.Element => {
         <SelectOption value="not_selected">Select an Input Json</SelectOption>
         {jsons.inputJsons.map((inputJson) => {
           return (
-            <SelectOption key={inputJson.id} value={inputJson.id}>
+            <SelectOption key={inputJson.id} value={String(inputJson.id)}>
               {inputJson.name}
             </SelectOption>
           );
@@ -275,7 +289,7 @@ export const TransformJsonPage = (): JSX.Element => {
           </SelectOption>
           {jsons.outputJsons.map((outputJson) => {
             return (
-              <SelectOption key={outputJson.id} value={outputJson.id}>
+              <SelectOption key={outputJson.id} value={String(outputJson.id)}>
                 {outputJson.name}
               </SelectOption>
             );
@@ -306,9 +320,13 @@ export const TransformJsonPage = (): JSX.Element => {
       <ButtonSubmit
         ariaLabel="Submit Form Transform Json"
         disabled={
-          (formState.idInputJson === "not_selected" && !outputJson.model) ||
+          (formState.idInputJson === "not_selected" &&
+            !outputJson.transformationModel) ||
           (formState.saveOutputJson &&
-            (!formState.outputJsonNameToSave || !outputJson.model))
+            (!formState.outputJsonNameToSave ||
+              !outputJson.transformationModel)) ||
+          JSON.stringify(parsedText) !==
+            JSON.stringify(outputJson.transformationModel)
         }
         className="lg:bg-primary"
       >

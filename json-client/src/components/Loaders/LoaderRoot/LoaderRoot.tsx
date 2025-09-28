@@ -1,6 +1,4 @@
-import { GeneralProps } from "@/src/entities/entities";
-
-interface LoaderRootProps extends GeneralProps {}
+import { LoaderRootProps } from "@src/entities/props";
 
 export const LoaderRoot = ({
   className,

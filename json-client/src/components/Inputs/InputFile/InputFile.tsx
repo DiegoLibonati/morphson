@@ -1,18 +1,6 @@
-import { GeneralProps } from "@/src/entities/entities.d";
+import { InputFileProps } from "@src/entities/props";
 
-import { InputWithLabel } from "@/src/components/Inputs/export";
-
-interface InputFileProps extends GeneralProps {
-  id: string;
-  label: string;
-  buttonLabel: string;
-  emptyLabel: string;
-  name: string;
-  value: string;
-  accept?: string;
-  spanClassName?: string;
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
-}
+import { InputWithLabel } from "@src/components/Inputs/export";
 
 export const InputFile = ({
   id,

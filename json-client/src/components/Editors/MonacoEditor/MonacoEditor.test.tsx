@@ -1,21 +1,13 @@
 import { render } from "@testing-library/react";
 
-import { editor } from "monaco-editor";
-
-import { MonacoEditor } from "./MonacoEditor";
+import { MonacoEditor } from "@src/components/Editors/MonacoEditor/MonacoEditor";
+import { MonacoEditorProps } from "@src/entities/props";
 
 type RenderComponent = {
   props: {
-    language: string;
-    defaultValue: string;
-    value: string;
-    theme: string;
-    height: string;
-    options: editor.IStandaloneEditorConstructionOptions;
-    className: string;
-    mockOnChange: jest.Mock;
-    mockOnMount: jest.Mock;
-  };
+    onChange: jest.Mock;
+    onMount: jest.Mock;
+  } & MonacoEditorProps;
   container: HTMLElement;
 };
 
@@ -28,8 +20,8 @@ const renderComponent = (): RenderComponent => {
     height: "100vh",
     options: {},
     className: "monaco-editor",
-    mockOnChange: jest.fn(),
-    mockOnMount: jest.fn(),
+    onChange: jest.fn(),
+    onMount: jest.fn(),
   };
 
   const { container } = render(
@@ -41,8 +33,8 @@ const renderComponent = (): RenderComponent => {
       options={props.options}
       height={props.height}
       className={props.className}
-      onChange={props.mockOnChange}
-      onMount={props.mockOnMount}
+      onChange={props.onChange}
+      onMount={props.onMount}
     ></MonacoEditor>
   );
 

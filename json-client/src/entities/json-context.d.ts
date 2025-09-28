@@ -1,4 +1,4 @@
-import { InputJson, OutputJson } from "@/src/entities/entities.d";
+import { InputJson, OutputJson } from "@src/entities/entities.d";
 
 export type JSONState = {
   inputJson: InputJson;
@@ -13,21 +13,11 @@ export type JSONState = {
 export type JSONAction =
   | {
       type: "INPUT_JSON_UPDATE";
-      payload: {
-        id: string;
-        name: string;
-        file: File;
-        content: string;
-        keys: string[];
-      };
-    }
-  | {
-      type: "INPUT_JSON_FILE_UPDATE";
-      payload: { file: File };
+      payload: Pick<InputJson, "id" | "name", "content", "keys">;
     }
   | {
       type: "INPUT_JSON_CONTENT_UPDATE";
-      payload: { content: string };
+      payload: Pick<InputJson, "content">;
     }
   | {
       type: "CONTEXT_CLEAR";
@@ -54,15 +44,11 @@ export type JSONAction =
     }
   | {
       type: "OUTPUT_JSON_UPDATE";
-      payload: {
-        id: string;
-        name: string;
-        model: string;
-      };
+      payload: Pick<OutputJson, "id" | "name" | "transformationModel">;
     }
   | {
       type: "OUTPUT_JSON_MODEL_UPDATE";
-      payload: { model: string };
+      payload: Pick<OutputJson, "transformationModel">;
     }
   | {
       type: "LOADING";
@@ -78,13 +64,20 @@ export type JSONContext = {
   };
   loading: boolean;
   handleUpdateInputJson: (inputJson: InputJson) => void;
-  handleInputJsonContentUpdate: (inputContent: string) => void;
-  handleInputJsonFileUpdate: (inputFile: File) => void;
+  handleInputJsonContentUpdate: (
+    inputContent: Pick<InputJson, "content">
+  ) => void;
   handleInputJsons: (inputJsons: InputJson[]) => void;
   handleOutputJsons: (outputJsons: OutputJson[]) => void;
   handleFillJsons: (inputJsons: InputJson[], outputJsons: OutputJson[]) => void;
   handleUpdateOutputJson: (outputJson: OutputJson) => void;
-  handleOutputJsonModelUpdate: (outputContent: string) => void;
+  handleOutputJsonModelUpdate: (
+    outputContent: Pick<OutputJson, "transformationModel">
+  ) => void;
   handleLoading: (loading: boolean) => void;
   handleClearJson: () => void;
 };
+
+export interface JSONProviderProps {
+  children: React.ReactNode;
+}

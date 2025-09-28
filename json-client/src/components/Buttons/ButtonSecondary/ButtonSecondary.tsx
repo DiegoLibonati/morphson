@@ -1,9 +1,4 @@
-import { GeneralProps } from "@/src/entities/entities";
-
-interface ButtonSecondaryProps extends GeneralProps {
-  ariaLabel: string;
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
-}
+import { ButtonSecondaryProps } from "@src/entities/props";
 
 export const ButtonSecondary = ({
   ariaLabel,

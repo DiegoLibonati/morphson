@@ -1,22 +1,7 @@
 import { ChangeEvent, useState } from "react";
 
-interface UseFormProps<T> {
-  initialValueForm: T;
-}
-
-type UseForm<T> = {
-  formState: T;
-  onInputChange: React.ChangeEventHandler<HTMLInputElement>;
-  onInputFileChange: React.ChangeEventHandler<HTMLInputElement>;
-  onCheckboxChange: React.ChangeEventHandler<HTMLInputElement>;
-  onSelectChange: React.ChangeEventHandler<HTMLSelectElement>;
-  onMultiSelectChange: (
-    e: ChangeEvent<HTMLSelectElement>,
-    key: keyof T
-  ) => void;
-  onResetForm: () => void;
-  onResetSpecificKeys: (keys: (keyof T)[]) => void;
-};
+import { UseForm } from "@src/entities/hooks";
+import { UseFormProps } from "@src/entities/props";
 
 export const useForm = <T extends object>({
   initialValueForm,

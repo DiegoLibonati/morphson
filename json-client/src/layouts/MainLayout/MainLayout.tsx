@@ -1,6 +1,4 @@
-import { GeneralProps } from "@/src/entities/entities.d";
-
-interface MainLayoutProps extends GeneralProps {}
+import { MainLayoutProps } from "@src/entities/props";
 
 export const MainLayout = ({
   className,

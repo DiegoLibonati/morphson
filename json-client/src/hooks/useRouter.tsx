@@ -1,21 +1,7 @@
-import {
-  Params,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
-import { Resolution } from "@/src/entities/entities";
-
-type UseRouter = {
-  params: Readonly<Params<string>>;
-  searchParams: URLSearchParams;
-  handleNavigateToHome: () => void;
-  handleNavigateToResolution: (
-    idResolution: Resolution,
-    params: string
-  ) => void;
-};
+import { Resolution } from "@src/entities/entities";
+import { UseRouter } from "@src/entities/hooks";
 
 export const useRouter = (): UseRouter => {
   const params = useParams();

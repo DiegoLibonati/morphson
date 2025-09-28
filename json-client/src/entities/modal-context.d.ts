@@ -1,4 +1,4 @@
-import { Modal } from "@/src/entities/entities.d";
+import { Modal } from "@src/entities/entities.d";
 
 export type ModalState = {
   modal: Modal;
@@ -14,3 +14,7 @@ export type ModalContext = {
   handleSetModal: (modal: Modal) => void;
   handleSetModalClose: () => void;
 };
+
+export interface ModalProviderProps {
+  children: React.ReactNode;
+}

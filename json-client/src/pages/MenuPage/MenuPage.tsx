@@ -1,5 +1,5 @@
-import { SectionActions } from "@/src/containers/export";
-import { MainLayout } from "@/src/layouts/export";
+import { SectionActions } from "@src/containers/export";
+import { MainLayout } from "@src/layouts/export";
 
 export const MenuPage = (): JSX.Element => {
   return (

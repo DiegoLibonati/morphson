@@ -1,14 +1,19 @@
 import { useEffect } from "react";
 import axios from "axios";
 
-import { LoaderSpinner } from "@/src/components/Loaders/export";
-import { ButtonSubmit } from "@/src/components/Buttons/export";
-import { InputField, InputFile } from "@/src/components/Inputs/export";
+import { LoaderSpinner } from "@src/components/Loaders/export";
+import { ButtonSubmit } from "@src/components/Buttons/export";
+import { InputField, InputFile } from "@src/components/Inputs/export";
 
-import { useJSONContext, useModalContext } from "@/src/contexts/export";
-import { FormEditorLayout } from "@/src/layouts/export";
-import { useForm, useRouter } from "@/src/hooks/export";
-import { postGetFileContent, postUploadJson } from "@/src/services/export";
+import {
+  useEditorContext,
+  useJSONContext,
+  useModalContext,
+} from "@src/contexts/export";
+import { FormEditorLayout } from "@src/layouts/export";
+import { useForm, useRouter } from "@src/hooks/export";
+import { postGetFileContent, postUploadJson } from "@src/services/export";
+import { safeJsonParse } from "@src/helpers/export";
 
 type FormData = {
   jsonName: string;
@@ -20,11 +25,11 @@ export const LoadJsonPage = (): JSX.Element => {
     loading,
     inputJson,
     handleClearJson,
-    handleInputJsonContentUpdate,
     handleUpdateInputJson,
     handleLoading,
   } = useJSONContext();
   const { handleSetModal } = useModalContext();
+  const { text, handleSetText } = useEditorContext();
 
   const { handleNavigateToResolution } = useRouter();
   const { formState, onInputChange, onInputFileChange, onResetForm } =
@@ -34,6 +39,8 @@ export const LoadJsonPage = (): JSX.Element => {
         jsonFile: null,
       },
     });
+
+  const parsedText = safeJsonParse(text) ? safeJsonParse(text) : text;
 
   const onSubmitForm: React.FormEventHandler<HTMLFormElement> = async (
     e
@@ -56,20 +63,22 @@ export const LoadJsonPage = (): JSX.Element => {
       }
 
       const body = {
-        "name": name,
-        "content": content
-      }
+        name: name,
+        content: JSON.stringify(content),
+      };
 
       const response = await postUploadJson(body);
 
       const data = response.data.data;
 
       handleUpdateInputJson({
-        id: data.json.id,
-        name: name,
-        file: file,
-        content: content,
-        keys: [],
+        id: data.inputJson.id,
+        name: data.inputJson.name,
+        content: data.inputJson.content,
+        keys: data.inputJson.keys,
+        keysAndValues: data.inputJson.keysAndValues,
+        createdAt: data.inputJson.createdAt,
+        updatedAt: data.inputJson.updatedAt,
       });
       handleLoading(false);
       return handleNavigateToResolution("uploaded", `name=${name}`);
@@ -97,7 +106,7 @@ export const LoadJsonPage = (): JSX.Element => {
 
       const data = await response.data;
 
-      return handleInputJsonContentUpdate(data.content);
+      handleSetText(data.content);
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {
         handleSetModal({ message: e.response.data.message, open: true });
@@ -154,7 +163,10 @@ export const LoadJsonPage = (): JSX.Element => {
       <ButtonSubmit
         ariaLabel="Submit Form Load Json"
         className="lg:bg-primary"
-        disabled={!formState.jsonName || !formState.jsonFile}
+        disabled={
+          !formState.jsonName ||
+          JSON.stringify(parsedText) !== JSON.stringify(inputJson.content)
+        }
       >
         Upload JSON
       </ButtonSubmit>

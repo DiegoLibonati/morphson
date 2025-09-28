@@ -1,5 +1,5 @@
-import { jsonApi } from "@/src/services/export";
+import { inputApi } from "@src/services/export";
 
 export const postUploadJson = (formData: { name: string; content: string }) => {
-  return jsonApi.post("/json/upload", formData);
+  return inputApi.post("/upload", formData);
 };

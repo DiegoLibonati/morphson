@@ -2,7 +2,7 @@ import { screen, render } from "@testing-library/react";
 
 import { MemoryRouter } from "react-router-dom";
 
-import { SectionJsonUploaded } from "./SectionJsonUploaded";
+import { SectionJsonUploaded } from "@src/containers/ResolutionPage/Sections/SectionJsonUploaded/SectionJsonUploaded";
 
 type RenderComponent = {
   props: {

@@ -1,2 +1,2 @@
-export * from "@/src/hooks/useForm";
-export * from "@/src/hooks/useRouter";
+export * from "@src/hooks/useForm";
+export * from "@src/hooks/useRouter";

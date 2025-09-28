@@ -1,20 +1,11 @@
 import { screen, render } from "@testing-library/react";
 
-import { InputFile } from "./InputFile";
+import { InputFileProps } from "@src/entities/props";
+
+import { InputFile } from "@src/components/Inputs/InputFile/InputFile";
 
 type RenderComponent = {
-  props: {
-    id: string;
-    label: string;
-    buttonLabel: string;
-    emptyLabel: string;
-    name: string;
-    value: string;
-    accept: string;
-    className: string;
-    spanClassName: string;
-    mockOnChange: jest.Mock;
-  };
+  props: { onChange: jest.Mock } & InputFileProps;
   container: HTMLElement;
 };
 
@@ -33,7 +24,7 @@ const renderComponent = ({ value }: RenderComponentProps): RenderComponent => {
     accept: "accept",
     className: "class",
     spanClassName: "spanclass",
-    mockOnChange: jest.fn(),
+    onChange: jest.fn(),
   };
 
   const { container } = render(
@@ -47,7 +38,7 @@ const renderComponent = ({ value }: RenderComponentProps): RenderComponent => {
       accept={props.accept}
       className={props.className}
       spanClassName={props.spanClassName}
-      onChange={props.mockOnChange}
+      onChange={props.onChange}
     ></InputFile>
   );
 
@@ -122,7 +113,7 @@ describe("InputFile.tsx", () => {
         const message = screen.getByText(value);
 
         expect(message).toBeInTheDocument();
-        expect(message).toHaveClass(props.spanClassName);
+        expect(message).toHaveClass(props.spanClassName!);
       });
 
       test("It must render the element with the class entered by props.", () => {
@@ -133,7 +124,7 @@ describe("InputFile.tsx", () => {
         ) as HTMLDivElement;
 
         expect(root).toBeInTheDocument();
-        expect(root).toHaveClass(props.className);
+        expect(root).toHaveClass(props.className!);
       });
     });
   });

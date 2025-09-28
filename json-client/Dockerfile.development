@@ -1,4 +1,4 @@
-FROM node:21.1.0-alpine3.18
+FROM node:20.19.0-alpine
 
 WORKDIR /home/app
 
@@ -6,7 +6,7 @@ COPY . .
 
 RUN rm -rf node_modules && rm -rf yarn.lock
 
-RUN yarn install --ignore-engines
+RUN yarn install
 
 EXPOSE 5173
 
