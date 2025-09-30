@@ -157,7 +157,7 @@ describe("LoadJsonPage.tsx", () => {
     const mockRequestPostJsonUpload = { inputJson: mockInputJsonState };
 
     mockFile.onPost("/content").reply(200, { data: mockInputJsonState });
-    mockInput.onPost("/upload").reply(200, { data: mockRequestPostJsonUpload });
+    mockInput.onPost("/").reply(200, { data: mockRequestPostJsonUpload });
 
     beforeEach(() => {
       jest.clearAllMocks();

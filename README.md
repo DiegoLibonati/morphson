@@ -220,7 +220,7 @@ BASE_URL=
 
 - **Endpoint Name**: Upload Input Json
 - **Endpoint Method**: POST
-- **Endpoint Prefix**: /api/v1/inputs/upload
+- **Endpoint Prefix**: /api/v1/inputs
 - **Endpoint Fn**: This endpoint is used to upload a Json Input and then use its values to translate or create a new Json.
 - **Endpoint Body**:
 

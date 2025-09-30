@@ -74,7 +74,7 @@ describe("app.ts", () => {
 
       test("It should return the contents of the entered file.", async () => {
         const response = await request(app)
-          .get(`${PREFIX_JSON}/content`)
+          .post(`${PREFIX_JSON}/content`)
           .attach("file", fileBuffer, "file.json");
 
         expect(response.status).toBe(200);
@@ -89,64 +89,6 @@ describe("app.ts", () => {
 
   describe("Input Route", () => {
     const PREFIX_JSON = "/api/v1/inputs";
-
-    describe(`${PREFIX_JSON}/upload`, () => {
-      test("It must return that a valid name was not entered.", async () => {
-        const response = await request(app)
-          .post(`${PREFIX_JSON}/upload`)
-          .send({ name: "", content: mockJsonUploadBody.content })
-          .set("Content-Type", "application/json");
-
-        expect(response.status).toBe(400);
-        expect(response.body).toEqual({
-          code: CODES_NOT.validName,
-          message: MESSAGES_NOT.validName,
-        });
-      });
-
-      test("It should return that no valid content was entered.", async () => {
-        const response = await request(app)
-          .post(`${PREFIX_JSON}/upload`)
-          .send({ name: mockJsonUploadBody.name, content: "{}" })
-          .set("Content-Type", "application/json");
-
-        expect(response.status).toBe(400);
-        expect(response.body).toEqual({
-          code: CODES_NOT.validContent,
-          message: MESSAGES_NOT.validContent,
-          data: null,
-        });
-      });
-
-      test("It must return the input json uploaded.", async () => {
-        const content = JSON.parse(mockJsonUploadBody.content);
-
-        const keysAndValues = await getPeers(content);
-        const keys = Object.keys(keysAndValues);
-
-        const response = await request(app)
-          .post(`${PREFIX_JSON}/upload`)
-          .send(mockJsonUploadBody)
-          .set("Content-Type", "application/json");
-
-        expect(response.status).toBe(201);
-        expect(response.body).toEqual({
-          code: CODES_SUCCESS.inputJsonUploaded,
-          message: MESSAGES_SUCCESS.inputJsonUploaded,
-          data: {
-            inputJson: {
-              id: expect.any(Number),
-              name: mockJsonUploadBody.name,
-              content: content,
-              keys: keys,
-              keysAndValues: keysAndValues,
-              createdAt: expect.any(String),
-              updatedAt: expect.any(String),
-            },
-          },
-        });
-      });
-    });
 
     describe(`${PREFIX_JSON}`, () => {
       test("It must return the list of input jsons.", async () => {
@@ -168,6 +110,62 @@ describe("app.ts", () => {
             ]),
           })
         );
+      });
+
+      test("It must return that a valid name was not entered.", async () => {
+        const response = await request(app)
+          .post(`${PREFIX_JSON}`)
+          .send({ name: "", content: mockJsonUploadBody.content })
+          .set("Content-Type", "application/json");
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+          code: CODES_NOT.validName,
+          message: MESSAGES_NOT.validName,
+        });
+      });
+
+      test("It should return that no valid content was entered.", async () => {
+        const response = await request(app)
+          .post(`${PREFIX_JSON}`)
+          .send({ name: mockJsonUploadBody.name, content: "{}" })
+          .set("Content-Type", "application/json");
+
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+          code: CODES_NOT.validContent,
+          message: MESSAGES_NOT.validContent,
+          data: null,
+        });
+      });
+
+      test("It must return the input json uploaded.", async () => {
+        const content = JSON.parse(mockJsonUploadBody.content);
+
+        const keysAndValues = await getPeers(content);
+        const keys = Object.keys(keysAndValues);
+
+        const response = await request(app)
+          .post(`${PREFIX_JSON}`)
+          .send(mockJsonUploadBody)
+          .set("Content-Type", "application/json");
+
+        expect(response.status).toBe(201);
+        expect(response.body).toEqual({
+          code: CODES_SUCCESS.inputJsonUploaded,
+          message: MESSAGES_SUCCESS.inputJsonUploaded,
+          data: {
+            inputJson: {
+              id: expect.any(Number),
+              name: mockJsonUploadBody.name,
+              content: content,
+              keys: keys,
+              keysAndValues: keysAndValues,
+              createdAt: expect.any(String),
+              updatedAt: expect.any(String),
+            },
+          },
+        });
       });
     });
 
@@ -215,6 +213,9 @@ describe("app.ts", () => {
               name: jsonTest?.name,
               content: jsonTest?.content,
               keys: jsonTest?.keys,
+              keysAndValues: jsonTest?.keysAndValues,
+              createdAt: expect.any(String),
+              updatedAt: expect.any(String),
             },
           },
         });
@@ -394,6 +395,8 @@ describe("app.ts", () => {
               id: jsonTest?.id,
               name: jsonTest?.name,
               transformationModel: jsonTest?.transformationModel,
+              createdAt: expect.any(String),
+              updatedAt: expect.any(String),
             },
           },
         });
