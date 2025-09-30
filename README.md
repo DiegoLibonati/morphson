@@ -151,8 +151,6 @@ AUTHOR: Diego Libonati
 
 ### **Env Keys**
 
-NOTE: You must create two .env, one for the client called `client.env` and one for the api called `api.env` both inside the json-config folder.
-
 1. `VITE_API_URL`: Refers to the API URI
 2. `VITE_API_PREFIX`: Refers to the prefix where API endpoints are used.
 3. `PORT`: Refers to the port on which the API is exposed.
