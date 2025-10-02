@@ -9,11 +9,13 @@ services:
     env_file:
       - ./json-client/.env.development
     volumes:
-      - ./json-client/src:/home/app/src
+      - ./json-client:/home/app
+      - /home/app/node_modules
     networks:
       - net-json-transformer
     depends_on:
       - api
+    tty: true
 
   api:
     build:

@@ -1,19 +1,17 @@
 import axios from "axios";
 
-import { APP_CONFIG } from "@src/constants/config";
-
 export const transformApi = axios.create({
-  baseURL: `${APP_CONFIG.API_PREFIX}/transform`,
+  baseURL: `/api/v1/transform`,
 });
 
 export const fileApi = axios.create({
-  baseURL: `${APP_CONFIG.API_PREFIX}/file`,
+  baseURL: `/api/v1/file`,
 });
 
 export const inputApi = axios.create({
-  baseURL: `${APP_CONFIG.API_PREFIX}/inputs`,
+  baseURL: `/api/v1/inputs`,
 });
 
 export const outputApi = axios.create({
-  baseURL: `${APP_CONFIG.API_PREFIX}/outputs`,
+  baseURL: `/api/v1/outputs`,
 });

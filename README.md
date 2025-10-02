@@ -152,18 +152,16 @@ AUTHOR: Diego Libonati
 ### **Env Keys**
 
 1. `VITE_API_URL`: Refers to the API URI
-2. `VITE_API_PREFIX`: Refers to the prefix where API endpoints are used.
-3. `PORT`: Refers to the port on which the API is exposed.
-4. `DATABASE_URL`: Refers to the database connection URI
-5. `NODE_ENV` is the key to distinguish the environment in which the app is running.
-6. `BASE_URL` key refers to the URL where the app is hosted.
+2. `PORT`: Refers to the port on which the API is exposed.
+3. `DATABASE_URL`: Refers to the database connection URI
+4. `NODE_ENV` is the key to distinguish the environment in which the app is running.
+5. `BASE_URL` key refers to the URL where the app is hosted.
 
 ```ts
-# Frontend Envs -> client.env
+# Frontend Envs
 VITE_API_URL=http://api:3000
-VITE_API_PREFIX=/api/v1
 
-# Backend Envs -> api.env
+# Backend Envs
 PORT=3000
 NODE_ENV=development
 DATABASE_URL=postgresql://root:admin@host.docker.internal:5432/jsondb?schema=public

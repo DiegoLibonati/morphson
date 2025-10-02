@@ -2,13 +2,13 @@ FROM node:20.19.0-alpine AS builder
 
 WORKDIR /home/app
 
-COPY package*.json yarn.lock* ./
-RUN yarn install --frozen-lockfile
+COPY package*.json package-lock.json* ./
+RUN npm install
 
 COPY . .
 COPY .env.production .env
 
-RUN yarn build
+RUN npm run build
 
 FROM nginx:stable-alpine AS runner
 
@@ -27,9 +27,3 @@ EXPOSE 80
 USER appuser
 
 CMD ["nginx", "-g", "daemon off;"]
-
-
-
-
-
-

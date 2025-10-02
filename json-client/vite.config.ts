@@ -8,17 +8,17 @@ import autoprefixer from "autoprefixer";
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
 
-  console.log(env)
-
   return {
     server: {
       proxy: {
-        [env.VITE_API_PREFIX]: {
+        "/api/v1": {
           target: env.VITE_API_URL,
           changeOrigin: true,
           secure: false,
         },
       },
+      host: true,
+      strictPort: true,
       port: 5173,
       watch: {
         usePolling: true,
