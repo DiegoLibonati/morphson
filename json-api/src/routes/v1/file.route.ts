@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { upload } from "@src/config/multer.config";
+import { upload } from "@src/configs/multer.config";
 
 import { FileController } from "@src/controllers/file.controller";
 

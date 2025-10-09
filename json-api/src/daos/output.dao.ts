@@ -1,4 +1,4 @@
-import prisma from "@src/config/prisma.config";
+import prisma from "@src/configs/prisma.config";
 
 import { OutputJsonFlat } from "@src/entities/app";
 

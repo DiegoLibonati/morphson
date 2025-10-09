@@ -1,4 +1,4 @@
-import { envs } from "@src/config/env.config";
+import { envs } from "@src/configs/env.config";
 
 import app from "@src/app";
 

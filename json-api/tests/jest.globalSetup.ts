@@ -14,25 +14,25 @@ export default async () => {
       stdio: "inherit",
     });
 
-    console.log("✅ DB container is running!");
+    console.log("DB container is running!");
 
     await new Promise((res) => setTimeout(res, 5000));
 
-    console.log("🔧 Running prisma generate...");
+    console.log("Running prisma generate...");
     execSync("npx prisma generate", {
       stdio: "inherit",
       env: process.env,
     });
 
-    console.log("🔧 Running prisma migrate dev...");
+    console.log("Running prisma migrate dev...");
     execSync("npx prisma migrate dev --name init --skip-seed", {
       stdio: "inherit",
       env: process.env,
     });
 
-    console.log("✅ Prisma migrations applied!");
+    console.log("Prisma migrations applied!");
   } catch (error) {
-    console.error("❌ Error starting db container or applying migrations:", error);
+    console.error("Error starting db container or applying migrations:", error);
     throw error;
   }
 };
