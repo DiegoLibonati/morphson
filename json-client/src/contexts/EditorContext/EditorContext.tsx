@@ -1,48 +1,26 @@
-import React, { Reducer, createContext, useContext, useReducer } from "react";
+import React, { createContext, useReducer } from "react";
 
-import {
-  EditorAction,
-  EditorContext as EditorContextT,
-  EditorProviderProps,
-  EditorState,
-} from "@src/entities/editor-context";
+import { EditorContext as EditorContextT } from "@src/entities/contexts";
+import { EditorProviderProps } from "@src/entities/props";
 
 import {
   initialState,
-  reducer,
-} from "@src/contexts/EditorContext/reducer/reducer";
+  EditorReducer,
+} from "@src/contexts/EditorContext/EditorReducer";
 
-export const EditorContext = createContext<EditorContextT | undefined>(
-  undefined
-);
+export const EditorContext = createContext<EditorContextT | null>(null);
 
-export const EditorProvider: React.FunctionComponent<EditorProviderProps> = ({
-  children,
-}) => {
-  const [state, dispatch] = useReducer<Reducer<EditorState, EditorAction>>(
-    reducer,
-    initialState
-  );
-
-  const handleSetText = (text: string): void => {
-    return dispatch({
-      type: "SET_TEXT",
-      payload: { text: text },
-    });
-  };
+export const EditorProvider = ({ children }: EditorProviderProps) => {
+  const [state, dispatch] = useReducer(EditorReducer, initialState);
 
   return (
     <EditorContext.Provider
       value={{
-        text: state.text,
-        handleSetText: handleSetText,
+        state: state,
+        dispatch: dispatch,
       }}
     >
       {children}
     </EditorContext.Provider>
   );
-};
-
-export const useEditorContext = (): EditorContextT => {
-  return useContext(EditorContext)!;
 };

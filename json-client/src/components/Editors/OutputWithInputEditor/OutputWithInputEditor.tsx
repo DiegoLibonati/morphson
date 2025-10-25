@@ -2,22 +2,26 @@ import { useEffect, useRef } from "react";
 import { OnChange, OnMount } from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 
-import { MonacoEditor } from "@src/components/Editors/export";
+import { MonacoEditor } from "@src/components/Editors/MonacoEditor/MonacoEditor";
 
-import { useEditorContext, useJSONContext } from "@src/contexts/export";
+import { useJSONContext } from "@src/hooks/useJSONContext";
+import { useEditorContext } from "@src/hooks/useEditorContext";
 
 export const OutputWithInputEditor = (): JSX.Element => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<typeof monaco | null>(null);
   const completionProviderRef = useRef<monaco.IDisposable | null>(null);
 
-  const { inputJson, handleOutputJsonModelUpdate } = useJSONContext();
-  const { text, handleSetText } = useEditorContext();
+  const { state: jsonState, dispatch: jsonDispatch } = useJSONContext();
+  const { state: editorState, dispatch: editorDispatch } = useEditorContext();
 
   const onChangeEditor: OnChange = (value) => {
     const newContent = value!;
 
-    handleSetText(newContent);
+    editorDispatch({
+      type: "SET_TEXT",
+      payload: { text: newContent },
+    });
   };
 
   const onMountEditor: OnMount = (editor, monaco) => {
@@ -27,9 +31,12 @@ export const OutputWithInputEditor = (): JSX.Element => {
 
   const onTextEditorChange = () => {
     try {
-      const parsed = JSON.parse(text);
+      const parsed = JSON.parse(editorState.text);
 
-      return handleOutputJsonModelUpdate(parsed);
+      return jsonDispatch({
+        type: "OUTPUT_JSON_MODEL_UPDATE",
+        payload: { transformationModel: parsed },
+      });
     } catch {}
   };
 
@@ -51,7 +58,7 @@ export const OutputWithInputEditor = (): JSX.Element => {
             endColumn: word.endColumn,
           };
 
-          const suggestions = inputJson.keys.map((key) => {
+          const suggestions = jsonState.inputJson.keys.map((key) => {
             return {
               label: `input.${key}`,
               kind: monaco.languages.CompletionItemKind.Function,
@@ -71,11 +78,11 @@ export const OutputWithInputEditor = (): JSX.Element => {
       if (completionProviderRef.current)
         completionProviderRef.current.dispose();
     };
-  }, [inputJson.keys]);
+  }, [jsonState.inputJson.keys]);
 
   useEffect(() => {
     onTextEditorChange();
-  }, [text]);
+  }, [editorState.text]);
 
   return (
     <MonacoEditor
@@ -83,7 +90,7 @@ export const OutputWithInputEditor = (): JSX.Element => {
       defaultValue="{}"
       language="json"
       theme="vs-dark"
-      value={text}
+      value={editorState.text}
       onChange={onChangeEditor}
       onMount={onMountEditor}
     ></MonacoEditor>

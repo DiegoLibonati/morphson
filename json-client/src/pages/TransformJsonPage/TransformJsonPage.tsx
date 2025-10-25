@@ -1,51 +1,38 @@
 import React, { useEffect } from "react";
 import axios from "axios";
 
-import { LoaderSpinner } from "@src/components/Loaders/export";
-import { SelectNormal, SelectOption } from "@src/components/Selects/export";
-import { InputCheck, InputField } from "@src/components/Inputs/export";
-import { ButtonSubmit } from "@src/components/Buttons/export";
+import { FormDataTransformJsonPage } from "@src/entities/forms";
 
-import {
-  useEditorContext,
-  useJSONContext,
-  useModalContext,
-} from "@src/contexts/export";
-import {
-  getJsonInput,
-  getJsonInputs,
-  getJsonOutput,
-  getJsonOutputs,
-  postTransformJson,
-} from "@src/services/export";
-import { FormEditorLayout } from "@src/layouts/export";
-import { useForm } from "@src/hooks/export";
-import { getContentFromBlob, safeJsonParse } from "@src/helpers/export";
+import { LoaderSpinner } from "@src/components/Loaders/LoaderSpinner/LoaderSpinner";
+import { SelectNormal } from "@src/components/Selects/SelectNormal/SelectNormal";
+import { SelectOption } from "@src/components/Selects/SelectOption/SelectOption";
+import { InputCheck } from "@src/components/Inputs/InputCheck/InputCheck";
+import { InputField } from "@src/components/Inputs/InputField/InputField";
+import { ButtonSubmit } from "@src/components/Buttons/ButtonSubmit/ButtonSubmit";
 
-type FormData = {
-  idInputJson: string | "not_selected";
-  idOutputJson: string | "not_selected";
-  saveOutputJson: boolean;
-  outputJsonNameToSave: string;
-};
+import { FormEditorLayout } from "@src/layouts/FormEditorLayout/FormEditorLayout";
+
+import { useForm } from "@src/hooks/useForm";
+import { useEditorContext } from "@src/hooks/useEditorContext";
+import { useModalContext } from "@src/hooks/useModalContext";
+import { useJSONContext } from "@src/hooks/useJSONContext";
+
+import { safeJsonParse } from "@src/helpers/safeJsonParse";
+import { getContentFromBlob } from "@src/helpers/getContentFromBlob";
+
+import { getJsonInput } from "@src/api/get/getJsonInput/getJsonInput";
+import { getJsonOutput } from "@src/api/get/getJsonOutput/getJsonOutput";
+import { postTransformJson } from "@src/api/post/postTransformJson/postTransformJson";
+import { getJsonInputs } from "@src/api/get/getJsonInputs/getJsonInputs";
+import { getJsonOutputs } from "@src/api/get/getJsonOutputs/getJsonOutputs";
 
 export const TransformJsonPage = (): JSX.Element => {
-  const {
-    loading,
-    inputJson,
-    outputJson,
-    jsons,
-    handleLoading,
-    handleFillJsons,
-    handleClearJson,
-    handleUpdateInputJson,
-    handleUpdateOutputJson,
-  } = useJSONContext();
-  const { handleSetModal } = useModalContext();
-  const { text, handleSetText } = useEditorContext();
+  const { state: jsonState, dispatch: jsonDispatch } = useJSONContext();
+  const { dispatch: modalDispatch } = useModalContext();
+  const { state: editorState, dispatch: editorDispatch } = useEditorContext();
 
   const { formState, onInputChange, onSelectChange, onCheckboxChange } =
-    useForm<FormData>({
+    useForm<FormDataTransformJsonPage>({
       initialValueForm: {
         idInputJson: "not_selected",
         idOutputJson: "not_selected",
@@ -54,105 +41,160 @@ export const TransformJsonPage = (): JSX.Element => {
       },
     });
 
-  const parsedText = safeJsonParse(text) ? safeJsonParse(text) : text;
+  const parsedText = safeJsonParse(editorState.text)
+    ? safeJsonParse(editorState.text)
+    : editorState.text;
 
   const handleGetJsons = async (): Promise<void> => {
     try {
-      handleLoading(true);
+      jsonDispatch({
+        type: "LOADING",
+        payload: { loading: true },
+      });
 
       const [responseInputJsons, responseOutputJsons] = await Promise.all([
         getJsonInputs(),
         getJsonOutputs(),
       ]);
 
-      const inputJsons = responseInputJsons.data.data;
-      const outputJsons = responseOutputJsons.data.data;
+      const inputJsons = responseInputJsons.data;
+      const outputJsons = responseOutputJsons.data;
 
-      handleLoading(false);
-      return handleFillJsons(inputJsons, outputJsons);
+      jsonDispatch({
+        type: "LOADING",
+        payload: { loading: false },
+      });
+      return jsonDispatch({
+        type: "OUTPUT_AND_INPUT_JSONS",
+        payload: { inputJsons: inputJsons, outputJsons: outputJsons },
+      });
     } catch (e) {
       console.log(e);
       if (axios.isAxiosError(e) && e.response) {
-        handleSetModal({ message: e.response.data.message, open: true });
+        modalDispatch({
+          type: "SET_MODAL",
+          payload: { message: e.response.data.message, open: true },
+        });
       } else {
-        handleSetModal({
-          message: "An unexpected error occurred.",
-          open: true,
+        modalDispatch({
+          type: "SET_MODAL",
+          payload: { message: "An unexpected error occurred.", open: true },
         });
       }
-      handleLoading(false);
+      jsonDispatch({
+        type: "LOADING",
+        payload: { loading: false },
+      });
     }
   };
 
   const handleGetInputJson = async (idInputJson: string): Promise<void> => {
     try {
-      handleLoading(true);
+      jsonDispatch({
+        type: "LOADING",
+        payload: { loading: true },
+      });
       const response = await getJsonInput(idInputJson);
-      const data = response.data.data;
 
-      handleLoading(false);
-      handleSetModal({
-        open: true,
-        message:
-          "Now you can use the key: input followed by a dot to get the keys from the json input and then transform them into values of those keys.",
+      jsonDispatch({
+        type: "LOADING",
+        payload: { loading: false },
+      });
+      modalDispatch({
+        type: "SET_MODAL",
+        payload: {
+          message:
+            "Now you can use the key: input followed by a dot to get the keys from the json input and then transform them into values of those keys.",
+          open: true,
+        },
       });
 
-      return handleUpdateInputJson({
-        id: data.inputJson.id,
-        name: data.inputJson.name,
-        content: data.inputJson.content,
-        keys: data.inputJson.keys,
-        keysAndValues: data.inputJson.keysAndValues,
-        createdAt: data.inputJson.createdAt,
-        updatedAt: data.inputJson.updatedAt,
+      return jsonDispatch({
+        type: "INPUT_JSON_UPDATE",
+        payload: {
+          id: response.data.inputJson.id,
+          name: response.data.inputJson.name,
+          content: response.data.inputJson.content,
+          keys: response.data.inputJson.keys,
+        },
       });
     } catch (e) {
       console.log(e);
       if (axios.isAxiosError(e) && e.response) {
-        handleSetModal({ message: e.response.data.message, open: true });
+        modalDispatch({
+          type: "SET_MODAL",
+          payload: { message: e.response.data.message, open: true },
+        });
       } else {
-        handleSetModal({
-          message: "An unexpected error occurred.",
-          open: true,
+        modalDispatch({
+          type: "SET_MODAL",
+          payload: { message: "An unexpected error occurred.", open: true },
         });
       }
-      handleLoading(false);
+      jsonDispatch({
+        type: "LOADING",
+        payload: { loading: false },
+      });
     }
   };
 
   const handleGetOutputJson = async (idOutputJson: string): Promise<void> => {
     try {
-      handleLoading(true);
+      jsonDispatch({
+        type: "LOADING",
+        payload: { loading: true },
+      });
       const response = await getJsonOutput(idOutputJson);
-      const data = response.data.data;
 
-      handleLoading(false);
-      handleSetModal({
-        open: true,
-        message: "Successfully loaded the output json!",
+      jsonDispatch({
+        type: "LOADING",
+        payload: { loading: false },
       });
 
-      handleSetText(
-        JSON.stringify(data.outputJson.transformationModel, null, 2)
-      );
-      return handleUpdateOutputJson({
-        id: data.outputJson.id,
-        name: data.outputJson.name,
-        transformationModel: data.outputJson.transformationModel,
-        createdAt: data.outputJson.createdAt,
-        updatedAt: data.outputJson.updatedAt,
+      modalDispatch({
+        type: "SET_MODAL",
+        payload: {
+          message: "Successfully loaded the output json!",
+          open: true,
+        },
+      });
+
+      editorDispatch({
+        type: "SET_TEXT",
+        payload: {
+          text: JSON.stringify(
+            response.data.outputJson.transformationModel,
+            null,
+            2
+          ),
+        },
+      });
+
+      return jsonDispatch({
+        type: "OUTPUT_JSON_UPDATE",
+        payload: {
+          id: response.data.outputJson.id,
+          name: response.data.outputJson.name,
+          transformationModel: response.data.outputJson.transformationModel,
+        },
       });
     } catch (e) {
       console.log(e);
       if (axios.isAxiosError(e) && e.response) {
-        handleSetModal({ message: e.response.data.message, open: true });
+        modalDispatch({
+          type: "SET_MODAL",
+          payload: { message: e.response.data.message, open: true },
+        });
       } else {
-        handleSetModal({
-          message: "An unexpected error occurred.",
-          open: true,
+        modalDispatch({
+          type: "SET_MODAL",
+          payload: { message: "An unexpected error occurred.", open: true },
         });
       }
-      handleLoading(false);
+      jsonDispatch({
+        type: "LOADING",
+        payload: { loading: false },
+      });
     }
   };
 
@@ -161,12 +203,15 @@ export const TransformJsonPage = (): JSX.Element => {
   ) => {
     try {
       e.preventDefault();
-      handleLoading(true);
+      jsonDispatch({
+        type: "LOADING",
+        payload: { loading: true },
+      });
 
       const idInputJson = formState.idInputJson;
       const saveOutputJson = formState.saveOutputJson;
       const outputJsonNameToSave = formState.outputJsonNameToSave.trim();
-      const contentJsonToTransform = outputJson.transformationModel;
+      const contentJsonToTransform = jsonState.outputJson.transformationModel;
 
       const body = {
         idInputJson: idInputJson === "not_selected" ? "" : idInputJson,
@@ -177,14 +222,12 @@ export const TransformJsonPage = (): JSX.Element => {
 
       const response = await postTransformJson(body);
 
-      const data = response.data;
-
-      const url = window.URL.createObjectURL(data);
+      const url = window.URL.createObjectURL(response);
       const a = document.createElement("a") as HTMLAnchorElement;
 
       a.style.display = "none";
       a.href = url;
-      a.download = `${inputJson.name}_transformed.json`;
+      a.download = `${jsonState.inputJson.name}_transformed.json`;
 
       document.body.append(a);
 
@@ -193,12 +236,19 @@ export const TransformJsonPage = (): JSX.Element => {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
-      handleLoading(false);
-      handleSetModal({
-        message: !saveOutputJson
-          ? "The json was successfully transformed!"
-          : "The json was successfully transformed and the output model was successfully saved!",
-        open: true,
+      jsonDispatch({
+        type: "LOADING",
+        payload: { loading: false },
+      });
+
+      modalDispatch({
+        type: "SET_MODAL",
+        payload: {
+          message: !saveOutputJson
+            ? "The json was successfully transformed!"
+            : "The json was successfully transformed and the output model was successfully saved!",
+          open: true,
+        },
       });
     } catch (e) {
       console.log(e);
@@ -207,14 +257,20 @@ export const TransformJsonPage = (): JSX.Element => {
           await getContentFromBlob(e.response.data as Blob)
         );
 
-        handleSetModal({ message: response.message, open: true });
+        modalDispatch({
+          type: "SET_MODAL",
+          payload: { message: response.message, open: true },
+        });
       } else {
-        handleSetModal({
-          message: "An unexpected error occurred.",
-          open: true,
+        modalDispatch({
+          type: "SET_MODAL",
+          payload: { message: "An unexpected error occurred.", open: true },
         });
       }
-      handleLoading(false);
+      jsonDispatch({
+        type: "LOADING",
+        payload: { loading: false },
+      });
     }
   };
 
@@ -222,7 +278,10 @@ export const TransformJsonPage = (): JSX.Element => {
     handleGetJsons();
 
     return () => {
-      handleClearJson();
+      jsonDispatch({
+        type: "CONTEXT_CLEAR",
+        payload: null,
+      });
     };
   }, []);
 
@@ -234,7 +293,7 @@ export const TransformJsonPage = (): JSX.Element => {
       return;
 
     if (
-      String(inputJson.id) !== formState.idInputJson &&
+      String(jsonState.inputJson.id) !== formState.idInputJson &&
       formState.idInputJson !== "not_selected"
     ) {
       handleGetInputJson(formState.idInputJson);
@@ -242,7 +301,7 @@ export const TransformJsonPage = (): JSX.Element => {
     }
 
     if (
-      String(outputJson.id) !== formState.idOutputJson &&
+      String(jsonState.outputJson.id) !== formState.idOutputJson &&
       formState.idOutputJson !== "not_selected"
     ) {
       handleGetOutputJson(formState.idOutputJson);
@@ -253,7 +312,7 @@ export const TransformJsonPage = (): JSX.Element => {
   return (
     <FormEditorLayout
       onSubmit={handleSubmitForm}
-      loading={loading}
+      loading={jsonState.loading}
       LoadingComponent={() => <LoaderSpinner></LoaderSpinner>}
       jsonTypeToEdit="outputWithInput"
     >
@@ -266,7 +325,7 @@ export const TransformJsonPage = (): JSX.Element => {
         onChange={onSelectChange}
       >
         <SelectOption value="not_selected">Select an Input Json</SelectOption>
-        {jsons.inputJsons.map((inputJson) => {
+        {jsonState.jsons.inputJsons.map((inputJson) => {
           return (
             <SelectOption key={inputJson.id} value={String(inputJson.id)}>
               {inputJson.name}
@@ -275,7 +334,7 @@ export const TransformJsonPage = (): JSX.Element => {
         })}
       </SelectNormal>
 
-      {jsons.outputJsons.length > 0 && (
+      {jsonState.jsons.outputJsons.length > 0 && (
         <SelectNormal
           id="json_output_select"
           label="Select an Output JSON"
@@ -287,7 +346,7 @@ export const TransformJsonPage = (): JSX.Element => {
           <SelectOption value="not_selected">
             Select an Output Json
           </SelectOption>
-          {jsons.outputJsons.map((outputJson) => {
+          {jsonState.jsons.outputJsons.map((outputJson) => {
             return (
               <SelectOption key={outputJson.id} value={String(outputJson.id)}>
                 {outputJson.name}
@@ -321,12 +380,12 @@ export const TransformJsonPage = (): JSX.Element => {
         ariaLabel="Submit Form Transform Json"
         disabled={
           (formState.idInputJson === "not_selected" &&
-            !outputJson.transformationModel) ||
+            !jsonState.outputJson.transformationModel) ||
           (formState.saveOutputJson &&
             (!formState.outputJsonNameToSave ||
-              !outputJson.transformationModel)) ||
+              !jsonState.outputJson.transformationModel)) ||
           JSON.stringify(parsedText) !==
-            JSON.stringify(outputJson.transformationModel)
+            JSON.stringify(jsonState.outputJson.transformationModel)
         }
         className="lg:bg-primary"
       >

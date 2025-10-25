@@ -1,7 +1,8 @@
 import { screen, render } from "@testing-library/react";
 
-import { SelectWithLabel } from "@src/components/Selects/SelectWithLabel/SelectWithLabel";
 import { SelectWithLabelProps } from "@src/entities/props";
+
+import { SelectWithLabel } from "@src/components/Selects/SelectWithLabel/SelectWithLabel";
 
 type RenderComponent = {
   props: SelectWithLabelProps;
@@ -47,9 +48,9 @@ describe("SelectWithLabel.tsx", () => {
     test("It must render the root of the component with the class entered by props.", () => {
       const { props, container } = renderComponent();
 
-      const root = container.querySelector(
+      const root = container.querySelector<HTMLDivElement>(
         `.${props.className}`
-      ) as HTMLDivElement;
+      );
 
       expect(root).toBeInTheDocument();
       expect(root).toHaveClass(props.className!);

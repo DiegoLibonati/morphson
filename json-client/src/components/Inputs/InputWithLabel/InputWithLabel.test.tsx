@@ -48,9 +48,9 @@ describe("InputWithLabel.tsx", () => {
     test("It must render the root of the component with the class entered by props.", () => {
       const { props, container } = renderComponent();
 
-      const root = container.querySelector(
+      const root = container.querySelector<HTMLDivElement>(
         `.${props.className}`
-      ) as HTMLDivElement;
+      );
 
       expect(root).toBeInTheDocument();
       expect(root).toHaveClass(props.className!);

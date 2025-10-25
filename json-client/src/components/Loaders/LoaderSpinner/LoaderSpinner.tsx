@@ -1,6 +1,6 @@
 import { LoaderSpinnerProps } from "@src/entities/props";
 
-import { LoaderRoot } from "@src/components/Loaders/export";
+import { LoaderRoot } from "@src/components/Loaders/LoaderRoot/LoaderRoot";
 
 import "@src/components/Loaders/LoaderSpinner/LoaderSpinner.css";
 

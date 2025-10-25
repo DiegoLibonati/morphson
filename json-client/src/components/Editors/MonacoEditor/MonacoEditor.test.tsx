@@ -1,7 +1,8 @@
 import { render } from "@testing-library/react";
 
-import { MonacoEditor } from "@src/components/Editors/MonacoEditor/MonacoEditor";
 import { MonacoEditorProps } from "@src/entities/props";
+
+import { MonacoEditor } from "@src/components/Editors/MonacoEditor/MonacoEditor";
 
 type RenderComponent = {
   props: {
@@ -49,9 +50,8 @@ describe("MonacoEditor.tsx", () => {
     test("It must render the monaco editor.", async () => {
       const { container } = renderComponent();
 
-      const monacoEditor = container.querySelector(
-        ".monaco-editor"
-      ) as HTMLDivElement;
+      const monacoEditor =
+        container.querySelector<HTMLDivElement>(".monaco-editor");
 
       expect(monacoEditor).toBeInTheDocument();
     });

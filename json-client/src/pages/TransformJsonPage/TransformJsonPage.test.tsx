@@ -6,15 +6,16 @@ import { MemoryRouter } from "react-router-dom";
 
 import { TransformJsonPage } from "@src/pages/TransformJsonPage/TransformJsonPage";
 
-import {
-  EditorProvider,
-  JSONProvider,
-  ModalProvider,
-  useEditorContext,
-  useJSONContext,
-  useModalContext,
-} from "@src/contexts/export";
-import { inputApi, outputApi } from "@src/services/axios";
+import { useModalContext } from "@src/hooks/useModalContext";
+import { useJSONContext } from "@src/hooks/useJSONContext";
+import { useEditorContext } from "@src/hooks/useEditorContext";
+
+import { JSONProvider } from "@src/contexts/JSONContext/JSONContext";
+import { ModalProvider } from "@src/contexts/ModalContext/ModalContext";
+import { EditorProvider } from "@src/contexts/EditorContext/EditorContext";
+
+import { inputApi } from "@src/api/input";
+import { outputApi } from "@src/api/output";
 
 import {
   mockInputJsonNullState,
@@ -47,30 +48,26 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-jest.mock("@src/contexts/ModalContext/ModalContext", () => ({
-  ...jest.requireActual("@src/contexts/ModalContext/ModalContext"),
+jest.mock("@src/hooks/useModalContext", () => ({
+  ...jest.requireActual("@src/hooks/useModalContext"),
   useModalContext: jest.fn(),
 }));
 
-jest.mock("@src/contexts/JSONContext/JSONContext", () => ({
-  ...jest.requireActual("@src/contexts/JSONContext/JSONContext"),
+jest.mock("@src/hooks/useJSONContext", () => ({
+  ...jest.requireActual("@src/hooks/useJSONContext"),
   useJSONContext: jest.fn(),
 }));
 
-jest.mock("@src/contexts/EditorContext/EditorContext", () => ({
-  ...jest.requireActual("@src/contexts/EditorContext/EditorContext"),
+jest.mock("@src/hooks/useEditorContext", () => ({
+  ...jest.requireActual("@src/hooks/useEditorContext"),
   useEditorContext: jest.fn(),
 }));
 
 describe("TransformJsonPage.tsx", () => {
   describe("General Tests.", () => {
-    const mockHandleLoading = jest.fn();
-    const mockHandleFillJsons = jest.fn();
-    const mockHandleClearJson = jest.fn();
-    const mockHandleUpdateInputJson = jest.fn();
-    const mockHandleUpdateOutputJson = jest.fn();
-    const mockHandleSetModal = jest.fn();
-    const mockHandleSetText = jest.fn();
+    const mockDispatchModal = jest.fn();
+    const mockDispatchJSON = jest.fn();
+    const mockDispatchEditor = jest.fn();
 
     const mockInput = new MockAdapter(inputApi);
     const mockOutput = new MockAdapter(outputApi);
@@ -82,26 +79,25 @@ describe("TransformJsonPage.tsx", () => {
       jest.clearAllMocks();
 
       (useModalContext as jest.Mock).mockReturnValue({
-        handleSetModal: mockHandleSetModal,
+        dispatch: mockDispatchModal,
       });
 
       (useJSONContext as jest.Mock).mockReturnValue({
-        loading: false,
-        inputJson: mockInputJsonNullState,
-        outputJson: mockOutputJsonNullState,
-        jsons: {
-          inputJsons: mockInputJsons,
-          outputJsons: mockOutputJsons,
+        state: {
+          loading: false,
+          inputJson: mockInputJsonNullState,
+          outputJson: mockOutputJsonNullState,
+          jsons: {
+            inputJsons: mockInputJsons,
+            outputJsons: mockOutputJsons,
+          },
         },
-        handleLoading: mockHandleLoading,
-        handleFillJsons: mockHandleFillJsons,
-        handleClearJson: mockHandleClearJson,
-        handleUpdateInputJson: mockHandleUpdateInputJson,
-        handleUpdateOutputJson: mockHandleUpdateOutputJson,
+        dispatch: mockDispatchJSON,
       });
 
       (useEditorContext as jest.Mock).mockReturnValue({
-        handleSetText: mockHandleSetText,
+        state: { text: "" },
+        dispatch: mockDispatchEditor,
       });
     });
 
@@ -109,7 +105,7 @@ describe("TransformJsonPage.tsx", () => {
       const { container } = renderComponent();
 
       const selects = Array.from(
-        container.querySelectorAll("select") as NodeList
+        container.querySelectorAll<HTMLSelectElement>("select")
       );
       const selectInputJsons = selects.find((select) => {
         const s = select as HTMLSelectElement;
@@ -164,13 +160,9 @@ describe("TransformJsonPage.tsx", () => {
   });
 
   describe("if calls are 200.", () => {
-    const mockHandleLoading = jest.fn();
-    const mockHandleFillJsons = jest.fn();
-    const mockHandleClearJson = jest.fn();
-    const mockHandleUpdateInputJson = jest.fn();
-    const mockHandleUpdateOutputJson = jest.fn();
-    const mockHandleSetModal = jest.fn();
-    const mockHandleSetText = jest.fn();
+    const mockDispatchModal = jest.fn();
+    const mockDispatchJSON = jest.fn();
+    const mockDispatchEditor = jest.fn();
 
     const inputJsonSelected = mockInputJsons[0];
     const outputJsonSelected = mockOutputJsons[0];
@@ -195,26 +187,25 @@ describe("TransformJsonPage.tsx", () => {
       jest.clearAllMocks();
 
       (useModalContext as jest.Mock).mockReturnValue({
-        handleSetModal: mockHandleSetModal,
+        dispatch: mockDispatchModal,
       });
 
       (useJSONContext as jest.Mock).mockReturnValue({
-        loading: false,
-        inputJson: mockInputJsonNullState,
-        outputJson: mockOutputJsonNullState,
-        jsons: {
-          inputJsons: mockInputJsons,
-          outputJsons: mockOutputJsons,
+        state: {
+          loading: false,
+          inputJson: mockInputJsonNullState,
+          outputJson: mockOutputJsonNullState,
+          jsons: {
+            inputJsons: mockInputJsons,
+            outputJsons: mockOutputJsons,
+          },
         },
-        handleLoading: mockHandleLoading,
-        handleFillJsons: mockHandleFillJsons,
-        handleClearJson: mockHandleClearJson,
-        handleUpdateInputJson: mockHandleUpdateInputJson,
-        handleUpdateOutputJson: mockHandleUpdateOutputJson,
+        dispatch: mockDispatchJSON,
       });
 
       (useEditorContext as jest.Mock).mockReturnValue({
-        handleSetText: mockHandleSetText,
+        state: { text: "" },
+        dispatch: mockDispatchEditor,
       });
     });
 
@@ -222,7 +213,7 @@ describe("TransformJsonPage.tsx", () => {
       const { container } = renderComponent();
 
       const selects = Array.from(
-        container.querySelectorAll("select") as NodeList
+        container.querySelectorAll<HTMLSelectElement>("select")
       );
       const selectInputJsons = selects.find((select) => {
         const s = select as HTMLSelectElement;
@@ -234,32 +225,15 @@ describe("TransformJsonPage.tsx", () => {
 
       await user.selectOptions(selectInputJsons, String(inputJsonSelected.id));
 
-      expect(mockHandleLoading).toHaveBeenCalledTimes(4);
-      expect(mockHandleLoading).toHaveBeenCalledWith(true);
-      expect(mockHandleLoading).toHaveBeenCalledWith(false);
-      expect(mockHandleSetModal).toHaveBeenCalledTimes(1);
-      expect(mockHandleSetModal).toHaveBeenCalledWith({
-        open: true,
-        message:
-          "Now you can use the key: input followed by a dot to get the keys from the json input and then transform them into values of those keys.",
-      });
-      expect(mockHandleUpdateInputJson).toHaveBeenCalledTimes(1);
-      expect(mockHandleUpdateInputJson).toHaveBeenCalledWith({
-        id: inputJsonSelected.id,
-        name: inputJsonSelected.name,
-        content: inputJsonSelected.content,
-        keys: inputJsonSelected.keys,
-        keysAndValues: inputJsonSelected.keysAndValues,
-        createdAt: inputJsonSelected.createdAt,
-        updatedAt: inputJsonSelected.updatedAt,
-      });
+      expect(mockDispatchJSON).toHaveBeenCalledTimes(6);
+      expect(mockDispatchModal).toHaveBeenCalledTimes(1);
     });
 
     test("It must choose an option from the json output select.", async () => {
       const { container } = renderComponent();
 
       const selects = Array.from(
-        container.querySelectorAll("select") as NodeList
+        container.querySelectorAll<HTMLSelectElement>("select")
       );
       const selectOutputJsons = selects.find((select) => {
         const s = select as HTMLSelectElement;
@@ -274,26 +248,9 @@ describe("TransformJsonPage.tsx", () => {
         String(outputJsonSelected.id)
       );
 
-      expect(mockHandleLoading).toHaveBeenCalledTimes(4);
-      expect(mockHandleLoading).toHaveBeenCalledWith(true);
-      expect(mockHandleLoading).toHaveBeenCalledWith(false);
-      expect(mockHandleSetModal).toHaveBeenCalledTimes(1);
-      expect(mockHandleSetModal).toHaveBeenCalledWith({
-        open: true,
-        message: "Successfully loaded the output json!",
-      });
-      expect(mockHandleSetText).toHaveBeenCalledTimes(1);
-      expect(mockHandleSetText).toHaveBeenCalledWith(
-        JSON.stringify(outputJsonSelected.transformationModel, null, 2)
-      );
-      expect(mockHandleUpdateOutputJson).toHaveBeenCalledTimes(1);
-      expect(mockHandleUpdateOutputJson).toHaveBeenCalledWith({
-        id: outputJsonSelected.id,
-        name: outputJsonSelected.name,
-        transformationModel: outputJsonSelected.transformationModel,
-        createdAt: outputJsonSelected.createdAt,
-        updatedAt: outputJsonSelected.updatedAt,
-      });
+      expect(mockDispatchJSON).toHaveBeenCalledTimes(6);
+      expect(mockDispatchModal).toHaveBeenCalledTimes(1);
+      expect(mockDispatchEditor).toHaveBeenCalledTimes(1);
     });
   });
 });

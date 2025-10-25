@@ -1,64 +1,67 @@
 import { useEffect } from "react";
 import axios from "axios";
 
-import { LoaderSpinner } from "@src/components/Loaders/export";
-import { ButtonSubmit } from "@src/components/Buttons/export";
-import { InputField, InputFile } from "@src/components/Inputs/export";
+import { FormDataLoadJsonPage } from "@src/entities/forms";
 
-import {
-  useEditorContext,
-  useJSONContext,
-  useModalContext,
-} from "@src/contexts/export";
-import { FormEditorLayout } from "@src/layouts/export";
-import { useForm, useRouter } from "@src/hooks/export";
-import { postGetFileContent, postUploadJson } from "@src/services/export";
-import { safeJsonParse } from "@src/helpers/export";
+import { LoaderSpinner } from "@src/components/Loaders/LoaderSpinner/LoaderSpinner";
+import { InputField } from "@src/components/Inputs/InputField/InputField";
+import { InputFile } from "@src/components/Inputs/InputFile/InputFile";
+import { ButtonSubmit } from "@src/components/Buttons/ButtonSubmit/ButtonSubmit";
 
-type FormData = {
-  jsonName: string;
-  jsonFile: File | null;
-};
+import { FormEditorLayout } from "@src/layouts/FormEditorLayout/FormEditorLayout";
+
+import { useForm } from "@src/hooks/useForm";
+import { useRouter } from "@src/hooks/useRouter";
+import { useEditorContext } from "@src/hooks/useEditorContext";
+import { useModalContext } from "@src/hooks/useModalContext";
+import { useJSONContext } from "@src/hooks/useJSONContext";
+
+import { safeJsonParse } from "@src/helpers/safeJsonParse";
+
+import { postUploadJson } from "@src/api/post/postUploadJson/postUploadJson";
+import { postGetFileContent } from "@src/api/post/postGetFileContent/postGetFileContent";
 
 export const LoadJsonPage = (): JSX.Element => {
-  const {
-    loading,
-    inputJson,
-    handleClearJson,
-    handleUpdateInputJson,
-    handleLoading,
-  } = useJSONContext();
-  const { handleSetModal } = useModalContext();
-  const { text, handleSetText } = useEditorContext();
+  const { state: jsonState, dispatch: jsonDispatch } = useJSONContext();
+  const { dispatch: modalDispatch } = useModalContext();
+  const { state: editorState, dispatch: editorDispatch } = useEditorContext();
 
   const { handleNavigateToResolution } = useRouter();
   const { formState, onInputChange, onInputFileChange, onResetForm } =
-    useForm<FormData>({
+    useForm<FormDataLoadJsonPage>({
       initialValueForm: {
         jsonName: "",
         jsonFile: null,
       },
     });
 
-  const parsedText = safeJsonParse(text) ? safeJsonParse(text) : text;
+  const parsedText = safeJsonParse(editorState.text)
+    ? safeJsonParse(editorState.text)
+    : editorState.text;
 
   const onSubmitForm: React.FormEventHandler<HTMLFormElement> = async (
     e
   ): Promise<void> => {
     try {
       e.preventDefault();
-      handleLoading(true);
+      jsonDispatch({
+        type: "LOADING",
+        payload: { loading: true },
+      });
       console.log("Submit Form");
 
       const name = formState.jsonName.trim();
       const file = formState.jsonFile;
-      const content = inputJson.content;
+      const content = jsonState.inputJson.content;
 
       if (!name || !file || !content) {
         onResetForm();
-        return handleSetModal({
-          message: "You must send a valid name, content and file.",
-          open: true,
+        return modalDispatch({
+          type: "SET_MODAL",
+          payload: {
+            message: "You must send a valid name, content and file.",
+            open: true,
+          },
         });
       }
 
@@ -69,30 +72,37 @@ export const LoadJsonPage = (): JSX.Element => {
 
       const response = await postUploadJson(body);
 
-      const data = response.data.data;
-
-      handleUpdateInputJson({
-        id: data.inputJson.id,
-        name: data.inputJson.name,
-        content: data.inputJson.content,
-        keys: data.inputJson.keys,
-        keysAndValues: data.inputJson.keysAndValues,
-        createdAt: data.inputJson.createdAt,
-        updatedAt: data.inputJson.updatedAt,
+      jsonDispatch({
+        type: "INPUT_JSON_UPDATE",
+        payload: {
+          id: response.data.inputJson.id,
+          name: response.data.inputJson.name,
+          content: response.data.inputJson.content,
+          keys: response.data.inputJson.keys,
+        },
       });
-      handleLoading(false);
+      jsonDispatch({
+        type: "LOADING",
+        payload: { loading: false },
+      });
       return handleNavigateToResolution("uploaded", `name=${name}`);
     } catch (e) {
       console.log(e);
       if (axios.isAxiosError(e) && e.response) {
-        handleSetModal({ message: e.response.data.message, open: true });
+        modalDispatch({
+          type: "SET_MODAL",
+          payload: { message: e.response.data.message, open: true },
+        });
       } else {
-        handleSetModal({
-          message: "An unexpected error occurred.",
-          open: true,
+        modalDispatch({
+          type: "SET_MODAL",
+          payload: { message: "An unexpected error occurred.", open: true },
         });
       }
-      handleLoading(false);
+      jsonDispatch({
+        type: "LOADING",
+        payload: { loading: false },
+      });
     }
   };
 
@@ -104,26 +114,36 @@ export const LoadJsonPage = (): JSX.Element => {
 
       const response = await postGetFileContent(formData);
 
-      const data = await response.data;
-
-      handleSetText(data.content);
+      editorDispatch({
+        type: "SET_TEXT",
+        payload: { text: response.content },
+      });
     } catch (e) {
       if (axios.isAxiosError(e) && e.response) {
-        handleSetModal({ message: e.response.data.message, open: true });
+        modalDispatch({
+          type: "SET_MODAL",
+          payload: { message: e.response.data.message, open: true },
+        });
       } else {
-        handleSetModal({
-          message: "An unexpected error occurred.",
-          open: true,
+        modalDispatch({
+          type: "SET_MODAL",
+          payload: { message: "An unexpected error occurred.", open: true },
         });
       }
 
-      handleLoading(false);
+      jsonDispatch({
+        type: "LOADING",
+        payload: { loading: false },
+      });
     }
   };
 
   useEffect(() => {
     return () => {
-      handleClearJson();
+      jsonDispatch({
+        type: "CONTEXT_CLEAR",
+        payload: null,
+      });
     };
   }, []);
 
@@ -138,7 +158,7 @@ export const LoadJsonPage = (): JSX.Element => {
       onSubmit={onSubmitForm}
       LoadingComponent={() => <LoaderSpinner></LoaderSpinner>}
       jsonTypeToEdit="input"
-      loading={loading}
+      loading={jsonState.loading}
     >
       <InputField
         id="json_name"
@@ -165,7 +185,8 @@ export const LoadJsonPage = (): JSX.Element => {
         className="lg:bg-primary"
         disabled={
           !formState.jsonName ||
-          JSON.stringify(parsedText) !== JSON.stringify(inputJson.content)
+          JSON.stringify(parsedText) !==
+            JSON.stringify(jsonState.inputJson.content)
         }
       >
         Upload JSON

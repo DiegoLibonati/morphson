@@ -2,11 +2,10 @@ import { render } from "@testing-library/react";
 
 import { OutputWithInputEditor } from "@src/components/Editors/OutputWithInputEditor/OutputWithInputEditor";
 
-import {
-  EditorProvider,
-  JSONProvider,
-  useJSONContext,
-} from "@src/contexts/export";
+import { JSONProvider } from "@src/contexts/JSONContext/JSONContext";
+import { EditorProvider } from "@src/contexts/EditorContext/EditorContext";
+
+import { useJSONContext } from "@src/hooks/useJSONContext";
 
 import { mockInputJsonState, mockOutputJsonState } from "@tests/jest.constants";
 
@@ -28,31 +27,33 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-jest.mock("@src/contexts/JSONContext/JSONContext", () => ({
-  ...jest.requireActual("@src/contexts/JSONContext/JSONContext"),
+jest.mock("@src/hooks/useJSONContext", () => ({
+  ...jest.requireActual("@src/hooks/useJSONContext"),
   useJSONContext: jest.fn(),
 }));
 
 describe("OutputWithInputEditor.tsx", () => {
   describe("General Tests.", () => {
-    const mockHandleOutputJsonContentUpdate = jest.fn();
+    const mockDispatch = jest.fn();
 
     beforeEach(() => {
       jest.clearAllMocks();
 
       (useJSONContext as jest.Mock).mockReturnValue({
-        inputJson: mockInputJsonState,
-        outputJson: mockOutputJsonState,
-        handleOutputJsonModelUpdate: mockHandleOutputJsonContentUpdate,
+        state: {
+          inputJson: mockInputJsonState,
+          outputJson: mockOutputJsonState,
+        },
+        dispatch: mockDispatch,
       });
     });
 
     test("It must render the output with input editor.", async () => {
       const { container } = renderComponent();
 
-      const outputWithInputEditor = container.querySelector(
+      const outputWithInputEditor = container.querySelector<HTMLDivElement>(
         ".output-with-input-editor"
-      ) as HTMLDivElement;
+      );
 
       expect(outputWithInputEditor).toBeInTheDocument();
     });

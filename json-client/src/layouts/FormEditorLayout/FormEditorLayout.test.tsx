@@ -5,9 +5,10 @@ import { MemoryRouter } from "react-router-dom";
 
 import { FormEditorLayoutProps } from "@src/entities/props";
 
-import { FormEditorLayout } from "@src/layouts/FormEditorLayout/FormEditorLayout";
+import { JSONProvider } from "@src/contexts/JSONContext/JSONContext";
+import { EditorProvider } from "@src/contexts/EditorContext/EditorContext";
 
-import { EditorProvider, JSONProvider } from "@src/contexts/export";
+import { FormEditorLayout } from "@src/layouts/FormEditorLayout/FormEditorLayout";
 
 type RenderComponent = {
   props: {
@@ -95,7 +96,8 @@ describe("FormEditorLayout.tsx", () => {
         jsonTypeToEdit: jsonTypeToEdit,
       });
 
-      const inputEditor = container.querySelector(".input-editor");
+      const inputEditor =
+        container.querySelector<HTMLDivElement>(".input-editor");
 
       expect(inputEditor).toBeInTheDocument();
     });
@@ -111,7 +113,9 @@ describe("FormEditorLayout.tsx", () => {
         jsonTypeToEdit: jsonTypeToEdit,
       });
 
-      const inputEditor = container.querySelector(".output-with-input-editor");
+      const inputEditor = container.querySelector<HTMLDivElement>(
+        ".output-with-input-editor"
+      );
 
       expect(inputEditor).toBeInTheDocument();
     });
@@ -138,7 +142,7 @@ describe("FormEditorLayout.tsx", () => {
         jsonTypeToEdit: jsonTypeToEdit,
       });
 
-      const form = container.querySelector("form");
+      const form = container.querySelector<HTMLFormElement>("form");
       const btnSubmit = screen.getByRole("button", { name: /submit form/i });
 
       expect(form).toBeInTheDocument();

@@ -31,7 +31,7 @@ describe("LoaderRoot.tsx", () => {
     test("It must render the root of the loader.", async () => {
       const { props, container } = renderComponent();
 
-      const loaderRoot = container.querySelector("div") as HTMLDivElement;
+      const loaderRoot = container.querySelector<HTMLDivElement>("div");
 
       expect(loaderRoot).toBeInTheDocument();
       expect(loaderRoot).toHaveClass(props.className!);

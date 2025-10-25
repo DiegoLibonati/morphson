@@ -1,17 +1,18 @@
 import { HashRouter } from "react-router-dom";
 
-import { ModalAlert } from "@src/components/Modals/export";
+import { ModalAlert } from "@src/components/Modals/ModalAlert/ModalAlert";
 
-import { Router } from "@src/router/export";
-import { useModalContext } from "@src/contexts/export";
+import { useModalContext } from "@src/hooks/useModalContext";
+
+import { AppRouter } from "@src/router/AppRouter";
 
 const App = (): JSX.Element => {
-  const { modal } = useModalContext();
+  const { state: modalState } = useModalContext();
 
   return (
     <HashRouter>
-      {modal.open && <ModalAlert></ModalAlert>}
-      <Router></Router>
+      {modalState.modal.open && <ModalAlert></ModalAlert>}
+      <AppRouter></AppRouter>
     </HashRouter>
   );
 };

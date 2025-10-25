@@ -6,15 +6,16 @@ import { MemoryRouter } from "react-router-dom";
 
 import { LoadJsonPage } from "@src/pages/LoadJsonPage/LoadJsonPage";
 
-import {
-  EditorProvider,
-  JSONProvider,
-  ModalProvider,
-  useEditorContext,
-  useJSONContext,
-  useModalContext,
-} from "@src/contexts/export";
-import { fileApi, inputApi } from "@src/services/axios";
+import { JSONProvider } from "@src/contexts/JSONContext/JSONContext";
+import { ModalProvider } from "@src/contexts/ModalContext/ModalContext";
+import { EditorProvider } from "@src/contexts/EditorContext/EditorContext";
+
+import { useModalContext } from "@src/hooks/useModalContext";
+import { useJSONContext } from "@src/hooks/useJSONContext";
+import { useEditorContext } from "@src/hooks/useEditorContext";
+
+import { fileApi } from "@src/api/file";
+import { inputApi } from "@src/api/input";
 
 import {
   mockInputJsonNullState,
@@ -45,27 +46,26 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-jest.mock("@src/contexts/ModalContext/ModalContext", () => ({
-  ...jest.requireActual("@src/contexts/ModalContext/ModalContext"),
+jest.mock("@src/hooks/useModalContext", () => ({
+  ...jest.requireActual("@src/hooks/useModalContext"),
   useModalContext: jest.fn(),
 }));
-jest.mock("@src/contexts/JSONContext/JSONContext", () => ({
-  ...jest.requireActual("@src/contexts/JSONContext/JSONContext"),
+
+jest.mock("@src/hooks/useJSONContext", () => ({
+  ...jest.requireActual("@src/hooks/useJSONContext"),
   useJSONContext: jest.fn(),
 }));
-jest.mock("@src/contexts/EditorContext/EditorContext", () => ({
-  ...jest.requireActual("@src/contexts/EditorContext/EditorContext"),
+
+jest.mock("@src/hooks/useEditorContext", () => ({
+  ...jest.requireActual("@src/hooks/useEditorContext"),
   useEditorContext: jest.fn(),
 }));
 
 describe("LoadJsonPage.tsx", () => {
   describe("if calls are 200 but content is empty.", () => {
-    const mockHandleClearJson = jest.fn();
-    const mockHandleInputJsonContentUpdate = jest.fn();
-    const mockHandleUpdateInputJson = jest.fn();
-    const mockHandleLoading = jest.fn();
-    const mockHandleSetModal = jest.fn();
-    const mockHandleSetText = jest.fn();
+    const mockDispatchModal = jest.fn();
+    const mockDispatchJSON = jest.fn();
+    const mockDispatchEditor = jest.fn();
 
     const mockFile = new MockAdapter(fileApi);
 
@@ -77,21 +77,20 @@ describe("LoadJsonPage.tsx", () => {
       jest.clearAllMocks();
 
       (useModalContext as jest.Mock).mockReturnValue({
-        handleSetModal: mockHandleSetModal,
+        dispatch: mockDispatchModal,
       });
 
       (useJSONContext as jest.Mock).mockReturnValue({
-        loading: false,
-        inputJson: mockInputJsonNullState,
-        handleClearJson: mockHandleClearJson,
-        handleInputJsonContentUpdate: mockHandleInputJsonContentUpdate,
-        handleUpdateInputJson: mockHandleUpdateInputJson,
-        handleLoading: mockHandleLoading,
+        state: {
+          loading: false,
+          inputJson: mockInputJsonNullState,
+        },
+        dispatch: mockDispatchJSON,
       });
 
       (useEditorContext as jest.Mock).mockReturnValue({
-        text: mockInputJsonNullState.content,
-        handleSetText: mockHandleSetText,
+        state: { text: mockInputJsonNullState.content },
+        dispatch: mockDispatchEditor,
       });
     });
 
@@ -105,7 +104,7 @@ describe("LoadJsonPage.tsx", () => {
       const { container } = renderComponent();
 
       const inputs = Array.from(
-        container.querySelectorAll("input") as NodeList
+        container.querySelectorAll<HTMLInputElement>("input")
       );
       const inputJsonName = inputs.find((input) => {
         const i = input as HTMLInputElement;
@@ -133,23 +132,15 @@ describe("LoadJsonPage.tsx", () => {
 
       await user.click(btnSubmit);
 
-      expect(mockHandleLoading).toHaveBeenCalledTimes(1);
-      expect(mockHandleLoading).toHaveBeenCalledWith(true);
-      expect(mockHandleSetModal).toHaveBeenCalledTimes(1);
-      expect(mockHandleSetModal).toHaveBeenCalledWith({
-        message: "You must send a valid name, content and file.",
-        open: true,
-      });
+      expect(mockDispatchJSON).toHaveBeenCalledTimes(2);
+      expect(mockDispatchModal).toHaveBeenCalledTimes(1);
     });
   });
 
   describe("if calls are 200 but content is not empty.", () => {
-    const mockHandleClearJson = jest.fn();
-    const mockHandleInputJsonContentUpdate = jest.fn();
-    const mockHandleUpdateInputJson = jest.fn();
-    const mockHandleLoading = jest.fn();
-    const mockHandleSetModal = jest.fn();
-    const mockHandleSetText = jest.fn();
+    const mockDispatchModal = jest.fn();
+    const mockDispatchJSON = jest.fn();
+    const mockDispatchEditor = jest.fn();
 
     const mockFile = new MockAdapter(fileApi);
     const mockInput = new MockAdapter(inputApi);
@@ -163,21 +154,20 @@ describe("LoadJsonPage.tsx", () => {
       jest.clearAllMocks();
 
       (useModalContext as jest.Mock).mockReturnValue({
-        handleSetModal: mockHandleSetModal,
+        dispatch: mockDispatchModal,
       });
 
       (useJSONContext as jest.Mock).mockReturnValue({
-        loading: false,
-        inputJson: mockInputJsonState,
-        handleClearJson: mockHandleClearJson,
-        handleInputJsonContentUpdate: mockHandleInputJsonContentUpdate,
-        handleUpdateInputJson: mockHandleUpdateInputJson,
-        handleLoading: mockHandleLoading,
+        state: {
+          loading: false,
+          inputJson: mockInputJsonState,
+        },
+        dispatch: mockDispatchJSON,
       });
 
       (useEditorContext as jest.Mock).mockReturnValue({
-        text: JSON.stringify(mockInputJsonState.content),
-        handleSetText: mockHandleSetText,
+        state: { text: JSON.stringify(mockInputJsonState.content) },
+        dispatch: mockDispatchEditor,
       });
     });
 
@@ -192,7 +182,7 @@ describe("LoadJsonPage.tsx", () => {
       const { container } = renderComponent();
 
       const inputs = Array.from(
-        container.querySelectorAll("input") as NodeList
+        container.querySelectorAll<HTMLInputElement>("input")
       );
       const inputJsonName = inputs.find((input) => {
         const i = input as HTMLInputElement;
@@ -220,48 +210,33 @@ describe("LoadJsonPage.tsx", () => {
 
       await user.click(btnSubmit);
 
-      expect(mockHandleLoading).toHaveBeenCalledTimes(2);
-      expect(mockHandleLoading).toHaveBeenCalledWith(true);
-      expect(mockHandleLoading).toHaveBeenCalledWith(false);
-      expect(mockHandleUpdateInputJson).toHaveBeenCalledTimes(1);
-      expect(mockHandleUpdateInputJson).toHaveBeenCalledWith({
-        id: mockRequestPostJsonUpload.inputJson.id,
-        name: mockRequestPostJsonUpload.inputJson.name,
-        content: mockRequestPostJsonUpload.inputJson.content,
-        keys: mockRequestPostJsonUpload.inputJson.keys,
-        keysAndValues: mockRequestPostJsonUpload.inputJson.keysAndValues,
-        createdAt: mockRequestPostJsonUpload.inputJson.createdAt,
-        updatedAt: mockRequestPostJsonUpload.inputJson.updatedAt,
-      });
+      expect(mockDispatchJSON).toHaveBeenCalledTimes(4);
     });
   });
 
   describe("General Tests.", () => {
-    const mockHandleClearJson = jest.fn();
-    const mockHandleInputJsonContentUpdate = jest.fn();
-    const mockHandleUpdateInputJson = jest.fn();
-    const mockHandleLoading = jest.fn();
-    const mockHandleSetModal = jest.fn();
-    const mockHandleSetText = jest.fn();
+    const mockDispatchModal = jest.fn();
+    const mockDispatchJSON = jest.fn();
+    const mockDispatchEditor = jest.fn();
 
     beforeEach(() => {
       jest.clearAllMocks();
 
       (useModalContext as jest.Mock).mockReturnValue({
-        handleSetModal: mockHandleSetModal,
+        dispatch: mockDispatchModal,
       });
 
       (useJSONContext as jest.Mock).mockReturnValue({
-        loading: false,
-        inputJson: mockInputJsonNullState,
-        handleClearJson: mockHandleClearJson,
-        handleInputJsonContentUpdate: mockHandleInputJsonContentUpdate,
-        handleUpdateInputJson: mockHandleUpdateInputJson,
-        handleLoading: mockHandleLoading,
+        state: {
+          loading: false,
+          inputJson: mockInputJsonNullState,
+        },
+        dispatch: mockDispatchJSON,
       });
 
       (useEditorContext as jest.Mock).mockReturnValue({
-        handleSetText: mockHandleSetText,
+        state: { text: "" },
+        dispatch: mockDispatchEditor,
       });
     });
 
@@ -269,7 +244,7 @@ describe("LoadJsonPage.tsx", () => {
       const { container } = renderComponent();
 
       const inputs = Array.from(
-        container.querySelectorAll("input") as NodeList
+        container.querySelectorAll<HTMLInputElement>("input")
       );
       const inputJsonName = inputs.find((input) => {
         const i = input as HTMLInputElement;

@@ -1,6 +1,6 @@
 import { SelectNormalProps } from "@src/entities/props";
 
-import { SelectWithLabel } from "@src/components/Selects/export";
+import { SelectWithLabel } from "@src/components/Selects/SelectWithLabel/SelectWithLabel";
 
 export const SelectNormal = ({
   id,

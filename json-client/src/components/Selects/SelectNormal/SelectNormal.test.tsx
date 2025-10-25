@@ -1,8 +1,9 @@
 import { screen, render } from "@testing-library/react";
 import user from "@testing-library/user-event";
 
-import { SelectNormal } from "@src/components/Selects/SelectNormal/SelectNormal";
 import { SelectNormalProps } from "@src/entities/props";
+
+import { SelectNormal } from "@src/components/Selects/SelectNormal/SelectNormal";
 
 type RenderComponent = {
   props: { onChange: jest.Mock } & SelectNormalProps;
@@ -47,7 +48,7 @@ describe("SelectNormal.tsx", () => {
     test("It must render the select with label.", () => {
       const { props, container } = renderComponent();
 
-      const select = container.querySelector("select") as HTMLSelectElement;
+      const select = container.querySelector<HTMLSelectElement>("select");
       const label = screen.getByText(props.label);
 
       expect(select).toBeInTheDocument();
@@ -70,9 +71,9 @@ describe("SelectNormal.tsx", () => {
     test("The corresponding functions must be executed when an option is selected.", async () => {
       const { props, container } = renderComponent();
 
-      const select = container.querySelector("select") as HTMLSelectElement;
+      const select = container.querySelector<HTMLSelectElement>("select");
 
-      await user.selectOptions(select, "1");
+      await user.selectOptions(select!, "1");
 
       expect(props.onChange).toHaveBeenCalledTimes(1);
     });

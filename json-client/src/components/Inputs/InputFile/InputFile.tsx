@@ -1,6 +1,6 @@
 import { InputFileProps } from "@src/entities/props";
 
-import { InputWithLabel } from "@src/components/Inputs/export";
+import { InputWithLabel } from "@src/components/Inputs/InputWithLabel/InputWithLabel";
 
 export const InputFile = ({
   id,

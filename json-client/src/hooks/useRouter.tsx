@@ -1,6 +1,6 @@
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
-import { Resolution } from "@src/entities/entities";
+import { Resolution } from "@src/entities/app";
 import { UseRouter } from "@src/entities/hooks";
 
 export const useRouter = (): UseRouter => {

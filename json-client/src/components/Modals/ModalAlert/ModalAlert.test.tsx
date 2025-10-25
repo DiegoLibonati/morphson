@@ -3,7 +3,9 @@ import user from "@testing-library/user-event";
 
 import { ModalAlert } from "@src/components/Modals/ModalAlert/ModalAlert";
 
-import { ModalProvider, useModalContext } from "@src/contexts/export";
+import { ModalProvider } from "@src/contexts/ModalContext/ModalContext";
+
+import { useModalContext } from "@src/hooks/useModalContext";
 
 import { mockModalOpenState } from "@tests/jest.constants";
 
@@ -23,21 +25,21 @@ const renderComponent = (): RenderComponent => {
   };
 };
 
-jest.mock("@src/contexts/ModalContext/ModalContext", () => ({
-  ...jest.requireActual("@src/contexts/ModalContext/ModalContext"),
+jest.mock("@src/hooks/useModalContext", () => ({
+  ...jest.requireActual("@src/hooks/useModalContext"),
   useModalContext: jest.fn(),
 }));
 
 describe("ModalAlert.tsx", () => {
   describe("General Tests.", () => {
-    const mockHandleSetModalClose = jest.fn();
+    const mockDispatchModal = jest.fn();
 
     beforeEach(() => {
       jest.clearAllMocks();
 
       (useModalContext as jest.Mock).mockReturnValue({
-        modal: mockModalOpenState,
-        handleSetModalClose: mockHandleSetModalClose,
+        state: { modal: mockModalOpenState },
+        dispatch: mockDispatchModal,
       });
     });
 
@@ -60,7 +62,7 @@ describe("ModalAlert.tsx", () => {
 
       await user.click(btnCloseModal);
 
-      expect(mockHandleSetModalClose).toHaveBeenCalledTimes(1);
+      expect(mockDispatchModal).toHaveBeenCalledTimes(1);
     });
   });
 });

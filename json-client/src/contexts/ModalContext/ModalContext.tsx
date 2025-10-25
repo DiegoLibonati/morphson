@@ -1,47 +1,21 @@
 import React, {
-  Reducer,
   createContext,
-  useContext,
   useEffect,
   useReducer,
 } from "react";
 
-import { Modal } from "@src/entities/entities";
-import {
-  ModalAction,
-  ModalContext as ModalContextT,
-  ModalState,
-  ModalProviderProps,
-} from "@src/entities/modal-context.d";
+import { ModalContext as ModalContextT } from "@src/entities/contexts";
+import { ModalProviderProps } from "@src/entities/props";
 
 import {
   initialState,
-  reducer,
-} from "@src/contexts/ModalContext/reducer/reducer";
+  ModalReducer,
+} from "@src/contexts/ModalContext/ModalReducer";
 
-export const ModalContext = createContext<ModalContextT | undefined>(undefined);
+export const ModalContext = createContext<ModalContextT | null>(null);
 
-export const ModalProvider: React.FunctionComponent<ModalProviderProps> = ({
-  children,
-}) => {
-  const [state, dispatch] = useReducer<Reducer<ModalState, ModalAction>>(
-    reducer,
-    initialState
-  );
-
-  const handleSetModal = (modal: Modal): void => {
-    return dispatch({
-      type: "SET_MODAL",
-      payload: { message: modal.message, open: modal.open },
-    });
-  };
-
-  const handleSetModalClose = (): void => {
-    return dispatch({
-      type: "SET_MODAL",
-      payload: { message: "", open: false },
-    });
-  };
+export const ModalProvider = ({ children }: ModalProviderProps) => {
+  const [state, dispatch] = useReducer(ModalReducer, initialState);
 
   useEffect(() => {
     if (state.modal.open) {
@@ -54,16 +28,11 @@ export const ModalProvider: React.FunctionComponent<ModalProviderProps> = ({
   return (
     <ModalContext.Provider
       value={{
-        modal: state.modal,
-        handleSetModal: handleSetModal,
-        handleSetModalClose: handleSetModalClose,
+        state: state,
+        dispatch: dispatch,
       }}
     >
       {children}
     </ModalContext.Provider>
   );
-};
-
-export const useModalContext = (): ModalContextT => {
-  return useContext(ModalContext)!;
 };

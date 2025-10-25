@@ -1,8 +1,9 @@
 import { screen, render } from "@testing-library/react";
 import user from "@testing-library/user-event";
 
-import { InputField } from "@src/components/Inputs/InputField/InputField";
 import { InputFieldProps } from "@src/entities/props";
+
+import { InputField } from "@src/components/Inputs/InputField/InputField";
 
 type RenderComponent = {
   props: { onChange: jest.Mock } & InputFieldProps;

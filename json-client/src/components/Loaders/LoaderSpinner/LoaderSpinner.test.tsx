@@ -29,7 +29,7 @@ describe("LoaderSpinner.tsx", () => {
     test("It must render the root of the loader.", async () => {
       const { props, container } = renderComponent();
 
-      const loaderRoot = container.querySelector("div") as HTMLDivElement;
+      const loaderRoot = container.querySelector<HTMLDivElement>("div");
 
       expect(loaderRoot).toBeInTheDocument();
       expect(loaderRoot).toHaveClass(props.className!);
@@ -38,7 +38,7 @@ describe("LoaderSpinner.tsx", () => {
     test("It must render the spinner.", () => {
       const { container } = renderComponent();
 
-      const spinner = container.querySelector(".loader") as HTMLDivElement;
+      const spinner = container.querySelector<HTMLDivElement>(".loader");
 
       expect(spinner).toBeInTheDocument();
       expect(spinner).toHaveClass("loader");

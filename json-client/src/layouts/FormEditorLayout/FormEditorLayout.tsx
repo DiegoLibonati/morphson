@@ -2,14 +2,12 @@ import { FaArrowLeft } from "react-icons/fa";
 
 import { FormEditorLayoutProps } from "@src/entities/props";
 
-import { FormMenu } from "@src/components/Forms/export";
-import {
-  InputEditor,
-  OutputWithInputEditor,
-} from "@src/components/Editors/export";
-import { AnchorSecondary } from "@src/components/Anchors/export";
+import { FormMenu } from "@src/components/Forms/FormMenu/FormMenu";
+import { InputEditor } from "@src/components/Editors/InputEditor/InputEditor";
+import { OutputWithInputEditor } from "@src/components/Editors/OutputWithInputEditor/OutputWithInputEditor";
+import { AnchorSecondary } from "@src/components/Anchors/AnchorSecondary/AnchorSecondary";
 
-import { MainLayout } from "@src/layouts/export";
+import { MainLayout } from "@src/layouts/MainLayout/MainLayout";
 
 export const FormEditorLayout = ({
   loading,

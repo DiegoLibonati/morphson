@@ -1,12 +1,19 @@
 import { FaInfoCircle } from "react-icons/fa";
 
-import { ButtonSecondary } from "@src/components/Buttons/export";
-import { Modal } from "@src/components/Modals/export";
+import { ButtonSecondary } from "@src/components/Buttons/ButtonSecondary/ButtonSecondary";
+import { Modal } from "@src/components/Modals/Modal/Modal";
 
-import { useModalContext } from "@src/contexts/export";
+import { useModalContext } from "@src/hooks/useModalContext";
 
 export const ModalAlert = (): JSX.Element => {
-  const { modal, handleSetModalClose } = useModalContext();
+  const { state: modalState, dispatch: modalDispatch } = useModalContext();
+
+  const handleSetModalClose = () => {
+    return modalDispatch({
+      type: "SET_MODAL",
+      payload: { message: "", open: false },
+    });
+  };
 
   return (
     <Modal>
@@ -15,7 +22,7 @@ export const ModalAlert = (): JSX.Element => {
           <FaInfoCircle fontSize={24} className="fill-secondary"></FaInfoCircle>
         </div>
         <p className="w-full text-center text-secondary text-sm">
-          {modal.message}
+          {modalState.modal.message}
         </p>
       </div>
       <ButtonSecondary

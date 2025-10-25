@@ -1,8 +1,9 @@
 import { screen, render } from "@testing-library/react";
 import user from "@testing-library/user-event";
 
-import { InputCheck } from "@src/components/Inputs/InputCheck/InputCheck";
 import { InputCheckProps } from "@src/entities/props";
+
+import { InputCheck } from "@src/components/Inputs/InputCheck/InputCheck";
 
 type RenderComponent = {
   props: { onChange: jest.Mock } & InputCheckProps;

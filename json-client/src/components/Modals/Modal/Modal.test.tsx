@@ -23,10 +23,8 @@ describe("Modal.tsx", () => {
     test("It must render the root modal.", () => {
       const { container } = renderComponent();
 
-      const modalRoot = container.querySelector(
-        ".modal-root"
-      ) as HTMLDivElement;
-      const modalCenter = modalRoot.children[0];
+      const modalRoot = container.querySelector<HTMLDivElement>(".modal-root");
+      const modalCenter = modalRoot!.children[0];
 
       expect(modalRoot).toBeInTheDocument();
       expect(modalCenter).toBeInTheDocument();

@@ -33,9 +33,9 @@ describe("FormMenu.tsx", () => {
     test("It must render the form.", () => {
       const { props, container } = renderComponent();
 
-      const form = container.querySelector(
+      const form = container.querySelector<HTMLFormElement>(
         `.${props.className}`
-      ) as HTMLFormElement;
+      );
 
       expect(form).toBeInTheDocument();
       expect(form).toHaveClass(props.className!);

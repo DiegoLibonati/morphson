@@ -84,7 +84,7 @@ describe("InputFile.tsx", () => {
       test("It must render the input with label.", () => {
         const { props, container } = renderComponent({ value: value });
 
-        const input = container.querySelector("input") as HTMLInputElement;
+        const input = container.querySelector<HTMLInputElement>("input");
         const label = screen.getByText(props.label);
 
         expect(input).toBeInTheDocument();
@@ -119,9 +119,9 @@ describe("InputFile.tsx", () => {
       test("It must render the element with the class entered by props.", () => {
         const { props, container } = renderComponent({ value: value });
 
-        const root = container.querySelector(
+        const root = container.querySelector<HTMLDivElement>(
           `.${props.className}`
-        ) as HTMLDivElement;
+        );
 
         expect(root).toBeInTheDocument();
         expect(root).toHaveClass(props.className!);

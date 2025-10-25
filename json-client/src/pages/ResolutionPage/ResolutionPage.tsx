@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 
-import { MainLayout } from "@src/layouts/export";
-import { SectionJsonUploaded } from "@src/containers/export";
-import { useRouter } from "@src/hooks/export";
+import { SectionJsonUploaded } from "@src/components/Sections/SectionJsonUploaded/SectionJsonUploaded";
+
+import { MainLayout } from "@src/layouts/MainLayout/MainLayout";
+
+import { useRouter } from "@src/hooks/useRouter";
 
 export const ResolutionPage = (): JSX.Element => {
   const [availablesIds] = useState<string[]>(["uploaded"]);

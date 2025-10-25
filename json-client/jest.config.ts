@@ -5,7 +5,7 @@ const config: Config = {
   testEnvironment: "jsdom",
   setupFilesAfterEnv: ["<rootDir>/tests/jest.setup.ts"],
   moduleNameMapper: {
-    "\\.(css|scss)$": "<rootDir>/tests_mocks/styleMock.js",
+    "\\.(css|scss)$": "<rootDir>/tests_mocks/styleMock.ts",
     "^monaco-editor$": "<rootDir>/node_modules/@monaco-editor/react",
     "^@src/(.*)$": "<rootDir>/src/$1",
     "^@tests/(.*)$": "<rootDir>/tests/$1",

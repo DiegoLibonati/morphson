@@ -51,9 +51,8 @@ describe("AnchorAction.tsx", () => {
     test("It must not render the span.", () => {
       const { container } = renderComponent({ noMark: noMark });
 
-      const spanNoMark = container.querySelector(
-        ".span-nomark"
-      ) as HTMLSpanElement;
+      const spanNoMark =
+        container.querySelector<HTMLSpanElement>(".span-nomark");
 
       expect(spanNoMark).not.toBeInTheDocument();
     });
@@ -65,9 +64,8 @@ describe("AnchorAction.tsx", () => {
     test("It must render the span.", () => {
       const { container } = renderComponent({ noMark: noMark });
 
-      const spanNoMark = container.querySelector(
-        ".span-nomark"
-      ) as HTMLSpanElement;
+      const spanNoMark =
+        container.querySelector<HTMLSpanElement>(".span-nomark");
 
       expect(spanNoMark).toBeInTheDocument();
     });

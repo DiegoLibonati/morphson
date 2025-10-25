@@ -1,4 +1,4 @@
-import { InputJson, Modal, OutputJson } from "@src/entities/entities";
+import { InputJson, Modal, OutputJson } from "@src/entities/app";
 
 export const mockInputJsonState: InputJson = {
   id: 123,
