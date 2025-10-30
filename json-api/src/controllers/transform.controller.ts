@@ -26,19 +26,21 @@ export const TransformController = {
       ).trim();
 
       if (!idInputJson || !isInteger(idInputJson)) {
-        return res.status(400).json({
+        res.status(400).json({
           code: CODES_NOT.validInputJsonId,
           message: MESSAGES_NOT.validInputJsonId,
           data: null,
         });
+        return;
       }
 
       if (saveOutputJson && !outputJsonNameToSave) {
-        return res.status(400).json({
+        res.status(400).json({
           code: CODES_NOT.validName,
           message: MESSAGES_NOT.validName,
           data: null,
         });
+        return;
       }
 
       if (
@@ -46,21 +48,23 @@ export const TransformController = {
         contentJsonToTransform === "{}" ||
         isEmptyObject(contentJsonToTransform)
       ) {
-        return res.status(400).json({
+        res.status(400).json({
           code: CODES_NOT.validContent,
           message: MESSAGES_NOT.validContent,
           data: null,
         });
+        return;
       }
 
       const inputJson = await InputService.getInputById(idInputJson);
 
       if (!inputJson) {
-        return res.status(404).json({
+        res.status(404).json({
           code: CODES_NOT.foundInputJson,
           message: MESSAGES_NOT.foundInputJson,
           data: null,
         });
+        return;
       }
 
       if (saveOutputJson) {
@@ -86,14 +90,14 @@ export const TransformController = {
       res.setHeader("Content-Disposition", `attachment; filename=${filename}`);
       res.setHeader("Content-Type", "application/json");
 
-      return res.status(200).download(filePath, (err) => {
+      res.status(200).download(filePath, (err) => {
         if (!err) {
           fs.unlinkSync(filePath);
         }
       });
     } catch (e: unknown) {
       const response = getExceptionMessage(e);
-      return res.status(500).json(response);
+      res.status(500).json(response);
     }
   },
 };

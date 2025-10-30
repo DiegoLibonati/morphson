@@ -13,22 +13,24 @@ export const FileController = {
     try {
       const file = req.file;
 
-      if (!file)
-        return res.status(404).json({
+      if (!file) {
+        res.status(404).json({
           code: CODES_NOT.foundFile,
           message: MESSAGES_NOT.foundFile,
         });
+        return;
+      }
 
       const content = file!.buffer.toString("utf-8");
 
-      return res.status(200).json({
+      res.status(200).json({
         code: CODES_SUCCESS.getFileContent,
         message: MESSAGES_SUCCESS.getFileContent,
         content: content,
       });
     } catch (e) {
       const response = getExceptionMessage(e);
-      return res.status(500).json(response);
+      res.status(500).json(response);
     }
   },
 };

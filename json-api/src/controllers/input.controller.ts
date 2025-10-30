@@ -19,14 +19,14 @@ export const InputController = {
     try {
       const inputJsons = await InputService.getAllInputs();
 
-      return res.status(200).json({
+      res.status(200).json({
         code: CODES_SUCCESS.getAllInputJsons,
         message: MESSAGES_SUCCESS.getAllInputJsons,
         data: inputJsons,
       });
     } catch (e) {
       const response = getExceptionMessage(e);
-      return res.status(500).json(response);
+      res.status(500).json(response);
     }
   },
   getById: async (req: Request, res: Response) => {
@@ -34,24 +34,26 @@ export const InputController = {
       const idInputJson = req.params.id;
 
       if (!idInputJson || !isInteger(idInputJson)) {
-        return res.status(400).json({
+        res.status(400).json({
           code: CODES_NOT.validInputJsonId,
           message: MESSAGES_NOT.validInputJsonId,
           data: null,
         });
+        return;
       }
 
       const inputJson = await InputService.getInputById(idInputJson);
 
       if (!inputJson) {
-        return res.status(404).json({
+        res.status(404).json({
           code: CODES_NOT.foundInputJson,
           message: MESSAGES_NOT.foundInputJson,
           data: null,
         });
+        return;
       }
 
-      return res.status(200).json({
+      res.status(200).json({
         code: CODES_SUCCESS.getInputJson,
         message: MESSAGES_SUCCESS.getInputJson,
         data: {
@@ -60,7 +62,7 @@ export const InputController = {
       });
     } catch (e) {
       const response = getExceptionMessage(e);
-      return res.status(500).json(response);
+      res.status(500).json(response);
     }
   },
   upload: async (req: Request, res: Response) => {
@@ -71,18 +73,20 @@ export const InputController = {
       let content = body.content.trim();
 
       if (!name) {
-        return res.status(400).json({
+        res.status(400).json({
           code: CODES_NOT.validName,
           message: MESSAGES_NOT.validName,
         });
+        return;
       }
 
       if (!content || content === "{}" || isEmptyObject(content)) {
-        return res.status(400).json({
+        res.status(400).json({
           code: CODES_NOT.validContent,
           message: MESSAGES_NOT.validContent,
           data: null,
         });
+        return;
       }
 
       content = JSON.parse(body.content);
@@ -101,14 +105,14 @@ export const InputController = {
         inputJson: json,
       };
 
-      return res.status(201).json({
+      res.status(201).json({
         code: CODES_SUCCESS.inputJsonUploaded,
         message: MESSAGES_SUCCESS.inputJsonUploaded,
         data: data,
       });
     } catch (e: unknown) {
       const response = getExceptionMessage(e);
-      return res.status(500).json(response);
+      res.status(500).json(response);
     }
   },
 };

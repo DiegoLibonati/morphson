@@ -16,14 +16,14 @@ export const OutputController = {
     try {
       const outputJsons = await OutputService.getAllOutputs();
 
-      return res.status(200).json({
+      res.status(200).json({
         code: CODES_SUCCESS.getAllOutputJsons,
         message: MESSAGES_SUCCESS.getAllOutputJsons,
         data: outputJsons,
       });
     } catch (e) {
       const response = getExceptionMessage(e);
-      return res.status(500).json(response);
+      res.status(500).json(response);
     }
   },
   getById: async (req: Request, res: Response) => {
@@ -31,24 +31,26 @@ export const OutputController = {
       const idOutputJson = req.params.id;
 
       if (!idOutputJson || !isInteger(idOutputJson)) {
-        return res.status(400).json({
+        res.status(400).json({
           code: CODES_NOT.validOutputJsonId,
           message: MESSAGES_NOT.validOutputJsonId,
           data: null,
         });
+        return;
       }
 
       const outputJson = await OutputService.getOutputById(idOutputJson);
 
       if (!outputJson) {
-        return res.status(404).json({
+        res.status(404).json({
           code: CODES_NOT.foundOutputJson,
           message: MESSAGES_NOT.foundOutputJson,
           data: null,
         });
+        return;
       }
 
-      return res.status(200).json({
+      res.status(200).json({
         code: CODES_SUCCESS.getOutputJson,
         message: MESSAGES_SUCCESS.getOutputJson,
         data: {
@@ -57,7 +59,7 @@ export const OutputController = {
       });
     } catch (e) {
       const response = getExceptionMessage(e);
-      return res.status(500).json(response);
+      res.status(500).json(response);
     }
   },
 };
