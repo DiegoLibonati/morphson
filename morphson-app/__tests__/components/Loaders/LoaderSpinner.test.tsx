@@ -10,7 +10,7 @@ describe("LoaderSpinner", () => {
   describe("rendering", () => {
     it("should render the spinner element", () => {
       const { container } = renderComponent();
-      expect(container.querySelector(".loader")).toBeInTheDocument();
+      expect(container.querySelector<HTMLDivElement>(".loader")).toBeInTheDocument();
     });
 
     it("should render inside LoaderRoot overlay", () => {

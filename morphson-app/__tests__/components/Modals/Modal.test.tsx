@@ -20,7 +20,7 @@ describe("Modal", () => {
 
     it("should render the overlay backdrop", () => {
       const { container } = renderComponent();
-      expect(container.querySelector(".modal-root")).toBeInTheDocument();
+      expect(container.querySelector<HTMLDivElement>(".modal-root")).toBeInTheDocument();
     });
   });
 });

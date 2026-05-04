@@ -20,7 +20,7 @@ describe("FormMenu", () => {
   describe("rendering", () => {
     it("should render children inside a form", () => {
       const { container } = renderComponent();
-      expect(container.querySelector("form")).toBeInTheDocument();
+      expect(container.querySelector<HTMLFormElement>("form")).toBeInTheDocument();
     });
 
     it("should render a submit button", () => {

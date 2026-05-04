@@ -24,12 +24,12 @@ describe("AnchorAction", () => {
 
     it("should render the mark indicator span by default", () => {
       const { container } = renderComponent(false);
-      expect(container.querySelector(".span-nomark")).toBeInTheDocument();
+      expect(container.querySelector<HTMLSpanElement>(".span-nomark")).toBeInTheDocument();
     });
 
     it("should not render the mark indicator span when noMark is true", () => {
       const { container } = renderComponent(true);
-      expect(container.querySelector(".span-nomark")).not.toBeInTheDocument();
+      expect(container.querySelector<HTMLSpanElement>(".span-nomark")).not.toBeInTheDocument();
     });
 
     it("should apply custom className", () => {
