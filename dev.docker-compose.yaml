@@ -1,71 +1,78 @@
 services:
-  client:
+  morphson-app:
     build:
-      context: ./json-client
-      dockerfile: Dockerfile.development
-    restart: always
-    ports:
-      - "5173:5173"
-    env_file:
-      - ./json-client/.env.development
-    volumes:
-      - ./json-client:/home/app
-      - /home/app/node_modules
-    networks:
-      - net-json-transformer
-    depends_on:
-      - api
-    tty: true
-
-  api:
-    build:
-      context: ./json-api
+      context: ./morphson-app
       dockerfile: Dockerfile.development
     restart: always
     ports:
       - "3000:3000"
     env_file:
-      - ./json-api/.env.development
+      - ./morphson-app/.env
     volumes:
-      - ./json-api/src:/home/app/src
+      - ./morphson-app:/home/app
+      - /home/app/node_modules
     networks:
-      - net-json-transformer
+      - morphson-net
     depends_on:
-      db:
+      - morphson-api
+    stdin_open: true
+    tty: true
+
+  morphson-api:
+    build:
+      context: ./morphson-api
+      dockerfile: Dockerfile.development
+    restart: always
+    ports:
+      - "5050:5050"
+    env_file:
+      - ./morphson-api/.env
+    volumes:
+      - ./morphson-api:/home/app
+      - /home/app/node_modules
+    networks:
+      - morphson-net
+    depends_on:
+      morphson-db:
         condition: service_healthy
 
-  db:
+  morphson-db:
     image: postgres:16
     restart: always
     ports:
       - "5432:5432"
+    env_file:
+      - ./.env
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: jsondb
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
-      - ./data:/var/lib/postgresql/data
-    networks:
-      - net-json-transformer
+      - db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U root -d jsondb"]
-      interval: 5s
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 15s
+    networks:
+      - morphson-net
 
   adminer:
     image: adminer:latest
     restart: always
     ports:
       - "8080:8080"
-    environment:
-      ADMINER_DEFAULT_SERVER: db
-    networks:
-      - net-json-transformer
     depends_on:
-      db:
+      morphson-db:
         condition: service_healthy
+    networks:
+      - morphson-net
+
+volumes:
+  db-data:
+    driver: local
 
 networks:
-  net-json-transformer:
-    name: net-json-transformer
+  morphson-net:
+    driver: bridge

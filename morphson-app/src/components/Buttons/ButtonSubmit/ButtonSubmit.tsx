@@ -1,0 +1,22 @@
+import type { JSX } from "react";
+import type { ButtonSubmitProps } from "@/types/props";
+
+const ButtonSubmit = ({
+  ariaLabel,
+  disabled,
+  children,
+  className,
+}: ButtonSubmitProps): JSX.Element => {
+  return (
+    <button
+      className={`w-full h-10 text-white bg-secondary rounded-lg transition-all hover:bg-tertiary hover:font-semibold disabled:bg-light-grey disabled:cursor-not-allowed disabled:text-black disabled:font-normal ${className}`}
+      type="submit"
+      disabled={disabled}
+      aria-label={ariaLabel}
+    >
+      {children}
+    </button>
+  );
+};
+
+export default ButtonSubmit;

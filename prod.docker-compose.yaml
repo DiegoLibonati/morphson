@@ -1,52 +1,66 @@
-version: "3.9"
-
 services:
-  client:
+  morphson-app:
     build:
-      context: ./json-client
-      dockerfile: Dockerfile.production 
+      context: ./morphson-app
+      dockerfile: Dockerfile.production
     restart: always
+    env_file:
+      - ./morphson-app/.env
+    depends_on:
+      - morphson-api
     ports:
-      - "80:80"                         
-    env_file:
-      - ./json-client/.env.production
+      - 3000:8080
     networks:
-      - net-json-transformer
-    depends_on:
-      - api
+      - morphson-net
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
-  api:
+  morphson-api:
     build:
-      context: ./json-api
-      dockerfile: Dockerfile.production  
+      context: ./morphson-api
+      dockerfile: Dockerfile.production
     restart: always
-    expose:
-      - "3000"                         
     env_file:
-      ./json-api/.env.production
-    networks:
-      - net-json-transformer
+      - ./morphson-api/.env
     depends_on:
-      db:
+      morphson-db:
         condition: service_healthy
+    expose:
+      - 5050:5050
+    networks:
+      - morphson-net
 
-  db:
+  morphson-db:
     image: postgres:16
     restart: always
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./.env
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: jsondb
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
-      - ./data:/var/lib/postgresql/data
-    networks:
-      - net-json-transformer
+      - db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U root -d jsondb"]
-      interval: 5s
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 15s
+    networks:
+      - morphson-net
+
+volumes:
+  db-data:
+    driver: local
 
 networks:
-  net-json-transformer:
-    name: net-json-transformer
+  morphson-net:
+    name: morphson-net
+    driver: bridge
