@@ -1,5 +1,5 @@
 {
-  "name": "morphson",
+  "name": "morphson-api",
   "version": "0.0.1",
   "engines": {
     "node": ">=22.0.0"
