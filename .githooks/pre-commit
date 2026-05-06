@@ -1,0 +1,25 @@
+#!/bin/sh
+# Pre-commit hook for Morphson monorepo.
+# Runs lint-staged inside each package when its files are staged.
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+STAGED_FILES=$(git diff --cached --name-only)
+
+API_FILES=$(echo "$STAGED_FILES" | grep "^morphson-api/")
+APP_FILES=$(echo "$STAGED_FILES" | grep "^morphson-app/")
+
+EXIT_CODE=0
+
+if [ -n "$API_FILES" ]; then
+    echo "[pre-commit] Running lint-staged for morphson-api..."
+    cd "$REPO_ROOT/morphson-api" && npx lint-staged
+    EXIT_CODE=$((EXIT_CODE + $?))
+fi
+
+if [ -n "$APP_FILES" ]; then
+    echo "[pre-commit] Running lint-staged for morphson-app..."
+    cd "$REPO_ROOT/morphson-app" && npx lint-staged
+    EXIT_CODE=$((EXIT_CODE + $?))
+fi
+
+exit $EXIT_CODE
