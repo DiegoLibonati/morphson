@@ -69,7 +69,7 @@ const TransformJsonPage = (): JSX.Element => {
       });
       return;
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       if (axios.isAxiosError(e) && e.response) {
         modalDispatch({
           type: "SET_MODAL",
@@ -120,7 +120,7 @@ const TransformJsonPage = (): JSX.Element => {
       });
       return;
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       if (axios.isAxiosError(e) && e.response) {
         modalDispatch({
           type: "SET_MODAL",
@@ -177,7 +177,7 @@ const TransformJsonPage = (): JSX.Element => {
       });
       return;
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       if (axios.isAxiosError(e) && e.response) {
         modalDispatch({
           type: "SET_MODAL",
@@ -247,7 +247,7 @@ const TransformJsonPage = (): JSX.Element => {
         },
       });
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       if (axios.isAxiosError(e) && e.response) {
         const blob = e.response.data as Blob;
         const parsed = JSON.parse(await getContentFromBlob(blob)) as { message: string };

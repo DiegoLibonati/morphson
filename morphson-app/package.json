@@ -64,5 +64,14 @@
     "typescript": "^5.2.2",
     "typescript-eslint": "^8.0.0",
     "vite": "^7.1.6"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write"
+    ]
   }
 }
