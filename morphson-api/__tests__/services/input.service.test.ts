@@ -1,5 +1,5 @@
 import type { InputJson } from "@prisma/client";
-import type { InputJsonCreatePayload } from "@/types/payloads";
+import type { InputJsonCreatePayload } from "@/types/zod";
 
 import { InputService } from "@/services/input.service";
 

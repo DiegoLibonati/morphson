@@ -1,23 +1,24 @@
 import fs from "fs";
 
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 import { TransformController } from "@/controllers/transform.controller";
 
 import { InputService } from "@/services/input.service";
 import { OutputService } from "@/services/output.service";
 
+import { NotFoundError } from "@/errors/not_found.error";
+
 import { CODES_NOT } from "@/constants/codes.constant";
+import { MESSAGES_NOT } from "@/constants/messages.constant";
 
 import { mockInputJson } from "@tests/__mocks__/inputJson.mock";
 
 jest.mock("@/services/input.service");
 jest.mock("@/services/output.service");
 
-const buildReq = <P extends Record<string, string> = Record<string, string>>(
-  overrides: { params?: P; body?: unknown; query?: unknown } = {}
-): Request<P> => {
-  return { params: {} as P, query: {}, body: {}, ...overrides } as Request<P>;
+const buildReq = (body: unknown): Request => {
+  return { params: {}, query: {}, body } as Request;
 };
 
 const buildRes = (): Response => {
@@ -36,6 +37,8 @@ const buildRes = (): Response => {
   return res;
 };
 
+const buildNext = (): NextFunction => jest.fn();
+
 describe("transform.controller", () => {
   beforeEach((): void => {
     jest.spyOn(fs, "writeFileSync").mockImplementation((): void => {
@@ -47,174 +50,152 @@ describe("transform.controller", () => {
   });
 
   describe("transform", () => {
-    it("should return 400 when idInputJson is not a valid integer", async () => {
-      const req = buildReq({
-        body: {
-          idInputJson: "abc",
-          saveOutputJson: false,
-          outputJsonNameToSave: "",
-          contentJsonToTransform: '{"greeting":"input.name"}',
-        },
-      });
-      const res: Response = buildRes();
-
-      await TransformController.transform(req, res);
-
-      expect(InputService.getInputById).not.toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith(
-        expect.objectContaining({ code: CODES_NOT.validInputJsonId })
-      );
-    });
-
-    it("should return 400 when idInputJson is zero", async () => {
-      const req = buildReq({
-        body: {
-          idInputJson: "0",
-          saveOutputJson: false,
-          outputJsonNameToSave: "",
-          contentJsonToTransform: '{"greeting":"input.name"}',
-        },
-      });
-      const res: Response = buildRes();
-
-      await TransformController.transform(req, res);
-
-      expect(res.status).toHaveBeenCalledWith(400);
-    });
-
-    it("should return 400 when saveOutputJson is true but outputJsonNameToSave is empty", async () => {
-      const req = buildReq({
-        body: {
-          idInputJson: "1",
-          saveOutputJson: true,
-          outputJsonNameToSave: "   ",
-          contentJsonToTransform: '{"greeting":"input.name"}',
-        },
-      });
-      const res: Response = buildRes();
-
-      await TransformController.transform(req, res);
-
-      expect(InputService.getInputById).not.toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ code: CODES_NOT.validName }));
-    });
-
-    it("should return 400 when contentJsonToTransform is empty", async () => {
-      const req = buildReq({
-        body: {
-          idInputJson: "1",
-          saveOutputJson: false,
-          outputJsonNameToSave: "",
-          contentJsonToTransform: "   ",
-        },
-      });
-      const res: Response = buildRes();
-
-      await TransformController.transform(req, res);
-
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith(
-        expect.objectContaining({ code: CODES_NOT.validContent })
-      );
-    });
-
-    it("should return 400 when contentJsonToTransform is '{}'", async () => {
-      const req = buildReq({
-        body: {
-          idInputJson: "1",
-          saveOutputJson: false,
-          outputJsonNameToSave: "",
-          contentJsonToTransform: "{}",
-        },
-      });
-      const res: Response = buildRes();
-
-      await TransformController.transform(req, res);
-
-      expect(res.status).toHaveBeenCalledWith(400);
-    });
-
     it("should transform and download the file when inputs are valid and saveOutputJson is false", async () => {
       (InputService.getInputById as jest.Mock).mockResolvedValue(mockInputJson);
-
-      const req = buildReq({
-        body: {
-          idInputJson: "1",
-          saveOutputJson: false,
-          outputJsonNameToSave: "",
-          contentJsonToTransform: '{"greeting":"input.name"}',
-        },
+      const req: Request = buildReq({
+        idInputJson: "1",
+        saveOutputJson: false,
+        outputJsonNameToSave: "",
+        contentJsonToTransform: '{"greeting":"input.key"}',
       });
       const res: Response = buildRes();
+      const next: NextFunction = buildNext();
 
-      await TransformController.transform(req, res);
+      await TransformController.transform(req, res, next);
 
       expect(InputService.getInputById).toHaveBeenCalledWith("1");
       expect(OutputService.createOutput).not.toHaveBeenCalled();
       expect(fs.writeFileSync).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.download).toHaveBeenCalled();
+      expect(next).not.toHaveBeenCalled();
     });
 
-    it("should call createOutput when saveOutputJson is true", async () => {
+    it("should call createOutput when saveOutputJson is true and a name is provided", async () => {
       (InputService.getInputById as jest.Mock).mockResolvedValue(mockInputJson);
       (OutputService.createOutput as jest.Mock).mockResolvedValue({});
-
-      const req = buildReq({
-        body: {
-          idInputJson: "1",
-          saveOutputJson: true,
-          outputJsonNameToSave: "my-output",
-          contentJsonToTransform: '{"greeting":"input.name"}',
-        },
+      const req: Request = buildReq({
+        idInputJson: "1",
+        saveOutputJson: true,
+        outputJsonNameToSave: "my-output",
+        contentJsonToTransform: '{"greeting":"input.key"}',
       });
       const res: Response = buildRes();
+      const next: NextFunction = buildNext();
 
-      await TransformController.transform(req, res);
+      await TransformController.transform(req, res, next);
 
       expect(OutputService.createOutput).toHaveBeenCalledWith({
         name: "my-output",
-        transformationModel: { greeting: "input.name" },
+        transformationModel: { greeting: "input.key" },
       });
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
-    it("should delete the temp file after download via the callback", async () => {
+    it("should not call createOutput when saveOutputJson is false even if a name is provided", async () => {
       (InputService.getInputById as jest.Mock).mockResolvedValue(mockInputJson);
-
-      const req = buildReq({
-        body: {
-          idInputJson: "1",
-          saveOutputJson: false,
-          outputJsonNameToSave: "",
-          contentJsonToTransform: '{"greeting":"input.name"}',
-        },
+      const req: Request = buildReq({
+        idInputJson: "1",
+        saveOutputJson: false,
+        outputJsonNameToSave: "ignored",
+        contentJsonToTransform: '{"greeting":"input.key"}',
       });
       const res: Response = buildRes();
+      const next: NextFunction = buildNext();
 
-      await TransformController.transform(req, res);
+      await TransformController.transform(req, res, next);
+
+      expect(OutputService.createOutput).not.toHaveBeenCalled();
+    });
+
+    it("should set the Content-Disposition and Content-Type headers", async () => {
+      (InputService.getInputById as jest.Mock).mockResolvedValue(mockInputJson);
+      const req: Request = buildReq({
+        idInputJson: "1",
+        saveOutputJson: false,
+        outputJsonNameToSave: "",
+        contentJsonToTransform: '{"greeting":"input.key"}',
+      });
+      const res: Response = buildRes();
+      const next: NextFunction = buildNext();
+
+      await TransformController.transform(req, res, next);
+
+      expect(res.setHeader).toHaveBeenCalledWith(
+        "Content-Disposition",
+        `attachment; filename=${mockInputJson.name}_transformed.json`
+      );
+      expect(res.setHeader).toHaveBeenCalledWith("Content-Type", "application/json");
+    });
+
+    it("should delete the temp file after download via the callback", async () => {
+      (InputService.getInputById as jest.Mock).mockResolvedValue(mockInputJson);
+      const req: Request = buildReq({
+        idInputJson: "1",
+        saveOutputJson: false,
+        outputJsonNameToSave: "",
+        contentJsonToTransform: '{"greeting":"input.key"}',
+      });
+      const res: Response = buildRes();
+      const next: NextFunction = buildNext();
+
+      await TransformController.transform(req, res, next);
 
       expect(fs.unlinkSync).toHaveBeenCalled();
     });
 
-    it("should return 500 when service throws", async () => {
-      (InputService.getInputById as jest.Mock).mockRejectedValue(new Error("DB error"));
-
-      const req = buildReq({
-        body: {
-          idInputJson: "1",
-          saveOutputJson: false,
-          outputJsonNameToSave: "",
-          contentJsonToTransform: '{"greeting":"input.name"}',
-        },
+    it("should forward NotFoundError to next when the input json does not exist", async () => {
+      (InputService.getInputById as jest.Mock).mockResolvedValue(null);
+      const req: Request = buildReq({
+        idInputJson: "99999",
+        saveOutputJson: false,
+        outputJsonNameToSave: "",
+        contentJsonToTransform: '{"greeting":"input.key"}',
       });
       const res: Response = buildRes();
+      const next: NextFunction = buildNext();
 
-      await TransformController.transform(req, res);
+      await TransformController.transform(req, res, next);
 
-      expect(res.status).toHaveBeenCalledWith(500);
+      const error = (next as jest.Mock).mock.calls[0][0];
+      expect(error).toBeInstanceOf(NotFoundError);
+      expect(error.code).toBe(CODES_NOT.foundInputJson);
+      expect(error.message).toBe(MESSAGES_NOT.foundInputJson);
+      expect(res.status).not.toHaveBeenCalled();
+    });
+
+    it("should forward to next when service throws", async () => {
+      const dbError = new Error("DB error");
+      (InputService.getInputById as jest.Mock).mockRejectedValue(dbError);
+      const req: Request = buildReq({
+        idInputJson: "1",
+        saveOutputJson: false,
+        outputJsonNameToSave: "",
+        contentJsonToTransform: '{"greeting":"input.key"}',
+      });
+      const res: Response = buildRes();
+      const next: NextFunction = buildNext();
+
+      await TransformController.transform(req, res, next);
+
+      expect(next).toHaveBeenCalledWith(dbError);
+    });
+
+    it("should forward SyntaxError to next when contentJsonToTransform is not valid JSON", async () => {
+      (InputService.getInputById as jest.Mock).mockResolvedValue(mockInputJson);
+      const req: Request = buildReq({
+        idInputJson: "1",
+        saveOutputJson: false,
+        outputJsonNameToSave: "",
+        contentJsonToTransform: "not-json",
+      });
+      const res: Response = buildRes();
+      const next: NextFunction = buildNext();
+
+      await TransformController.transform(req, res, next);
+
+      expect(next).toHaveBeenCalledTimes(1);
+      expect((next as jest.Mock).mock.calls[0][0]).toBeInstanceOf(SyntaxError);
     });
   });
 });

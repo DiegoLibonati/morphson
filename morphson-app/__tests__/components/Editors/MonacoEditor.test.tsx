@@ -48,16 +48,6 @@ describe("MonacoEditor", () => {
     });
 
     it("should apply custom className to wrapper", () => {
-      render(
-        <MonacoEditor
-          language="json"
-          defaultValue="{}"
-          value="{}"
-          theme="vs-dark"
-          onChange={mockOnChange}
-          className="custom-editor"
-        />
-      );
       const { container } = render(
         <MonacoEditor
           language="json"
@@ -68,6 +58,7 @@ describe("MonacoEditor", () => {
           className="custom-editor"
         />
       );
+
       expect(container.firstChild).toHaveClass("custom-editor");
     });
   });

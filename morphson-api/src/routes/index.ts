@@ -1,5 +1,6 @@
 import { Router } from "express";
 
+import healthRoutes from "@/routes/v1/health.route";
 import fileRoutes from "@/routes/v1/file.route";
 import inputRoutes from "@/routes/v1/input.route";
 import outputRoutes from "@/routes/v1/output.route";
@@ -11,5 +12,6 @@ router.use("/file", fileRoutes);
 router.use("/inputs", inputRoutes);
 router.use("/outputs", outputRoutes);
 router.use("/transform", transformRoutes);
+router.use("/health", healthRoutes);
 
 export default router;

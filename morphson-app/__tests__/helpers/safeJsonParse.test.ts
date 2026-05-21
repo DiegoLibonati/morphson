@@ -16,10 +16,15 @@ describe("safeJsonParse", () => {
       const result = safeJsonParse("{}");
       expect(result).toEqual({});
     });
+
+    it("should parse an array", () => {
+      const result = safeJsonParse("[1, 2, 3]");
+      expect(result).toEqual([1, 2, 3]);
+    });
   });
 
   describe("invalid JSON", () => {
-    it("should return null for invalid json string", () => {
+    it("should return null for an invalid json string", () => {
       const result = safeJsonParse("not valid json");
       expect(result).toBeNull();
     });
@@ -29,8 +34,13 @@ describe("safeJsonParse", () => {
       expect(result).toBeNull();
     });
 
-    it("should return null for malformed JSON", () => {
+    it("should return null for a malformed JSON string", () => {
       const result = safeJsonParse("{key: value}");
+      expect(result).toBeNull();
+    });
+
+    it("should return null for an unterminated string", () => {
+      const result = safeJsonParse('{"key": "value');
       expect(result).toBeNull();
     });
   });

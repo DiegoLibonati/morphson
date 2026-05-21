@@ -7,6 +7,8 @@ export const MESSAGES_SUCCESS: MessagesSuccess = {
   getInputJson: "Input JSON retrieved successfully.",
   getAllOutputJsons: "Output JSONs retrieved successfully.",
   getOutputJson: "Output JSON retrieved successfully.",
+  healthLive: "Service is alive.",
+  healthReady: "Service is ready.",
 };
 
 export const MESSAGES_NOT: MessagesNot = {
@@ -23,4 +25,5 @@ export const MESSAGES_NOT: MessagesNot = {
 export const MESSAGES_ERROR: MessagesError = {
   generic: "Something went wrong.",
   jsonAlreadyExistsInDatabase: "A JSON with this name already exists.",
+  validation: "Validation failed.",
 };

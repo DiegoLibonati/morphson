@@ -1,51 +1,44 @@
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
+import type { OutputIdParams } from "@/types/zod";
 
 import { OutputService } from "@/services/output.service";
 
-import { getExceptionMessage } from "@/helpers/get_exception_message.helper";
-import { isInteger } from "@/helpers/is_integer.helper";
+import { NotFoundError } from "@/errors/not_found.error";
 
 import { MESSAGES_NOT, MESSAGES_SUCCESS } from "@/constants/messages.constant";
 import { CODES_NOT, CODES_SUCCESS } from "@/constants/codes.constant";
 
 export const OutputController = {
-  getAll: async (_: Request, res: Response): Promise<void> => {
+  getAll: async (_req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const outputJsons = await OutputService.getAllOutputs();
-
       res.status(200).json({
         code: CODES_SUCCESS.getAllOutputJsons,
         message: MESSAGES_SUCCESS.getAllOutputJsons,
         data: outputJsons,
       });
     } catch (e) {
-      const { status, ...response } = getExceptionMessage(e);
-      res.status(status).json(response);
+      next(e);
     }
   },
-  getById: async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+
+  getById: async (
+    req: Request<OutputIdParams>,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
-      const idOutputJson = req.params.id;
-
-      if (!idOutputJson || !isInteger(idOutputJson)) {
-        res.status(400).json({
-          code: CODES_NOT.validOutputJsonId,
-          message: MESSAGES_NOT.validOutputJsonId,
-          data: null,
-        });
-        return;
-      }
-
+      const { idOutputJson } = req.params;
       const outputJson = await OutputService.getOutputById(idOutputJson);
-
+      if (!outputJson)
+        throw new NotFoundError(CODES_NOT.foundOutputJson, MESSAGES_NOT.foundOutputJson);
       res.status(200).json({
         code: CODES_SUCCESS.getOutputJson,
         message: MESSAGES_SUCCESS.getOutputJson,
         data: { outputJson },
       });
     } catch (e) {
-      const { status, ...response } = getExceptionMessage(e);
-      res.status(status).json(response);
+      next(e);
     }
   },
 };

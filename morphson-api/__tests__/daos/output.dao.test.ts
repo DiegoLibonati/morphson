@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 
 import type { OutputJson } from "@prisma/client";
-import type { OutputJsonCreatePayload } from "@/types/payloads";
+import type { OutputJsonCreatePayload } from "@/types/zod";
 
 import { prisma } from "@/configs/prisma.config";
 

@@ -6,7 +6,7 @@ RUN apt-get update \
     && apt-get install -y openssl \
     && rm -rf /var/lib/apt/lists/*
 
-COPY package*.json ./
+COPY package*.json .npmrc ./
 RUN npm ci
 
 COPY . .
@@ -14,7 +14,8 @@ COPY . .
 RUN npx prisma generate
 
 COPY entrypoint.development.sh ./entrypoint.development.sh
-RUN chmod +x ./entrypoint.development.sh
+RUN sed -i 's/\r$//' ./entrypoint.development.sh \
+    && chmod +x ./entrypoint.development.sh
 
 EXPOSE 5050
 

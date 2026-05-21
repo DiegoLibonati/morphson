@@ -1,15 +1,13 @@
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-
 import type { ExceptionInfo } from "@/types/helpers";
 
-import { CODES_ERROR, CODES_NOT } from "@/constants/codes.constant";
-import { MESSAGES_ERROR, MESSAGES_NOT } from "@/constants/messages.constant";
+import { AppError } from "@/errors/app.error";
+
+import { CODES_ERROR } from "@/constants/codes.constant";
+import { MESSAGES_ERROR } from "@/constants/messages.constant";
 
 export const getExceptionMessage = (e: unknown): ExceptionInfo => {
-  if (e instanceof PrismaClientKnownRequestError) {
-    if (e.code === "P2025") {
-      return { status: 404, code: CODES_NOT.foundFile, message: MESSAGES_NOT.foundFile };
-    }
+  if (e instanceof AppError) {
+    return { status: e.status, code: e.code, message: e.message };
   }
 
   return { status: 500, code: CODES_ERROR.generic, message: MESSAGES_ERROR.generic };

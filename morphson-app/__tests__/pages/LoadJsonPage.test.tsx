@@ -234,6 +234,83 @@ describe("LoadJsonPage", () => {
   });
 
   describe("error handling", () => {
+    it("should show the API message when fileService.getContent throws an axios error response", async () => {
+      const user = userEvent.setup();
+      const axiosErr = Object.assign(new Error("Request failed"), {
+        response: { status: 400, data: { message: "Invalid file" } },
+        isAxiosError: true,
+      });
+      (fileService.getContent as jest.Mock).mockRejectedValue(axiosErr);
+
+      const { container } = render(
+        <MemoryRouter>
+          <ModalProvider>
+            <ModalAlert />
+            <JSONProvider>
+              <EditorProvider>
+                <LoadJsonPage />
+              </EditorProvider>
+            </JSONProvider>
+          </ModalProvider>
+        </MemoryRouter>
+      );
+
+      const file = new File(["{}"], "test.json", { type: "application/json" });
+      const fileInput = container.querySelector<HTMLInputElement>("input[type='file']");
+      if (fileInput) await user.upload(fileInput, file);
+
+      await waitFor(() => {
+        expect(screen.getByText("Invalid file")).toBeInTheDocument();
+      });
+    });
+
+    it("should show the API message when inputService.upload throws an axios error response", async () => {
+      const user = userEvent.setup();
+      (fileService.getContent as jest.Mock).mockResolvedValue({
+        code: "200",
+        message: "OK",
+        data: '{"k":"v"}',
+      });
+      const axiosErr = Object.assign(new Error("Request failed"), {
+        response: { status: 409, data: { message: "Name already taken" } },
+        isAxiosError: true,
+      });
+      (inputService.upload as jest.Mock).mockRejectedValue(axiosErr);
+
+      const { container } = render(
+        <MemoryRouter>
+          <ModalProvider>
+            <ModalAlert />
+            <JSONProvider>
+              <EditorProvider>
+                <LoadJsonPage />
+              </EditorProvider>
+            </JSONProvider>
+          </ModalProvider>
+        </MemoryRouter>
+      );
+
+      await user.type(screen.getByLabelText("JSON Name"), "my-json");
+      const fileInput = container.querySelector<HTMLInputElement>("input[type='file']");
+      const file = new File(['{"k":"v"}'], "data.json", { type: "application/json" });
+      if (fileInput) await user.upload(fileInput, file);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("monaco-editor")).toHaveValue('{"k":"v"}');
+      });
+      fireEvent.change(screen.getByTestId("monaco-editor"), { target: { value: '{"k":"v"}' } });
+
+      await waitFor(() => {
+        expect(screen.getByRole("button", { name: "Submit Form Load Json" })).not.toBeDisabled();
+      });
+
+      await user.click(screen.getByRole("button", { name: "Submit Form Load Json" }));
+
+      await waitFor(() => {
+        expect(screen.getByText("Name already taken")).toBeInTheDocument();
+      });
+    });
+
     it("should show modal when fileService.getContent throws an unexpected error", async () => {
       const user = userEvent.setup();
       (fileService.getContent as jest.Mock).mockRejectedValue(new Error("Unexpected"));

@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
@@ -15,6 +15,7 @@ import { ModalProvider } from "@/contexts/ModalContext/ModalProvider";
 
 import inputService from "@/services/inputService";
 import outputService from "@/services/outputService";
+import transformService from "@/services/transformService";
 
 import { mockInputJson } from "@tests/__mocks__/inputJson.mock";
 import { mockOutputJson } from "@tests/__mocks__/outputJson.mock";
@@ -77,6 +78,12 @@ jest.mock("@monaco-editor/react", () => ({
     );
   },
 }));
+
+const mockAxiosError = (status: number, data: unknown): Error =>
+  Object.assign(new Error("Request failed"), {
+    response: { status, data },
+    isAxiosError: true,
+  });
 
 const renderPage = (): RenderResult =>
   render(
@@ -306,6 +313,277 @@ describe("TransformJsonPage", () => {
 
       await waitFor(() => {
         expect(inputService.getById).toHaveBeenCalledWith("1");
+      });
+    });
+
+    it("should show a modal with the API message when inputService.getById fails with an axios error", async () => {
+      const user = userEvent.setup();
+      (inputService.getAll as jest.Mock).mockResolvedValue({
+        code: "200",
+        message: "OK",
+        data: [mockInputJson],
+      });
+      (outputService.getAll as jest.Mock).mockResolvedValue({
+        code: "200",
+        message: "OK",
+        data: [],
+      });
+      (inputService.getById as jest.Mock).mockRejectedValue(
+        mockAxiosError(400, { message: "Input json not found" })
+      );
+
+      renderPage();
+
+      await waitFor(() => {
+        expect(screen.getByRole("option", { name: "input.json" })).toBeInTheDocument();
+      });
+
+      await user.selectOptions(screen.getByRole("combobox", { name: "Select an Input JSON" }), "1");
+
+      await waitFor(() => {
+        expect(screen.getByText("Input json not found")).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe("selecting an output json", () => {
+    it("should call outputService.getById and update the editor when an output json is selected", async () => {
+      const user = userEvent.setup();
+      (inputService.getAll as jest.Mock).mockResolvedValue({
+        code: "200",
+        message: "OK",
+        data: [],
+      });
+      (outputService.getAll as jest.Mock).mockResolvedValue({
+        code: "200",
+        message: "OK",
+        data: [mockOutputJson],
+      });
+      (outputService.getById as jest.Mock).mockResolvedValue({
+        code: "200",
+        message: "OK",
+        data: { outputJson: mockOutputJson },
+      });
+
+      renderPage();
+
+      await waitFor(() => {
+        expect(screen.getByRole("option", { name: "output.json" })).toBeInTheDocument();
+      });
+
+      await user.selectOptions(
+        screen.getByRole("combobox", { name: "Select an Output JSON" }),
+        "1"
+      );
+
+      await waitFor(() => {
+        expect(outputService.getById).toHaveBeenCalledWith("1");
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText("Successfully loaded the output json!")).toBeInTheDocument();
+      });
+    });
+
+    it("should show a modal with the API message when outputService.getById fails with an axios error", async () => {
+      const user = userEvent.setup();
+      (inputService.getAll as jest.Mock).mockResolvedValue({
+        code: "200",
+        message: "OK",
+        data: [],
+      });
+      (outputService.getAll as jest.Mock).mockResolvedValue({
+        code: "200",
+        message: "OK",
+        data: [mockOutputJson],
+      });
+      (outputService.getById as jest.Mock).mockRejectedValue(
+        mockAxiosError(500, { message: "Server boom" })
+      );
+
+      renderPage();
+
+      await waitFor(() => {
+        expect(screen.getByRole("option", { name: "output.json" })).toBeInTheDocument();
+      });
+
+      await user.selectOptions(
+        screen.getByRole("combobox", { name: "Select an Output JSON" }),
+        "1"
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText("Server boom")).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe("submit", () => {
+    beforeEach((): void => {
+      (inputService.getAll as jest.Mock).mockResolvedValue({
+        code: "200",
+        message: "OK",
+        data: [],
+      });
+      (outputService.getAll as jest.Mock).mockResolvedValue({
+        code: "200",
+        message: "OK",
+        data: [],
+      });
+    });
+
+    it("should call transformService.transform and show a success modal", async () => {
+      const user = userEvent.setup();
+      (transformService.transform as jest.Mock).mockResolvedValue(
+        new Blob([JSON.stringify({ ok: true })], { type: "application/json" })
+      );
+      const mockCreateObjectURL = jest.fn().mockReturnValue("blob:http://localhost/fake");
+      const mockRevokeObjectURL = jest.fn();
+      Object.defineProperty(window.URL, "createObjectURL", {
+        value: mockCreateObjectURL,
+        configurable: true,
+      });
+      Object.defineProperty(window.URL, "revokeObjectURL", {
+        value: mockRevokeObjectURL,
+        configurable: true,
+      });
+
+      renderPage();
+
+      await waitFor(() => {
+        expect(screen.getByTestId("monaco-editor")).toBeInTheDocument();
+      });
+
+      fireEvent.change(screen.getByTestId("monaco-editor"), { target: { value: '{"a":1}' } });
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole("button", { name: "Submit Form Transform Json" })
+        ).not.toBeDisabled();
+      });
+
+      await user.click(screen.getByRole("button", { name: "Submit Form Transform Json" }));
+
+      await waitFor(() => {
+        expect(transformService.transform).toHaveBeenCalled();
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText("The json was successfully transformed!")).toBeInTheDocument();
+      });
+    });
+
+    it("should show the saved variant of the success modal when saveOutputJson is true", async () => {
+      const user = userEvent.setup();
+      (transformService.transform as jest.Mock).mockResolvedValue(
+        new Blob(["{}"], { type: "application/json" })
+      );
+      Object.defineProperty(window.URL, "createObjectURL", {
+        value: jest.fn().mockReturnValue("blob:http://localhost/fake"),
+        configurable: true,
+      });
+      Object.defineProperty(window.URL, "revokeObjectURL", {
+        value: jest.fn(),
+        configurable: true,
+      });
+
+      renderPage();
+
+      await waitFor(() => {
+        expect(screen.getByTestId("monaco-editor")).toBeInTheDocument();
+      });
+
+      fireEvent.change(screen.getByTestId("monaco-editor"), { target: { value: '{"a":1}' } });
+
+      await user.click(screen.getByRole("checkbox"));
+      await user.type(screen.getByLabelText("Output Json Name"), "my-output");
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole("button", { name: "Submit Form Transform Json" })
+        ).not.toBeDisabled();
+      });
+
+      await user.click(screen.getByRole("button", { name: "Submit Form Transform Json" }));
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(
+            "The json was successfully transformed and the output model was successfully saved!"
+          )
+        ).toBeInTheDocument();
+      });
+    });
+
+    it("should show an unexpected error modal when transformService.transform throws a generic error", async () => {
+      const user = userEvent.setup();
+      (transformService.transform as jest.Mock).mockRejectedValue(new Error("boom"));
+
+      renderPage();
+
+      await waitFor(() => {
+        expect(screen.getByTestId("monaco-editor")).toBeInTheDocument();
+      });
+
+      fireEvent.change(screen.getByTestId("monaco-editor"), { target: { value: '{"a":1}' } });
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole("button", { name: "Submit Form Transform Json" })
+        ).not.toBeDisabled();
+      });
+
+      await user.click(screen.getByRole("button", { name: "Submit Form Transform Json" }));
+
+      await waitFor(() => {
+        expect(screen.getByText("An unexpected error occurred.")).toBeInTheDocument();
+      });
+    });
+
+    it("should show the API message from the blob response when transformService.transform throws an axios error", async () => {
+      const user = userEvent.setup();
+      const errorBlob = new Blob([JSON.stringify({ message: "Invalid transformation" })], {
+        type: "application/json",
+      });
+      (transformService.transform as jest.Mock).mockRejectedValue(mockAxiosError(422, errorBlob));
+
+      renderPage();
+
+      await waitFor(() => {
+        expect(screen.getByTestId("monaco-editor")).toBeInTheDocument();
+      });
+
+      fireEvent.change(screen.getByTestId("monaco-editor"), { target: { value: '{"a":1}' } });
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole("button", { name: "Submit Form Transform Json" })
+        ).not.toBeDisabled();
+      });
+
+      await user.click(screen.getByRole("button", { name: "Submit Form Transform Json" }));
+
+      await waitFor(() => {
+        expect(screen.getByText("Invalid transformation")).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe("error handling on initial load", () => {
+    it("should show the API message when getAll fails with an axios error response", async () => {
+      (inputService.getAll as jest.Mock).mockRejectedValue(
+        mockAxiosError(503, { message: "Service unavailable" })
+      );
+      (outputService.getAll as jest.Mock).mockResolvedValue({
+        code: "200",
+        message: "OK",
+        data: [],
+      });
+
+      renderPage();
+
+      await waitFor(() => {
+        expect(screen.getByText("Service unavailable")).toBeInTheDocument();
       });
     });
   });

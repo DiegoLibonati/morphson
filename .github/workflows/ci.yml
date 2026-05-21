@@ -1,0 +1,225 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ============================================================
+  # BACKEND - runs first
+  # ============================================================
+  backend-lint-and-audit:
+    name: Backend - Lint & Audit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: morphson-api
+
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: morphson-api/.nvmrc
+          cache: npm
+          cache-dependency-path: morphson-api/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Prisma generate
+        run: npx prisma generate
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: Prettier format check
+        run: npm run format:check
+
+      - name: TypeScript type-check
+        run: npm run type-check
+
+      - name: npm audit (high+)
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
+  backend-test:
+    name: Backend - Testing
+    runs-on: ubuntu-latest
+    needs: backend-lint-and-audit
+    defaults:
+      run:
+        working-directory: morphson-api
+
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: morphson-api/.nvmrc
+          cache: npm
+          cache-dependency-path: morphson-api/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Prisma generate
+        run: npx prisma generate
+
+      - name: Run tests
+        run: npm test
+
+  backend-build:
+    name: Backend - Build
+    runs-on: ubuntu-latest
+    needs: backend-test
+    defaults:
+      run:
+        working-directory: morphson-api
+
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: morphson-api/.nvmrc
+          cache: npm
+          cache-dependency-path: morphson-api/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Prisma generate
+        run: npx prisma generate
+
+      - name: Build
+        run: npm run build
+
+  # ============================================================
+  # FRONTEND - runs after backend
+  # ============================================================
+  frontend-lint-and-audit:
+    name: Frontend - Lint & Audit
+    runs-on: ubuntu-latest
+    needs: backend-build
+    defaults:
+      run:
+        working-directory: morphson-app
+
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: morphson-app/.nvmrc
+          cache: npm
+          cache-dependency-path: morphson-app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: Prettier format check
+        run: npm run format:check
+
+      - name: TypeScript type-check
+        run: npm run type-check
+
+      - name: npm audit (high+)
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
+  frontend-test:
+    name: Frontend - Testing
+    runs-on: ubuntu-latest
+    needs: frontend-lint-and-audit
+    defaults:
+      run:
+        working-directory: morphson-app
+
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: morphson-app/.nvmrc
+          cache: npm
+          cache-dependency-path: morphson-app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Run tests
+        run: npm test
+
+  frontend-build:
+    name: Frontend - Build
+    runs-on: ubuntu-latest
+    needs: frontend-test
+    defaults:
+      run:
+        working-directory: morphson-app
+
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: morphson-app/.nvmrc
+          cache: npm
+          cache-dependency-path: morphson-app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Build
+        run: npm run build
+
+  # ============================================================
+  # DOCKER - all four images in parallel, after everything
+  # ============================================================
+  docker-build:
+    name: Docker Build - ${{ matrix.project }} ${{ matrix.tag }}
+    runs-on: ubuntu-latest
+    needs: frontend-build
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: morphson-api
+            dockerfile: Dockerfile.development
+            tag: morphson-api:dev
+          - project: morphson-api
+            dockerfile: Dockerfile.production
+            tag: morphson-api:prod
+          - project: morphson-app
+            dockerfile: Dockerfile.development
+            tag: morphson-app:dev
+          - project: morphson-app
+            dockerfile: Dockerfile.production
+            tag: morphson-app:prod
+
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.10.0
+
+      - name: Build ${{ matrix.project }}/${{ matrix.dockerfile }}
+        uses: docker/build-push-action@v6.15.0
+        with:
+          context: ${{ matrix.project }}
+          file: ${{ matrix.project }}/${{ matrix.dockerfile }}
+          push: false
+          tags: ${{ matrix.tag }}

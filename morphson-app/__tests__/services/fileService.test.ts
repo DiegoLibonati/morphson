@@ -1,49 +1,60 @@
 import axios from "axios";
+import { http, HttpResponse } from "msw";
 
-import { apiFile } from "@/services/axios";
 import fileService from "@/services/fileService";
 
-jest.mock("@/services/axios", () => ({
-  apiFile: { post: jest.fn() },
-  apiInput: { get: jest.fn(), post: jest.fn() },
-  apiOutput: { get: jest.fn() },
-  apiTransform: { post: jest.fn() },
-}));
+import { mockMswServer } from "@tests/__mocks__/mswServer.mock";
 
 describe("fileService", () => {
   describe("getContent", () => {
-    it("should return response data on success", async () => {
-      const mockFormData = new FormData();
-      const mockResponseData = { code: "200", message: "OK", data: "file content" };
-      (apiFile.post as jest.Mock).mockResolvedValue({ data: mockResponseData });
+    it("should return the response data on success", async () => {
+      const formData = new FormData();
+      formData.append("file", new Blob(["{}"]), "test.json");
 
-      const result = await fileService.getContent(mockFormData);
+      const result = await fileService.getContent(formData);
 
-      expect(result).toEqual(mockResponseData);
-      expect(apiFile.post).toHaveBeenCalledWith("/content", mockFormData);
-    });
-
-    it("should throw with HTTP error message on axios error with response", async () => {
-      const mockFormData = new FormData();
-      const mockError = Object.assign(new Error("Request failed"), {
-        response: { status: 404 },
-        isAxiosError: true,
+      expect(result).toEqual({
+        code: "200",
+        message: "OK",
+        data: '{"key":"value"}',
       });
-      (apiFile.post as jest.Mock).mockRejectedValue(mockError);
-      jest.spyOn(axios, "isAxiosError").mockReturnValue(true);
-
-      await expect(fileService.getContent(mockFormData)).rejects.toThrow(
-        "HTTP error! status: 404 - Request failed"
-      );
     });
 
-    it("should re-throw non-axios errors", async () => {
-      const mockFormData = new FormData();
-      const mockError = new Error("Network failure");
-      (apiFile.post as jest.Mock).mockRejectedValue(mockError);
+    it("should throw an HTTP error message when the API responds with a 500", async () => {
+      mockMswServer.use(
+        http.post("/api/v1/file/content", () => {
+          return new HttpResponse(null, { status: 500 });
+        })
+      );
+
+      const formData = new FormData();
+
+      await expect(fileService.getContent(formData)).rejects.toThrow(/HTTP error! status: 500/);
+    });
+
+    it("should throw an HTTP error message when the API responds with a 404", async () => {
+      mockMswServer.use(
+        http.post("/api/v1/file/content", () => {
+          return new HttpResponse(null, { status: 404 });
+        })
+      );
+
+      const formData = new FormData();
+
+      await expect(fileService.getContent(formData)).rejects.toThrow(/HTTP error! status: 404/);
+    });
+
+    it("should rethrow the original error when it is not an axios error", async () => {
+      mockMswServer.use(
+        http.post("/api/v1/file/content", () => {
+          return new HttpResponse(null, { status: 500 });
+        })
+      );
       jest.spyOn(axios, "isAxiosError").mockReturnValue(false);
 
-      await expect(fileService.getContent(mockFormData)).rejects.toThrow("Network failure");
+      const formData = new FormData();
+
+      await expect(fileService.getContent(formData)).rejects.not.toThrow(/HTTP error!/);
     });
   });
 });

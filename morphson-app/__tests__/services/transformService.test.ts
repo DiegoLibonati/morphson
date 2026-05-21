@@ -1,27 +1,13 @@
 import axios from "axios";
+import { http, HttpResponse } from "msw";
 
-import { apiTransform } from "@/services/axios";
 import transformService from "@/services/transformService";
 
-jest.mock("@/services/axios", () => ({
-  apiFile: { post: jest.fn() },
-  apiInput: { get: jest.fn(), post: jest.fn() },
-  apiOutput: { get: jest.fn() },
-  apiTransform: { post: jest.fn() },
-}));
-
-const mockAxiosError = (status: number): Error =>
-  Object.assign(new Error("Request failed"), {
-    response: { status },
-    isAxiosError: true,
-  });
+import { mockMswServer } from "@tests/__mocks__/mswServer.mock";
 
 describe("transformService", () => {
   describe("transform", () => {
-    it("should return the blob on success", async () => {
-      const mockBlob = new Blob(['{"result": "ok"}'], { type: "application/json" });
-      (apiTransform.post as jest.Mock).mockResolvedValue({ data: mockBlob });
-
+    it("should return a blob on success", async () => {
       const payload = {
         idInputJson: "1",
         saveOutputJson: false,
@@ -31,13 +17,17 @@ describe("transformService", () => {
 
       const result = await transformService.transform(payload);
 
-      expect(result).toBe(mockBlob);
-      expect(apiTransform.post).toHaveBeenCalledWith("/", payload, { responseType: "blob" });
+      expect(result).toBeInstanceOf(Blob);
+      const text = await result.text();
+      expect(JSON.parse(text)).toEqual({ transformed: true });
     });
 
-    it("should throw with HTTP error message on axios error", async () => {
-      (apiTransform.post as jest.Mock).mockRejectedValue(mockAxiosError(422));
-      jest.spyOn(axios, "isAxiosError").mockReturnValue(true);
+    it("should throw an HTTP error when the API responds with a 422", async () => {
+      mockMswServer.use(
+        http.post("/api/v1/transform/", () => {
+          return new HttpResponse(null, { status: 422 });
+        })
+      );
 
       const payload = {
         idInputJson: "1",
@@ -46,11 +36,32 @@ describe("transformService", () => {
         contentJsonToTransform: "{}",
       };
 
-      await expect(transformService.transform(payload)).rejects.toThrow("HTTP error! status: 422");
+      await expect(transformService.transform(payload)).rejects.toThrow(/HTTP error! status: 422/);
     });
 
-    it("should re-throw non-axios errors", async () => {
-      (apiTransform.post as jest.Mock).mockRejectedValue(new Error("Network failure"));
+    it("should throw an HTTP error when the API responds with a 500", async () => {
+      mockMswServer.use(
+        http.post("/api/v1/transform/", () => {
+          return new HttpResponse(null, { status: 500 });
+        })
+      );
+
+      const payload = {
+        idInputJson: "1",
+        saveOutputJson: false,
+        outputJsonNameToSave: "",
+        contentJsonToTransform: "{}",
+      };
+
+      await expect(transformService.transform(payload)).rejects.toThrow(/HTTP error! status: 500/);
+    });
+
+    it("should rethrow the original error when it is not an axios error", async () => {
+      mockMswServer.use(
+        http.post("/api/v1/transform/", () => {
+          return new HttpResponse(null, { status: 500 });
+        })
+      );
       jest.spyOn(axios, "isAxiosError").mockReturnValue(false);
 
       const payload = {
@@ -60,7 +71,7 @@ describe("transformService", () => {
         contentJsonToTransform: "{}",
       };
 
-      await expect(transformService.transform(payload)).rejects.toThrow("Network failure");
+      await expect(transformService.transform(payload)).rejects.not.toThrow(/HTTP error!/);
     });
   });
 });

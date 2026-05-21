@@ -1,9 +1,10 @@
 #!/bin/sh
 # Pre-commit hook for Morphson monorepo.
-# Runs lint-staged inside each package when its files are staged.
+# Runs lint-staged for morphson-api when its files are staged.
+# Runs lint-staged for morphson-app when its files are staged.
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-STAGED_FILES=$(git diff --cached --name-only)
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACMR)
 
 API_FILES=$(echo "$STAGED_FILES" | grep "^morphson-api/")
 APP_FILES=$(echo "$STAGED_FILES" | grep "^morphson-app/")
@@ -12,13 +13,23 @@ EXIT_CODE=0
 
 if [ -n "$API_FILES" ]; then
     echo "[pre-commit] Running lint-staged for morphson-api..."
-    cd "$REPO_ROOT/morphson-api" && npx lint-staged
+    if command -v npx > /dev/null; then
+        (cd "$REPO_ROOT/morphson-api" && npx --no-install lint-staged)
+    else
+        echo '[pre-commit] `npx` not found. Did you install Node.js?' 1>&2
+        exit 1
+    fi
     EXIT_CODE=$((EXIT_CODE + $?))
 fi
 
 if [ -n "$APP_FILES" ]; then
     echo "[pre-commit] Running lint-staged for morphson-app..."
-    cd "$REPO_ROOT/morphson-app" && npx lint-staged
+    if command -v npx > /dev/null; then
+        (cd "$REPO_ROOT/morphson-app" && npx --no-install lint-staged)
+    else
+        echo '[pre-commit] `npx` not found. Did you install Node.js?' 1>&2
+        exit 1
+    fi
     EXIT_CODE=$((EXIT_CODE + $?))
 fi
 

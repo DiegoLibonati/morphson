@@ -72,11 +72,11 @@ describe("input.route", () => {
       expect(response.status).toBe(400);
     });
 
-    it("should return 200 with null inputJson when the record does not exist", async () => {
+    it("should return 404 when the record does not exist", async () => {
       const response: Response = await request(app).get(`${baseUrl}/99999`);
 
-      expect(response.status).toBe(200);
-      expect(response.body.data.inputJson).toBeNull();
+      expect(response.status).toBe(404);
+      expect(response.body.code).toBe("NOT_FOUND_INPUT_JSON");
     });
   });
 

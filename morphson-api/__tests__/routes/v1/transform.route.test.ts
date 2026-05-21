@@ -132,7 +132,7 @@ describe("transform.route", () => {
       expect(response.status).toBe(400);
     });
 
-    it("should return 500 when the referenced InputJson does not exist", async () => {
+    it("should return 404 when the referenced InputJson does not exist", async () => {
       const response: Response = await request(app)
         .post(baseUrl)
         .send({
@@ -142,7 +142,8 @@ describe("transform.route", () => {
           contentJsonToTransform: JSON.stringify({ greeting: "input.name" }),
         });
 
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(404);
+      expect(response.body.code).toBe("NOT_FOUND_INPUT_JSON");
     });
   });
 });

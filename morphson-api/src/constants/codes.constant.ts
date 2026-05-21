@@ -7,11 +7,14 @@ export const CODES_SUCCESS: CodesSuccess = {
   getInputJson: "SUCCESS_GET_INPUT_JSON",
   getAllOutputJsons: "SUCCESS_GET_ALL_OUTPUT_JSONS",
   getOutputJson: "SUCCESS_GET_OUTPUT_JSON",
+  healthLive: "SUCCESS_HEALTH_LIVE",
+  healthReady: "SUCCESS_HEALTH_READY",
 };
 
 export const CODES_ERROR: CodesError = {
   generic: "ERROR_GENERIC",
   jsonAlreadyExistsInDatabase: "ERROR_JSON_ALREADY_EXISTS_IN_DATABASE",
+  validation: "ERROR_VALIDATION",
 };
 
 export const CODES_NOT: CodesNot = {

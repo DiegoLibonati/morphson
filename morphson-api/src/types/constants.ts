@@ -5,6 +5,8 @@ export interface MessagesSuccess {
   getInputJson: string;
   getAllOutputJsons: string;
   getOutputJson: string;
+  healthLive: string;
+  healthReady: string;
 }
 
 export interface MessagesNot {
@@ -21,6 +23,7 @@ export interface MessagesNot {
 export interface MessagesError {
   generic: string;
   jsonAlreadyExistsInDatabase: string;
+  validation: string;
 }
 
 export interface CodesSuccess {
@@ -30,6 +33,8 @@ export interface CodesSuccess {
   getInputJson: "SUCCESS_GET_INPUT_JSON";
   getAllOutputJsons: "SUCCESS_GET_ALL_OUTPUT_JSONS";
   getOutputJson: "SUCCESS_GET_OUTPUT_JSON";
+  healthLive: "SUCCESS_HEALTH_LIVE";
+  healthReady: "SUCCESS_HEALTH_READY";
 }
 
 export interface CodesNot {
@@ -46,4 +51,5 @@ export interface CodesNot {
 export interface CodesError {
   generic: "ERROR_GENERIC";
   jsonAlreadyExistsInDatabase: "ERROR_JSON_ALREADY_EXISTS_IN_DATABASE";
+  validation: "ERROR_VALIDATION";
 }
