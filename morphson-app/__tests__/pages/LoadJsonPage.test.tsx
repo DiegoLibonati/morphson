@@ -1,5 +1,5 @@
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 import userEvent from "@testing-library/user-event";
 
 import type { JSX } from "react";
@@ -18,8 +18,8 @@ import fileService from "@/services/fileService";
 
 const mockNavigate = jest.fn();
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual<Record<string, unknown>>("react-router-dom"),
+jest.mock("react-router", () => ({
+  ...jest.requireActual<Record<string, unknown>>("react-router"),
   useNavigate: (): jest.Mock => mockNavigate,
 }));
 

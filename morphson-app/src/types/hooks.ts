@@ -1,4 +1,4 @@
-import type { Params } from "react-router-dom";
+import type { Params } from "react-router";
 
 import type { Resolution } from "@/types/app";
 import type { EditorContext, JSONContext, ModalContext } from "@/types/contexts";

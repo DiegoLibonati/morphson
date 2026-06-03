@@ -1,4 +1,4 @@
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router";
 
 import type { Resolution } from "@/types/app";
 import type { UseRouter } from "@/types/hooks";

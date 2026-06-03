@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router";
 
 import type { RenderResult } from "@testing-library/react";
 
@@ -7,8 +7,8 @@ import ResolutionPage from "@/pages/ResolutionPage/ResolutionPage";
 
 const mockNavigate = jest.fn();
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual<Record<string, unknown>>("react-router-dom"),
+jest.mock("react-router", () => ({
+  ...jest.requireActual<Record<string, unknown>>("react-router"),
   useNavigate: (): jest.Mock => mockNavigate,
 }));
 
