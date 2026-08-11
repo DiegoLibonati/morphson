@@ -233,6 +233,7 @@ Database:
 
 ```
 "@prisma/client": "^5.20.0"
+"dotenv": "^17.4.2"
 "express": "^4.21.0"
 "express-rate-limit": "^8.5.2"
 "helmet": "^8.1.0"
@@ -280,9 +281,31 @@ With the dependencies in mind, here is how to bring the project up locally. The 
 
 NOTE: You have to be standing in the folder containing the: `dev.docker-compose.yaml` and you need to install `Docker Desktop` if you are in Windows.
 
+### Running the API without Docker
+
+The API can also run directly on the host with `npm run dev` (or `npm run build` + `npm start`):
+
+1. Start only the database: `docker compose -f dev.docker-compose.yaml up morphson-db` (or use any local Postgres).
+2. In `morphson-api/.env` (or `.env.local`), point the connection at the host instead of the compose hostname: `DB_HOST=localhost`, `DB_PORT=5432`, plus `DB_USER`, `DB_PASSWORD` and `DB_NAME`.
+3. From `morphson-api`, run `npx prisma migrate dev` once, then `npm run dev`.
+
+On boot the API pings the database (`SELECT 1`) via `src/helpers/verify_db_connection.helper.ts`, with up to 5 attempts and exponential backoff (500ms base, doubling, capped at 8s). If the database is unreachable it only logs warnings — the server keeps running and Prisma reconnects on its own once the database is back. If you see those warnings when running without Docker, check that the database is up and that the `DB_*` values in your env files point to it (e.g. `DB_HOST=localhost` instead of the compose hostname).
+
 ## Env Keys
 
 Both workspaces use their own `.env` file. The API validates its env at startup with `zod` and refuses to boot if any required key is missing or malformed. Production-specific values are listed later in [Production → Environment](#environment).
+
+### Env file cascade (API)
+
+`morphson-api` loads env files in cascade at startup through `src/configs/dotenv.config.ts`. Precedence, highest first:
+
+1. Real process environment (Docker `env_file`, CI, shell exports) — never overridden.
+2. `.env.<NODE_ENV>.local`
+3. `.env.local`
+4. `.env.<NODE_ENV>`
+5. `.env`
+
+Each key is applied only if it is not already defined, so the Docker flow (where compose injects the env via `env_file`) keeps working unchanged. In test mode (`NODE_ENV=test`) only `.env.test.local` and `.env.test` are read — a local development `.env` can never change test results. The list of files that were actually applied is exported as `loadedEnvFiles` from `src/configs/env.config.ts` and logged in the server startup line (`envFiles: [...]`). All `.env.*` variants are git-ignored except `.env.example`.
 
 1. `VITE_API_URL`: Refers to the API URI used by the frontend.
 2. `PORT`: Refers to the port on which the API is exposed.

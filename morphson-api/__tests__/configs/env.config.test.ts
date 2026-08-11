@@ -1,10 +1,19 @@
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+
 import type { Envs } from "@/types/env";
 
 describe("env.config", () => {
   const originalEnv: NodeJS.ProcessEnv = process.env;
+  const nonexistentCwd: string = join(tmpdir(), "env-config-nonexistent-cwd");
 
   beforeEach((): void => {
     process.env = { ...originalEnv };
+    jest.spyOn(process, "cwd").mockReturnValue(nonexistentCwd);
+  });
+
+  afterEach((): void => {
+    jest.restoreAllMocks();
   });
 
   afterAll((): void => {

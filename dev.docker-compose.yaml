@@ -7,7 +7,8 @@ services:
     ports:
       - "3000:3000"
     env_file:
-      - ./morphson-app/.env
+      - path: ./morphson-app/.env
+        required: false
     volumes:
       - ./morphson-app:/home/app
       - /home/app/node_modules
@@ -26,7 +27,8 @@ services:
     ports:
       - "5050:5050"
     env_file:
-      - ./morphson-api/.env
+      - path: ./morphson-api/.env
+        required: false
     volumes:
       - ./morphson-api:/home/app
       - /home/app/node_modules
@@ -42,7 +44,8 @@ services:
     ports:
       - "5432:5432"
     env_file:
-      - ./.env
+      - path: ./.env
+        required: false
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
